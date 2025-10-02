@@ -1,0 +1,245 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Repos\\ExcelHostApp\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{792BB2EF-F950-428A-8F5C-B0C2E2017EDB}|CommonDatabase\\CommonDatabase.csproj|d:\\repos\\excelhostapp\\commondatabase\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{792BB2EF-F950-428A-8F5C-B0C2E2017EDB}|CommonDatabase\\CommonDatabase.csproj|solutionrelative:commondatabase\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{824274BD-B61A-4ADE-988F-C5B2240BEBEA}|ExcelHostApp\\ExcelHostApp.csproj|d:\\repos\\excelhostapp\\excelhostapp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{824274BD-B61A-4ADE-988F-C5B2240BEBEA}|ExcelHostApp\\ExcelHostApp.csproj|solutionrelative:excelhostapp\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50FF62B3-C26C-4616-8935-19E608871B19}|ClientExcelApi\\ClientExcelApi.csproj|d:\\repos\\excelhostapp\\clientexcelapi\\controllers\\clientauthcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50FF62B3-C26C-4616-8935-19E608871B19}|ClientExcelApi\\ClientExcelApi.csproj|solutionrelative:clientexcelapi\\controllers\\clientauthcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{792BB2EF-F950-428A-8F5C-B0C2E2017EDB}|CommonDatabase\\CommonDatabase.csproj|d:\\repos\\excelhostapp\\commondatabase\\services\\applicationconstant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{792BB2EF-F950-428A-8F5C-B0C2E2017EDB}|CommonDatabase\\CommonDatabase.csproj|solutionrelative:commondatabase\\services\\applicationconstant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3E9CE42E-1384-4C10-B914-C75C7DD3B9E1}|DashboardExcelApi\\DashboardExcelApi.csproj|d:\\repos\\excelhostapp\\dashboardexcelapi\\controllers\\instrumentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3E9CE42E-1384-4C10-B914-C75C7DD3B9E1}|DashboardExcelApi\\DashboardExcelApi.csproj|solutionrelative:dashboardexcelapi\\controllers\\instrumentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{792BB2EF-F950-428A-8F5C-B0C2E2017EDB}|CommonDatabase\\CommonDatabase.csproj|d:\\repos\\excelhostapp\\commondatabase\\services\\clientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{792BB2EF-F950-428A-8F5C-B0C2E2017EDB}|CommonDatabase\\CommonDatabase.csproj|solutionrelative:commondatabase\\services\\clientservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3E9CE42E-1384-4C10-B914-C75C7DD3B9E1}|DashboardExcelApi\\DashboardExcelApi.csproj|d:\\repos\\excelhostapp\\dashboardexcelapi\\controllers\\selfsubscribecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3E9CE42E-1384-4C10-B914-C75C7DD3B9E1}|DashboardExcelApi\\DashboardExcelApi.csproj|solutionrelative:dashboardexcelapi\\controllers\\selfsubscribecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3E9CE42E-1384-4C10-B914-C75C7DD3B9E1}|DashboardExcelApi\\DashboardExcelApi.csproj|d:\\repos\\excelhostapp\\dashboardexcelapi\\controllers\\clientcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3E9CE42E-1384-4C10-B914-C75C7DD3B9E1}|DashboardExcelApi\\DashboardExcelApi.csproj|solutionrelative:dashboardexcelapi\\controllers\\clientcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{824274BD-B61A-4ADE-988F-C5B2240BEBEA}|ExcelHostApp\\ExcelHostApp.csproj|d:\\repos\\excelhostapp\\excelhostapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{824274BD-B61A-4ADE-988F-C5B2240BEBEA}|ExcelHostApp\\ExcelHostApp.csproj|solutionrelative:excelhostapp\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3E9CE42E-1384-4C10-B914-C75C7DD3B9E1}|DashboardExcelApi\\DashboardExcelApi.csproj|d:\\repos\\excelhostapp\\dashboardexcelapi\\excelhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3E9CE42E-1384-4C10-B914-C75C7DD3B9E1}|DashboardExcelApi\\DashboardExcelApi.csproj|solutionrelative:dashboardexcelapi\\excelhub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{3E9CE42E-1384-4C10-B914-C75C7DD3B9E1}|DashboardExcelApi\\DashboardExcelApi.csproj|d:\\repos\\excelhostapp\\dashboardexcelapi\\controllers\\publishcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{3E9CE42E-1384-4C10-B914-C75C7DD3B9E1}|DashboardExcelApi\\DashboardExcelApi.csproj|solutionrelative:dashboardexcelapi\\controllers\\publishcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{792BB2EF-F950-428A-8F5C-B0C2E2017EDB}|CommonDatabase\\CommonDatabase.csproj|d:\\repos\\excelhostapp\\commondatabase\\services\\commonservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{792BB2EF-F950-428A-8F5C-B0C2E2017EDB}|CommonDatabase\\CommonDatabase.csproj|solutionrelative:commondatabase\\services\\commonservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{792BB2EF-F950-428A-8F5C-B0C2E2017EDB}|CommonDatabase\\CommonDatabase.csproj|d:\\repos\\excelhostapp\\commondatabase\\interfaces\\icommonservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{792BB2EF-F950-428A-8F5C-B0C2E2017EDB}|CommonDatabase\\CommonDatabase.csproj|solutionrelative:commondatabase\\interfaces\\icommonservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{0174dea2-fdbe-4ef1-8f99-c0beae78880f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ClientAuthController.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\ClientExcelApi\\Controllers\\ClientAuthController.cs",
+              "RelativeDocumentMoniker": "ClientExcelApi\\Controllers\\ClientAuthController.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\ClientExcelApi\\Controllers\\ClientAuthController.cs",
+              "RelativeToolTip": "ClientExcelApi\\Controllers\\ClientAuthController.cs",
+              "ViewState": "AgIAAJcAAAAAAAAAAAAIwJ4AAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-01T08:47:05.576Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "InstrumentsController.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\Controllers\\InstrumentsController.cs",
+              "RelativeDocumentMoniker": "DashboardExcelApi\\Controllers\\InstrumentsController.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\Controllers\\InstrumentsController.cs",
+              "RelativeToolTip": "DashboardExcelApi\\Controllers\\InstrumentsController.cs",
+              "ViewState": "AgIAABsAAAAAAAAAAAAYwCoAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-01T05:58:07.436Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SelfSubscribeController.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\Controllers\\SelfSubscribeController.cs",
+              "RelativeDocumentMoniker": "DashboardExcelApi\\Controllers\\SelfSubscribeController.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\Controllers\\SelfSubscribeController.cs",
+              "RelativeToolTip": "DashboardExcelApi\\Controllers\\SelfSubscribeController.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAzwBoAAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-01T05:57:54.11Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ClientService.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\Services\\ClientService.cs",
+              "RelativeDocumentMoniker": "CommonDatabase\\Services\\ClientService.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\Services\\ClientService.cs",
+              "RelativeToolTip": "CommonDatabase\\Services\\ClientService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-29T09:18:05.073Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ExcelHub.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\ExcelHub.cs",
+              "RelativeDocumentMoniker": "DashboardExcelApi\\ExcelHub.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\ExcelHub.cs",
+              "RelativeToolTip": "DashboardExcelApi\\ExcelHub.cs",
+              "ViewState": "AgIAAIoAAAAAAAAAAAAswI0AAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-29T09:18:05.144Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "CommonDatabase\\Services\\AuthService.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\Services\\AuthService.cs",
+              "RelativeToolTip": "CommonDatabase\\Services\\AuthService.cs",
+              "ViewState": "AgIAALsAAAAAAAAAAAAxwNEAAABwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-29T09:18:05.163Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\ExcelHostApp\\appsettings.json",
+              "RelativeDocumentMoniker": "ExcelHostApp\\appsettings.json",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\ExcelHostApp\\appsettings.json",
+              "RelativeToolTip": "ExcelHostApp\\appsettings.json",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAAADEAAACFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-10-01T09:16:40.03Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ApplicationConstant.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\Services\\ApplicationConstant.cs",
+              "RelativeDocumentMoniker": "CommonDatabase\\Services\\ApplicationConstant.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\Services\\ApplicationConstant.cs",
+              "RelativeToolTip": "CommonDatabase\\Services\\ApplicationConstant.cs",
+              "ViewState": "AgIAAA0BAAAAAAAAAAAnwBMBAABSAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-01T08:49:00.34Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "PublishController.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\Controllers\\PublishController.cs",
+              "RelativeDocumentMoniker": "DashboardExcelApi\\Controllers\\PublishController.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\Controllers\\PublishController.cs",
+              "RelativeToolTip": "DashboardExcelApi\\Controllers\\PublishController.cs",
+              "ViewState": "AgIAACsAAAAAAAAAAAAswC4AAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-29T12:12:27.932Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\ExcelHostApp\\Program.cs",
+              "RelativeDocumentMoniker": "ExcelHostApp\\Program.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\ExcelHostApp\\Program.cs",
+              "RelativeToolTip": "ExcelHostApp\\Program.cs",
+              "ViewState": "AgIAAKAAAAAAAAAAAAArwK4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-29T09:20:22.551Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "CommonService.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\Services\\CommonService.cs",
+              "RelativeDocumentMoniker": "CommonDatabase\\Services\\CommonService.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\Services\\CommonService.cs",
+              "RelativeToolTip": "CommonDatabase\\Services\\CommonService.cs",
+              "ViewState": "AgIAAEIAAAAAAAAAAAArwCAAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-29T09:18:05.185Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ICommonService.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\Interfaces\\ICommonService.cs",
+              "RelativeDocumentMoniker": "CommonDatabase\\Interfaces\\ICommonService.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\Interfaces\\ICommonService.cs",
+              "RelativeToolTip": "CommonDatabase\\Interfaces\\ICommonService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwAoAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-29T12:26:48.813Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ClientController.cs",
+              "DocumentMoniker": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\Controllers\\ClientController.cs",
+              "RelativeDocumentMoniker": "DashboardExcelApi\\Controllers\\ClientController.cs",
+              "ToolTip": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\Controllers\\ClientController.cs",
+              "RelativeToolTip": "DashboardExcelApi\\Controllers\\ClientController.cs",
+              "ViewState": "AgIAACAAAAAAAAAAAAAgwCUAAABNAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-29T11:49:13.698Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

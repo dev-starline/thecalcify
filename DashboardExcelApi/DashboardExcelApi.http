@@ -1,0 +1,6 @@
+@DashboardExcelApi_HostAddress = http://localhost:5255
+
+GET {{DashboardExcelApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
