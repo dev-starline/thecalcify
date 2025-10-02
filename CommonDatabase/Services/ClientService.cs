@@ -48,7 +48,7 @@ namespace CommonDatabase.Services {
             client.NewsExpiredDate = newsExpiredDate; 
             await _context.Client.AddAsync(client); 
             await _context.SaveChangesAsync();
-            await _constant.PushClientDetails();
+            await _constant.PushClientDetails(); 
             var newClient = _context.Client.Where(x => x.Username == client.Username).FirstOrDefault();
             Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(newClient.Id,newClient.Username)).Wait();
             return ApiResponse.Ok(client, "Client added successfully."); 
@@ -119,7 +119,7 @@ namespace CommonDatabase.Services {
             await _context.SaveChangesAsync(); // ✅ Single commit
 
             await _commonService.GetDeviceAccessSummaryAsync(client.Id, client.Username); // ✅ No blocking
-
+            
             var responseData = new { clientId = id };
             return ApiResponse.Ok(responseData, "Client deleted successfully.");
         }

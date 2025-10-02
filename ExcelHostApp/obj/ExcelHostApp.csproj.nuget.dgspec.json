@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Repos\\ExcelHostApp\\ExcelHostApp\\ExcelHostApp.csproj": {}
+    "D:\\Repos\\thecalcify\\ExcelHostApp\\ExcelHostApp.csproj": {}
   },
   "projects": {
-    "D:\\Repos\\ExcelHostApp\\ClientExcelApi\\ClientExcelApi.csproj": {
+    "D:\\Repos\\thecalcify\\ClientExcelApi\\ClientExcelApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Repos\\ExcelHostApp\\ClientExcelApi\\ClientExcelApi.csproj",
+        "projectUniqueName": "D:\\Repos\\thecalcify\\ClientExcelApi\\ClientExcelApi.csproj",
         "projectName": "ClientExcelApi",
-        "projectPath": "D:\\Repos\\ExcelHostApp\\ClientExcelApi\\ClientExcelApi.csproj",
+        "projectPath": "D:\\Repos\\thecalcify\\ClientExcelApi\\ClientExcelApi.csproj",
         "packagesPath": "C:\\Users\\Hp\\.nuget\\packages\\",
-        "outputPath": "D:\\Repos\\ExcelHostApp\\ClientExcelApi\\obj\\",
+        "outputPath": "D:\\Repos\\thecalcify\\ClientExcelApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,11 +33,11 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj": {
-                "projectPath": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj"
+              "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj": {
+                "projectPath": "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj"
               },
-              "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\DashboardExcelApi.csproj": {
-                "projectPath": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\DashboardExcelApi.csproj"
+              "D:\\Repos\\thecalcify\\DashboardExcelApi\\DashboardExcelApi.csproj": {
+                "projectPath": "D:\\Repos\\thecalcify\\DashboardExcelApi\\DashboardExcelApi.csproj"
               }
             }
           }
@@ -110,14 +110,14 @@
         }
       }
     },
-    "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj": {
+    "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj",
+        "projectUniqueName": "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj",
         "projectName": "CommonDatabase",
-        "projectPath": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj",
+        "projectPath": "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj",
         "packagesPath": "C:\\Users\\Hp\\.nuget\\packages\\",
-        "outputPath": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\obj\\",
+        "outputPath": "D:\\Repos\\thecalcify\\CommonDatabase\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -216,14 +216,14 @@
         }
       }
     },
-    "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\DashboardExcelApi.csproj": {
+    "D:\\Repos\\thecalcify\\DashboardExcelApi\\DashboardExcelApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\DashboardExcelApi.csproj",
+        "projectUniqueName": "D:\\Repos\\thecalcify\\DashboardExcelApi\\DashboardExcelApi.csproj",
         "projectName": "DashboardExcelApi",
-        "projectPath": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\DashboardExcelApi.csproj",
+        "projectPath": "D:\\Repos\\thecalcify\\DashboardExcelApi\\DashboardExcelApi.csproj",
         "packagesPath": "C:\\Users\\Hp\\.nuget\\packages\\",
-        "outputPath": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\obj\\",
+        "outputPath": "D:\\Repos\\thecalcify\\DashboardExcelApi\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -245,8 +245,8 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj": {
-                "projectPath": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj"
+              "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj": {
+                "projectPath": "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj"
               }
             }
           }
@@ -315,14 +315,14 @@
         }
       }
     },
-    "D:\\Repos\\ExcelHostApp\\ExcelHostApp\\ExcelHostApp.csproj": {
+    "D:\\Repos\\thecalcify\\ExcelHostApp\\ExcelHostApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Repos\\ExcelHostApp\\ExcelHostApp\\ExcelHostApp.csproj",
+        "projectUniqueName": "D:\\Repos\\thecalcify\\ExcelHostApp\\ExcelHostApp.csproj",
         "projectName": "ExcelHostApp",
-        "projectPath": "D:\\Repos\\ExcelHostApp\\ExcelHostApp\\ExcelHostApp.csproj",
+        "projectPath": "D:\\Repos\\thecalcify\\ExcelHostApp\\ExcelHostApp.csproj",
         "packagesPath": "C:\\Users\\Hp\\.nuget\\packages\\",
-        "outputPath": "D:\\Repos\\ExcelHostApp\\ExcelHostApp\\obj\\",
+        "outputPath": "D:\\Repos\\thecalcify\\ExcelHostApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -344,14 +344,14 @@
           "net9.0": {
             "targetAlias": "net9.0",
             "projectReferences": {
-              "D:\\Repos\\ExcelHostApp\\ClientExcelApi\\ClientExcelApi.csproj": {
-                "projectPath": "D:\\Repos\\ExcelHostApp\\ClientExcelApi\\ClientExcelApi.csproj"
+              "D:\\Repos\\thecalcify\\ClientExcelApi\\ClientExcelApi.csproj": {
+                "projectPath": "D:\\Repos\\thecalcify\\ClientExcelApi\\ClientExcelApi.csproj"
               },
-              "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj": {
-                "projectPath": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj"
+              "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj": {
+                "projectPath": "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj"
               },
-              "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\DashboardExcelApi.csproj": {
-                "projectPath": "D:\\Repos\\ExcelHostApp\\DashboardExcelApi\\DashboardExcelApi.csproj"
+              "D:\\Repos\\thecalcify\\DashboardExcelApi\\DashboardExcelApi.csproj": {
+                "projectPath": "D:\\Repos\\thecalcify\\DashboardExcelApi\\DashboardExcelApi.csproj"
               }
             }
           }

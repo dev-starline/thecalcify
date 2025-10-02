@@ -14,6 +14,8 @@ using Reuters.Repositories;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.FileProviders;
+using Reuters.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 var allowedOrigins = builder.Configuration.GetSection("allowedOrigins").Get<string[]>();

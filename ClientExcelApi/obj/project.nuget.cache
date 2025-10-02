@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "u1DWNWf9KVg=",
+  "dgSpecHash": "O4EPGKZLznM=",
   "success": true,
-  "projectFilePath": "D:\\Repos\\ExcelHostApp\\ClientExcelApi\\ClientExcelApi.csproj",
+  "projectFilePath": "D:\\Repos\\thecalcify\\ClientExcelApi\\ClientExcelApi.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Hp\\.nuget\\packages\\azure.core\\1.44.1\\azure.core.1.44.1.nupkg.sha512",
     "C:\\Users\\Hp\\.nuget\\packages\\azure.identity\\1.13.2\\azure.identity.1.13.2.nupkg.sha512",

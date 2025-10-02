@@ -215,13 +215,17 @@ namespace ClientExcelApi.Controllers
             //var principal = ValidateJwtToken(model.Token);
             //if (principal == null)
             //    return Unauthorized(ApiResponse.Fail("Invalid or expired token."));
-            
+
             //await _jwtBlacklistService.AddToBlacklistAsync(model.Token);
             var result = await _authService.ClientLogout(model);
             return Ok(result);
         }
 
 
+        public class LogoutRequest
+        {
+            public string Token { get; set; }
+        }
 
 
         private ClaimsPrincipal? ValidateJwtToken(string token)

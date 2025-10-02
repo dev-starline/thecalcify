@@ -48,7 +48,7 @@ namespace DashboardExcelApi
 
         // Redis key templates (centralised for easier change)
         private const string ClientDetailsKey = "clientDetails"; 
-        private const string UserInstrumentKeyPrefix = "userInstrument:";
+        private const string UserInstrumentKeyPrefix = "userInstrument:"; 
         private const string UserDetailsKey = "UserDetails";
         private readonly ConnectionStore _store;
 
@@ -68,7 +68,7 @@ namespace DashboardExcelApi
             using (var gzip = new GZipStream(output, CompressionMode.Compress))
             using (var writer = new StreamWriter(gzip)) writer.Write(json);
             return output.ToArray();
-        }
+        }       
 
         public override async Task OnDisconnectedAsync(Exception ex)
         {
@@ -107,19 +107,19 @@ namespace DashboardExcelApi
                     new { 
                         status = userList.Exists(x => x.Username == room), 
                         data = userList.Where(x => x.Username == room) 
-                    }
+                }
                 );
             }
             catch (Exception ex)
-            {
+                {
                 _logger.LogError(ex, "Error in Client() method");
                 await Clients.Caller.SendAsync("error", "Something went wrong while processing your request.");
             }
-        }
+                }
         public async Task GetAllClient()
-        {
+                {
             try
-            {
+                {
                 var connId = Context.ConnectionId;
                 IDatabase db = _redis.GetDatabase();
                 var userDetailsRaw = await db.StringGetAsync(UserDetailsKey);
@@ -135,10 +135,10 @@ namespace DashboardExcelApi
                 await Clients.All.SendAsync(
                    "ReceiveAllClient",
                    new
-                   {
+                {
                        status = true,
                        data = userList.Select(x => new { x.Id, x.Username })
-                   }
+                }
                );
             }
             catch (Exception ex)
@@ -147,6 +147,7 @@ namespace DashboardExcelApi
                 await Clients.Caller.SendAsync("error", "Something went wrong while processing your request.");
             }
         }
+
 
         public async Task SubscribeSymbols(List<string> symbols)
         {

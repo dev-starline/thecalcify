@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj": {}
+    "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj": {}
   },
   "projects": {
-    "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj": {
+    "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj",
+        "projectUniqueName": "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj",
         "projectName": "CommonDatabase",
-        "projectPath": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj",
+        "projectPath": "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj",
         "packagesPath": "C:\\Users\\Hp\\.nuget\\packages\\",
-        "outputPath": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\obj\\",
+        "outputPath": "D:\\Repos\\thecalcify\\CommonDatabase\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

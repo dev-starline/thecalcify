@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Tz9//0KePg0=",
+  "dgSpecHash": "n7Q0jw5gZCw=",
   "success": true,
-  "projectFilePath": "D:\\Repos\\ExcelHostApp\\CommonDatabase\\CommonDatabase.csproj",
+  "projectFilePath": "D:\\Repos\\thecalcify\\CommonDatabase\\CommonDatabase.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Hp\\.nuget\\packages\\azure.core\\1.44.1\\azure.core.1.44.1.nupkg.sha512",
     "C:\\Users\\Hp\\.nuget\\packages\\azure.identity\\1.13.2\\azure.identity.1.13.2.nupkg.sha512",

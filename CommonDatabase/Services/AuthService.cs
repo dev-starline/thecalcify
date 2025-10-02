@@ -105,7 +105,7 @@ namespace CommonDatabase.Services
                 expireTime = user.RateExpiredDate ?? new DateTime(2025, 10, 20, 0, 0, 0),
             }, "Login successful");
         }
-        
+
 
 
         private string GenerateJwtToken(int id, string userName, UserRole role, bool isNews = false,

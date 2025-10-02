@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DashboardExcelApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9027b13412bebacc987a8b2d0c5f05bc735e1835")]
 [assembly: System.Reflection.AssemblyProductAttribute("DashboardExcelApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DashboardExcelApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
