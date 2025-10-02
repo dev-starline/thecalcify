@@ -222,10 +222,10 @@ namespace ClientExcelApi.Controllers
         }
 
 
-        public class LogoutRequest
-        {
-            public string Token { get; set; }
-        }
+        //public class LogoutRequest
+        //{
+        //    public string Token { get; set; }
+        //}
 
 
         private ClaimsPrincipal? ValidateJwtToken(string token)
