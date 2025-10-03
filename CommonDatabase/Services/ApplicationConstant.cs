@@ -27,7 +27,7 @@ namespace CommonDatabase.Services
         private readonly string _adminNodeUrl;
         private readonly string _rateAlertNodeUrl;
         private const string UserInstrumentKeyPrefix = "userInstrument:";
-        public ApplicationConstant(AppDbContext context, IConfiguration configuration, IConnectionMultiplexer redis)
+        public ApplicationConstant(AppDbContext context, IConfiguration configuration, IConnectionMultiplexer redis, IHttpClientFactory factory)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -35,7 +35,7 @@ namespace CommonDatabase.Services
             _adminNodeUrl = _configuration["adminNodeUrl"] ?? throw new ArgumentNullException("adminNodeUrl config is missing");
             _rateAlertNodeUrl = _configuration["rateAlertNodeUrl"] ?? throw new ArgumentNullException("rateAlertNodeUrl config is missing");
             _redisDb = _redis.GetDatabase();
-            _httpClient = new HttpClient();
+            _httpClient = factory.CreateClient("MyApi");
         }
 
         /// <summary>
@@ -53,6 +53,7 @@ namespace CommonDatabase.Services
         {
             var json = ConvertSelfSubscriberToRedisJson(s);
             await _redisDb.StringSetAsync(s.Identifier, json);
+            await _httpClient.GetAsync($"api/Publish/publish-subscriber?symbol={s.Identifier}&symboljson={json}");
         }
 
         public async Task RemoveSelfSubscriberFromRedis(SelfSubscribe subscriber)

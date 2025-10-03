@@ -73,7 +73,10 @@ builder.Services.AddSingleton<IJwtBlacklistService, JwtBlacklistService>();
 builder.Services.AddOpenApi();
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
-
+builder.Services.AddHttpClient("MyApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration.GetSection("publishUrl").Value);
+});
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
