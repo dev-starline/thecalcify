@@ -87,7 +87,7 @@ namespace CommonDatabase.Services
                             DeviceId = r.DeviceId,
                             IsDND = r.IsDND,
                             HasNewsAccess = !x.IsNews? x.IsNews : r.HasNewsAccess,
-                            HasRateAccess = r.HasRateAccess
+                            HasRateAccess = !x.IsRate ? x.IsRate : r.HasRateAccess
                         }
                     ).ToList()
                 }).ToList();

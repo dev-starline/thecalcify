@@ -68,8 +68,6 @@ namespace ClientExcelApi.Controllers
         {
             if (string.IsNullOrWhiteSpace(model.UserId.ToString()) || model.UserId <= 0)
                 return BadRequest(ApiResponse.Fail("UserId is missing."));
-            if (string.IsNullOrWhiteSpace(model.TopicOrKeyword.ToString()))
-                return BadRequest(ApiResponse.Fail("TopicOrKeyword is missing."));
 
             var result = await _authService.UpdateTopicKeyword(model);
             return result.IsSuccess ? Ok(result) : Unauthorized(result);
@@ -203,7 +201,7 @@ namespace ClientExcelApi.Controllers
             return File(bytes, "application/zip", "thecalcify.zip");
         }
 
-
+        [AllowAnonymous]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] LogoutRequest model)
         {

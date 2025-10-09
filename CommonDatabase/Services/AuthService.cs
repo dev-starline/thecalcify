@@ -49,7 +49,12 @@ namespace CommonDatabase.Services
 
         public async Task<ApiResponse> ValidateClientLogin(ClientAuth login)
         {
-            var user = await _context.Client.FirstOrDefaultAsync(u => u.Username == login.Username);
+            //var user = await _context.Client.FirstOrDefaultAsync(u => u.Username == login.Username);
+            var user = await _context.Client.FromSqlInterpolated($@"
+                                SELECT * FROM Client 
+                                WHERE Username = {login.Username} COLLATE Latin1_General_CS_AS")
+                            .FirstOrDefaultAsync();
+
             var expiryCutoff = DateTime.UtcNow.AddDays(-365);
 
             if (user == null || user.Password != login.Password)
@@ -98,10 +103,11 @@ namespace CommonDatabase.Services
             Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(user.Id, user.Username)).Wait();
 
 
-            var token = GenerateJwtToken(user.Id, user.Username, UserRole.Client, user.IsNews,user.IsRate,user.DeviceToken,user.RateExpiredDate,user.NewsExpiredDate);
+            var token = GenerateJwtToken(user.Id, user.Username, UserRole.Client, user.IsNews,user.IsRate, login.DeviceToken, user.RateExpiredDate,user.NewsExpiredDate);
             return ApiResponse.Ok(new
             {
-                Token = token,DeviceToken = user.DeviceToken,IsNews = user.IsNews,
+                Token = token,DeviceToken = login.DeviceToken,
+                IsNews = user.IsNews,
                 expireTime = user.RateExpiredDate ?? new DateTime(2025, 10, 20, 0, 0, 0),
             }, "Login successful");
         }

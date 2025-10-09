@@ -53,17 +53,26 @@ namespace DashboardExcelApi.Controllers
 
                 if (connId != null)
                 {
-                    await _hubContext.Clients.Client(connId).SendAsync(
-                        "ReceiveMessage", 
-                        new { 
-                            status = userList.Exists(x => x.Username == Username), 
-                            data = userList.Where(x => x.Username == Username) 
-                        }
-                    );
-                }
+                //await _hubContext.Clients.Client(connId).SendAsync(
+                //    "ReceiveMessage", 
+                //    new { 
+                //        status = userList.Exists(x => x.Username == Username), 
+                //        data = userList.Where(x => x.Username == Username) 
+                //    }
+                //);
+                await _hubContext.Clients.Group(Username).SendAsync(
+                    "ReceiveMessage",
+                    new
+                    {
+                        status = userList.Exists(x => x.Username == Username),
+                        data = userList.Where(x => x.Username == Username)
+                    }
+                );
+
+            }
             //}
-               
-           
+
+
             return Ok();
         }
     }

@@ -11,6 +11,7 @@ using StackExchange.Redis;
 using System.Collections.Concurrent;
 using System.IO.Compression;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DashboardExcelApi
 {
@@ -41,7 +42,7 @@ namespace DashboardExcelApi
 
         // Shared connections map (thread-safe)
         private static readonly ConcurrentDictionary<string, ConnectionMetadata> ActiveConnections = new();
-
+        private static readonly ConcurrentDictionary<string, List<string>> ConnectionGroups = new();
         private readonly IConnectionMultiplexer _redis;
         private readonly AppDbContext _context;
         private readonly ILogger<ExcelHub> _logger;
@@ -75,7 +76,17 @@ namespace DashboardExcelApi
             var connectionId = Context?.ConnectionId;
             if (!string.IsNullOrEmpty(connectionId))
             {
-                ActiveConnections.TryRemove(connectionId, out _);
+                //ActiveConnections.TryRemove(connectionId, out _);
+                // Remove from in-memory group
+                if (ConnectionGroups.TryRemove(connectionId, out var groups))
+                {
+                    foreach (var group in groups.Distinct())
+                    {
+                        await Groups.RemoveFromGroupAsync(connectionId, group);
+                    }
+
+                }
+
                 await Clients.All.SendAsync("UserDisconnected", Context.ConnectionId);
             }
 
@@ -96,13 +107,22 @@ namespace DashboardExcelApi
             try
             {
                 var connId = Context.ConnectionId;
+                //ActiveConnections2[Context.ConnectionId] = room;
+
+                await Groups.AddToGroupAsync(Context.ConnectionId, room);
+                ConnectionGroups.AddOrUpdate(
+                    Context.ConnectionId,
+                    new List<string> { room },
+                    (_, existing) => { existing.Add(room); return existing; }
+                );
+
                 _store.Add(room, Context.ConnectionId);
 
                 IDatabase db = _redis.GetDatabase();
                 var userDetailsRaw = await db.StringGetAsync(UserDetailsKey);
 
                 var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
-                await Clients.Client(connId).SendAsync(
+                await Clients.Group(room).SendAsync(
                     "ReceiveMessage", 
                     new { 
                         status = userList.Exists(x => x.Username == room), 
@@ -115,7 +135,46 @@ namespace DashboardExcelApi
                 _logger.LogError(ex, "Error in Client() method");
                 await Clients.Caller.SendAsync("error", "Something went wrong while processing your request.");
             }
-                }
+        }
+
+        public async Task ClientWithDevice(string room, string deviceId)
+        {
+            try
+            {
+                var connId = Context.ConnectionId;
+                _store.Add(room, Context.ConnectionId);
+
+                IDatabase db = _redis.GetDatabase();
+                var userDetailsRaw = await db.StringGetAsync(UserDetailsKey);
+
+                var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
+                await Clients.Client(connId).SendAsync(
+                    "ReceiveMessage",
+                    new
+                    {
+                        status = userList.Exists(x => x.Username == room),
+                        data = userList
+                                .Where(x => x.Username == room)
+                                .Select(y => new
+                                {
+                                    RateExpireDate = y.RateExpireDate,
+                                    NewsExpireDate = y.NewsExpireDate,
+                                    Username = y.Username,
+                                    Keywords = y.Keywords,
+                                    DeviceAccess = y.DeviceAccess.Where(i => i.DeviceId == deviceId),
+                                    IsActive = y.IsActive,
+                                    Id = y.Id,
+                                    Topics = y.Topics
+                                })
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in Client() method");
+                await Clients.Caller.SendAsync("error", "Something went wrong while processing your request.");
+            }
+        }
         public async Task GetAllClient()
                 {
             try
