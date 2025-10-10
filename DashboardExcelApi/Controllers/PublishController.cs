@@ -1,6 +1,8 @@
 ﻿using CommonDatabase.DTO;
 using CommonDatabase.Interfaces;
+using CommonDatabase.Models;
 using FirebaseAdmin.Messaging;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -20,8 +22,8 @@ namespace DashboardExcelApi.Controllers
         private readonly IHubContext<ExcelHub> _hubContext;
         private const string UserDetailsKey = "UserDetails";
         public readonly ConnectionStore _connectionStore;
-        public PublishController(IHubContext<ExcelHub> hubContext, ICommonService commonService, IConnectionMultiplexer redis,ConnectionStore connectionStore)
-        { 
+        public PublishController(IHubContext<ExcelHub> hubContext, ICommonService commonService, IConnectionMultiplexer redis, ConnectionStore connectionStore)
+        {
             _commonService = commonService;
             _redis = redis;
             _hubContext = hubContext;
@@ -33,7 +35,7 @@ namespace DashboardExcelApi.Controllers
         public async Task<IActionResult> PublishExcelData(string Username)
         {
             var userDetailsRaw = await _redisDb.StringGetAsync(UserDetailsKey);
-           
+
 
             var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
             //await _hubContext.Clients.All.SendAsync("ReceiveMessage", userList);
@@ -51,8 +53,8 @@ namespace DashboardExcelApi.Controllers
                );
             var connId = _connectionStore.GetConnectionId(Username);
 
-                if (connId != null)
-                {
+            if (connId != null)
+            {
                 //await _hubContext.Clients.Client(connId).SendAsync(
                 //    "ReceiveMessage", 
                 //    new { 
@@ -73,6 +75,23 @@ namespace DashboardExcelApi.Controllers
             //}
 
 
+            return Ok();
+        }
+        [AllowAnonymous]
+        [HttpPost("ReceiveNews")]
+        public async Task<IActionResult> ReceiveNews([FromBody] ReceiveNewsDto receiveNewsDto)
+        {
+
+            foreach (var item in receiveNewsDto.ClientList)
+            {
+                if (item.IsActive)
+                {
+                    await _hubContext.Clients.Group(item.Username).SendAsync(
+                        "ReceiveNewsNotification",
+                        receiveNewsDto.NewsList
+                    );
+                }
+            }
             return Ok();
         }
     }
