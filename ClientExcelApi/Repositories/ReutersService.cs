@@ -292,6 +292,7 @@ namespace Reuters.Repositories
                                     firstCreated
                                     sortTimestamp
                                     contentTimestamp
+                                    subject { code }
                                   }
                                 }";
 
