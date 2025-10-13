@@ -94,5 +94,19 @@ namespace DashboardExcelApi.Controllers
             }
             return Ok();
         }
+
+        [AllowAnonymous]
+        [HttpGet("ActiveUsers/{username?}")]
+        public async Task<IActionResult> ActiveUsers([FromRoute] string? username)
+        {
+
+            var userDetailsRaw = await _redisDb.StringGetAsync(UserDetailsKey);
+            var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
+            if (username != null)
+            {
+                return Ok(userList.Where(x=> x.Username == username).FirstOrDefault());
+            }
+            return Ok(userList);
+        }
     }
 }
