@@ -55,9 +55,18 @@ namespace ClientExcelApi.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] ClientAuth model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             if (string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Password))
                 return BadRequest(ApiResponse.Fail("Username or password cannot be empty."));
 
+            if (!_configuration.GetSection("deviceType").GetChildren().Select(x => x.Value).Contains(model.DeviceType))
+            { 
+                return BadRequest(ApiResponse.Fail("Invalid device type."));
+            }
             var result = await _authService.ValidateClientLogin(model);
             //return result.IsSuccess ? Ok(result) : Unauthorized(result);
             return Ok(result);

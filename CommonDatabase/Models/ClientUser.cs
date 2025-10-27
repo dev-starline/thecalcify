@@ -61,7 +61,7 @@ namespace CommonDatabase.Models
     }
     public class ReceiveNewsDto
     {
-        public List<ClientDto> ClientList { get; set; }
+        public List<DeviceNotificationDto> ClientList { get; set; }
         public NewsNotification NewsList { get; set; }
     }
 

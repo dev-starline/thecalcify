@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using StackExchange.Redis;
+using System.IO.Compression;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DashboardExcelApi.Controllers
@@ -84,13 +85,13 @@ namespace DashboardExcelApi.Controllers
 
             foreach (var item in receiveNewsDto.ClientList)
             {
-                if (item.IsActive)
-                {
+                //if (item.IsActive)
+                //{
                     await _hubContext.Clients.Group(item.Username).SendAsync(
                         "ReceiveNewsNotification",
                         receiveNewsDto.NewsList
                     );
-                }
+                //}
             }
             return Ok();
         }

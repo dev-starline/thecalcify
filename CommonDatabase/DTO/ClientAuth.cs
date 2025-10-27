@@ -5,10 +5,15 @@ namespace CommonDatabase.DTO
 {
     public class ClientAuth
     {
+        [Required]
         public string Username { get; set; }
+        [Required]
         public string Password { get; set; }
+        [Required]
         public string DeviceId { get; set; }
+        [Required]
         public string DeviceToken { get; set; }
+        [Required]
         public string DeviceType { get; set; }
     }
 
@@ -61,6 +66,17 @@ namespace CommonDatabase.DTO
         public bool HasNewsAccess { get; set; }
         public bool HasRateAccess { get; set; }
     }
+
+    public class DeviceNotificationDto
+    {
+        public string Username { get; set; }
+        public string DeviceToken { get; set; }
+        public string DeviceType { get; set; }
+        public string DeviceId { get; set; }
+        public bool IsDND { get; set; }
+        public bool HasNewsAccess { get; set; }
+        public bool HasRateAccess { get; set; }
+    }
     public class ClientAccessModel
     {
         public int Id { get; set; }
@@ -98,4 +114,13 @@ namespace CommonDatabase.DTO
         public string DeviceId { get; set; }
         public bool IsDND { get; set; }
     }
+
+    public enum DeviceType
+    {
+        android,
+        ios,
+        desktop,
+        web
+    }
+
 }
