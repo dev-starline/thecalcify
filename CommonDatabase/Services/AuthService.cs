@@ -144,7 +144,9 @@ namespace CommonDatabase.Services
                     claims.Add(new Claim("RateExpiredDate", rateExpiredDate.Value.ToString("o")));
                 if (newsExpiredDate.HasValue)
                     claims.Add(new Claim("NewsExpiredDate", newsExpiredDate.Value.ToString("o")));
-               
+                var maxDate = (newsExpiredDate > rateExpiredDate ? newsExpiredDate : rateExpiredDate);
+                TimeSpan duration = DateTime.Parse(maxDate.ToString()) - DateTime.Now;
+                int totalDays = duration.Days;
             }
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
