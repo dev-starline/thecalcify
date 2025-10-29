@@ -330,7 +330,10 @@ namespace CommonDatabase.Services
         {
             return System.Text.Json.JsonSerializer.Serialize(new
             {
-                n = s.Name,i = s.Identifier,b = s.Bid,a = s.Ask,ltp = s.Ltp,h = s.High,l = s.Low,t = s.Mdate?.ToString("hh:mm:ss tt"),o = s.Open,c = s.Close,
+                n = s.Name,i = s.Identifier,b = s.Bid,a = s.Ask,ltp = s.Ltp,h = s.High,l = s.Low,
+                //t = s.Mdate?.ToString("hh:mm:ss tt"),
+                t = ((DateTimeOffset)DateTime.Parse($"{s.Mdate}").ToUniversalTime()).ToUnixTimeSeconds(),
+                o = s.Open,c = s.Close,
                 d = "--",v = "SELF"
             });
         }
