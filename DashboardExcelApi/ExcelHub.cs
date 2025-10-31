@@ -106,8 +106,16 @@ namespace DashboardExcelApi
         {
             try
             {
-                var connId = Context.ConnectionId;
-                //ActiveConnections2[Context.ConnectionId] = room;
+                var connectionId = Context.ConnectionId;
+
+                // Remove from old room
+                if (ConnectionGroups.TryRemove(connectionId, out var groups))
+                {
+                    foreach (var group in groups.Distinct())
+                    {
+                        await Groups.RemoveFromGroupAsync(connectionId, group);
+                    }
+                }
 
                 await Groups.AddToGroupAsync(Context.ConnectionId, room);
                 ConnectionGroups.AddOrUpdate(
