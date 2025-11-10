@@ -21,7 +21,7 @@ using static ClientExcelApi.Controllers.ClientAuthController;
 
 namespace ClientExcelApi.Controllers
 {
-
+    [Authorize]
     public class ClientAuthController : Controller
     {
         private readonly IAuthService _authService;
@@ -51,17 +51,49 @@ namespace ClientExcelApi.Controllers
             _context = context;
             _configuration = configuration;
         }
-
+        [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] ClientAuth model)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             if (string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Password))
                 return BadRequest(ApiResponse.Fail("Username or password cannot be empty."));
 
+            if (!_configuration.GetSection("deviceType").GetChildren().Select(x => x.Value).Contains(model.DeviceType))
+            { 
+                return BadRequest(ApiResponse.Fail("Invalid device type."));
+            }
             var result = await _authService.ValidateClientLogin(model);
+            //return result.IsSuccess ? Ok(result) : Unauthorized(result);
+            return Ok(result);
+        }
+
+        [HttpPost("update-topic-keyword")]
+        public async Task<IActionResult> UpdateTopicKeyword([FromBody] TopicKeyword model)
+        {
+            if (string.IsNullOrWhiteSpace(model.UserId.ToString()) || model.UserId <= 0)
+                return BadRequest(ApiResponse.Fail("UserId is missing."));
+
+            var result = await _authService.UpdateTopicKeyword(model);
             return result.IsSuccess ? Ok(result) : Unauthorized(result);
         }
 
+        [HttpPost("update-status-dnd")]
+        public async Task<IActionResult> UpdateStatusDND([FromBody] StatusDnd model)
+        {
+            if (string.IsNullOrWhiteSpace(model.UserId.ToString())|| model.UserId <= 0)
+                return BadRequest(ApiResponse.Fail("UserId is missing."));
+
+            if (string.IsNullOrWhiteSpace(model.DeviceId.ToString()))
+                return BadRequest(ApiResponse.Fail("DeviceId is missing."));
+
+            var result = await _authService.UpdateStatusDnd(model);
+            return result.IsSuccess ? Ok(result) : Unauthorized(result);
+        }
 
         [Authorize(Roles = "Client")]
         [HttpPost("AlertNotification")]
@@ -178,27 +210,29 @@ namespace ClientExcelApi.Controllers
             return File(bytes, "application/zip", "thecalcify.zip");
         }
 
-
+        [AllowAnonymous]
         [HttpPost("logout")]
         public async Task<IActionResult> Logout([FromBody] LogoutRequest model)
         {
-            if (string.IsNullOrWhiteSpace(model.Token))
-                return BadRequest(ApiResponse.Fail("Token is required."));
+            if (string.IsNullOrWhiteSpace(model.UserId.ToString()))
+                return BadRequest(ApiResponse.Fail("UserId is required."));
+            if (string.IsNullOrWhiteSpace(model.DeviceId))
+                return BadRequest(ApiResponse.Fail("DeviceId is required."));
            
-            var principal = ValidateJwtToken(model.Token);
-            if (principal == null)
-                return Unauthorized(ApiResponse.Fail("Invalid or expired token."));
-            
-            await _jwtBlacklistService.AddToBlacklistAsync(model.Token);
+            //var principal = ValidateJwtToken(model.Token);
+            //if (principal == null)
+            //    return Unauthorized(ApiResponse.Fail("Invalid or expired token."));
 
-            return Ok(ApiResponse.Ok(message: "Logout successful. Token expired."));
+            //await _jwtBlacklistService.AddToBlacklistAsync(model.Token);
+            var result = await _authService.ClientLogout(model);
+            return Ok(result);
         }
 
 
-        public class LogoutRequest
-        {
-            public string Token { get; set; }
-        }
+        //public class LogoutRequest
+        //{
+        //    public string Token { get; set; }
+        //}
 
 
         private ClaimsPrincipal? ValidateJwtToken(string token)

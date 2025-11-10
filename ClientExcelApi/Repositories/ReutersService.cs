@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using FirebaseAdmin.Messaging;
+using Microsoft.Extensions.Configuration;
 using System.Dynamic;
 using System.Net.Http.Json;
 using System.Text;
@@ -109,23 +110,32 @@ namespace Reuters.Repositories
             }
 
         }
-        public async Task<string> GetItems(string category, string subCategory, int pageSize = 20, string cursor = null)
+        public async Task<string> GetItems(string category, string subCategory, string dateRange, int pageSize = 20, string cursor = null)
         {
             try
             {
                 await EnsureAuthToken();
                 var request = new HttpRequestMessage(HttpMethod.Post, _configuration["api:apiUrl"] + "content/graphql");
                 request.Headers.Add("Authorization", $"Bearer {_accessToken}");
-                string filterPart = null;
+                var filterParts = new List<string>();
+
                 if (!string.IsNullOrEmpty(category) && !string.IsNullOrEmpty(subCategory))
                 {
-                    filterPart = $"filter: {{ namedQueries: {{ filters: \"cat://{category}/{subCategory}\" }} }}";
+                    filterParts.Add($"namedQueries: {{ filters: \"cat://{category}/{subCategory}\" }}");
                 }
                 else if (!string.IsNullOrEmpty(category))
                 {
-                    filterPart = $"filter: {{ namedQueries: {{ filters: \"cat://{category}\" }} }}";
+                    filterParts.Add($"namedQueries: {{ filters: \"cat://{category}\" }}");
                 }
-               
+
+                if (!string.IsNullOrEmpty(dateRange))
+                {
+                    filterParts.Add($"dateRange: \"{dateRange}\"");
+                }
+
+                string filterPart = filterParts.Count > 0
+                    ? $"filter: {{ {string.Join(", ", filterParts)} }} sort: {{ direction: ASC, field: VERSION_CREATED }}"
+                    : null;
                 string cursorPart = string.IsNullOrEmpty(cursor) ? null : $"cursor: \"{cursor}\"";
 
                 var args = new List<string>();
@@ -233,6 +243,56 @@ namespace Reuters.Repositories
                                       type
                                       renditions { mimeType uri type version code }
                                     }
+                                  }
+                                }";
+
+                var variables = new
+                {
+                    id = id
+                };
+
+                var json = JsonSerializer.Serialize(new { query, variables });
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+
+                var responseText = await response.Content.ReadAsStringAsync();
+                return responseText;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public async Task<string> GetNewsDescription(string id)
+        {
+            try
+            {
+                await EnsureAuthToken();
+                var request = new HttpRequestMessage(HttpMethod.Post, _configuration["api:apiUrl"] + "content/graphql");
+                request.Headers.Add("Authorization", $"Bearer {_accessToken}");
+                string query = @"
+                                query GetItemDetails($id: ID!) {
+                                 item(
+                                    id: $id
+                                    option: {
+                                      completeSentences: true, 
+                                      fragmentLength: 400, 
+                                      previewMode: DIRECT, 
+                                      dateFilterField: VERSION_CREATED
+                                    })
+                                  { 
+                                    versionedGuid
+                                    headLine
+                                    fragment
+                                    bodyXhtmlRich
+                                    firstCreated
+                                    sortTimestamp
+                                    contentTimestamp
+                                    subject { code }
                                   }
                                 }";
 

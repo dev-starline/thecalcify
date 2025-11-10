@@ -35,11 +35,11 @@ namespace ClientExcelApi.Controllers
         }
         [Authorize(Roles = "Client")]
         [HttpGet("Items")]
-        public async Task<ActionResult> Items(string category, string subCategory, int pageSize, string cursorToken)
+        public async Task<ActionResult> Items(string category, string subCategory, string dateRange, int pageSize, string cursorToken)
         {
             try
             {
-                var results = await _reutersService.GetItems(category, subCategory, pageSize, cursorToken);
+                var results = await _reutersService.GetItems(category, subCategory, dateRange, pageSize, cursorToken);
                 return Ok(results);
             }
             catch (Exception ex)
@@ -57,6 +57,22 @@ namespace ClientExcelApi.Controllers
             try
             {
                 var results = await _reutersService.GetDescription(id);
+                return Ok(results);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        [Authorize(Roles = "Client")]
+        [HttpGet("NewsDescription")]
+        public async Task<ActionResult> NewsDescription(string id)
+        {
+            try
+            {
+                var results = await _reutersService.GetNewsDescription(id);
                 return Ok(results);
             }
             catch (Exception ex)

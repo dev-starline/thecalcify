@@ -1,6 +1,7 @@
 ﻿using CommonDatabase;
 using CommonDatabase.DTO;
 using CommonDatabase.Models;
+using FirebaseAdmin.Messaging;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -10,6 +11,7 @@ using StackExchange.Redis;
 using System.Collections.Concurrent;
 using System.IO.Compression;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace DashboardExcelApi
 {
@@ -40,7 +42,7 @@ namespace DashboardExcelApi
 
         // Shared connections map (thread-safe)
         private static readonly ConcurrentDictionary<string, ConnectionMetadata> ActiveConnections = new();
-
+        private static readonly ConcurrentDictionary<string, List<string>> ConnectionGroups = new();
         private readonly IConnectionMultiplexer _redis;
         private readonly AppDbContext _context;
         private readonly ILogger<ExcelHub> _logger;
@@ -48,12 +50,16 @@ namespace DashboardExcelApi
         // Redis key templates (centralised for easier change)
         private const string ClientDetailsKey = "clientDetails"; 
         private const string UserInstrumentKeyPrefix = "userInstrument:"; 
+        private const string UserDetailsKey = "UserDetails";
+        private readonly ConnectionStore _store;
 
-        public ExcelHub(IConnectionMultiplexer redis, AppDbContext context, ILogger<ExcelHub> logger)
+
+        public ExcelHub(IConnectionMultiplexer redis, AppDbContext context, ILogger<ExcelHub> logger, ConnectionStore store)
         {
             _redis = redis ?? throw new ArgumentNullException(nameof(redis));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _store = store;
         }
 
 
@@ -70,99 +76,137 @@ namespace DashboardExcelApi
             var connectionId = Context?.ConnectionId;
             if (!string.IsNullOrEmpty(connectionId))
             {
-                ActiveConnections.TryRemove(connectionId, out _);
+                //ActiveConnections.TryRemove(connectionId, out _);
+                // Remove from in-memory group
+                if (ConnectionGroups.TryRemove(connectionId, out var groups))
+                {
+                    foreach (var group in groups.Distinct())
+                    {
+                        await Groups.RemoveFromGroupAsync(connectionId, group);
+                    }
+
+                }
+
+                await Clients.All.SendAsync("UserDisconnected", Context.ConnectionId);
             }
 
             await base.OnDisconnectedAsync(ex);
         }
 
+        public override async Task OnConnectedAsync()
+        {
+            _logger.LogInformation($"Connected: {Context.ConnectionId}");
+            _store.RemoveByConnection(Context.ConnectionId);
 
+            await Clients.Client(Context.ConnectionId).SendAsync("UserConnected", Context.ConnectionId);
+            await base.OnConnectedAsync();
+        }
 
         public async Task Client(string room)
         {
             try
             {
-                await Groups.AddToGroupAsync(Context.ConnectionId, room);
-                ActiveConnections[Context.ConnectionId] = new ConnectionMetadata
+                var connectionId = Context.ConnectionId;
+
+                // Remove from old room
+                if (ConnectionGroups.TryRemove(connectionId, out var groups))
                 {
-                    ConnectedAt = DateTime.UtcNow,
-                    Room = room
-                };
+                    foreach (var group in groups.Distinct())
+                    {
+                        await Groups.RemoveFromGroupAsync(connectionId, group);
+                    }
+                }
+
+                await Groups.AddToGroupAsync(Context.ConnectionId, room);
+                ConnectionGroups.AddOrUpdate(
+                    Context.ConnectionId,
+                    new List<string> { room },
+                    (_, existing) => { existing.Add(room); return existing; }
+                );
+
+                _store.Add(room, Context.ConnectionId);
 
                 IDatabase db = _redis.GetDatabase();
-                var contactDetailsRaw = await db.StringGetAsync(ClientDetailsKey);
+                var userDetailsRaw = await db.StringGetAsync(UserDetailsKey);
 
-                var contactList = JsonConvert.DeserializeObject<List<ClientDetailsDto>>(contactDetailsRaw!);
-                var clientDetails = contactList?
-                    .FirstOrDefault(c => string.Equals(c.ClientName, room, StringComparison.OrdinalIgnoreCase));
-
-                if (clientDetails == null)
-                {
-                    await Clients.Caller.SendAsync("clientDetails", new { status = false });
-                    return;
+                var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
+                await Clients.Group(room).SendAsync(
+                    "ReceiveMessage", 
+                    new { 
+                        status = userList.Exists(x => x.Username == room), 
+                        data = userList.Where(x => x.Username == room) 
                 }
-
-                int newsLimit = Math.Max(0, clientDetails.AccessNoOfNews);
-                int rateLimit = Math.Max(0, clientDetails.AccessNoOfRate);
-
-                // order connections by connected time
-                var roomConnections = ActiveConnections
-                    .Where(kvp => kvp.Value.Room == room)
-                    .OrderBy(kvp => kvp.Value.ConnectedAt)
-                    .ToList();
-
-                // सबसे recent R को active रखो
-                var activeConnections = roomConnections.Skip(Math.Max(0, roomConnections.Count - rateLimit)).ToList();
-                var inactiveConnections = roomConnections.Take(Math.Max(0, roomConnections.Count - rateLimit)).ToList();
-
-                // Active users को role दो
-                for (int i = 0; i < activeConnections.Count; i++)
+                );
+            }
+            catch (Exception ex)
                 {
-                    var connId = activeConnections[i].Key;
-                    bool isNews = i < newsLimit; // पहले N को news
-                    bool isRate = true;
+                _logger.LogError(ex, "Error in Client() method");
+                await Clients.Caller.SendAsync("error", "Something went wrong while processing your request.");
+            }
+        }
 
-                    var dto = new
+        public async Task ClientWithDevice(string room, string deviceId)
+        {
+            try
+            {
+                var connId = Context.ConnectionId;
+                _store.Add(room, Context.ConnectionId);
+
+                IDatabase db = _redis.GetDatabase();
+                var userDetailsRaw = await db.StringGetAsync(UserDetailsKey);
+
+                var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
+                await Clients.Client(connId).SendAsync(
+                    "ReceiveMessage",
+                    new
                     {
-                        clientDetails.Id,
-                        Username = clientDetails.Username ?? room,
-                        AccessNoOfNews = newsLimit,
-                        AccessNoOfRate = rateLimit,
-                        ClientName = room,
-                        DeviceToken = clientDetails.DeviceToken ?? string.Empty,
-                        IsActive = true,
-                        IsNews = isNews,
-                        IsRate = isRate,
-                        clientDetails.NewsExpiredDate,
-                        clientDetails.RateExpiredDate,
-                        status = true
-                    };
-
-                    string json = JsonConvert.SerializeObject(dto);
-                    var compressed = Compress(json);
-
-                    
-                    await Clients.Client(connId).SendAsync("clientDetails", new { status = true, data = compressed });
-                }
-
-               
-                foreach (var kvp in inactiveConnections)
+                        status = userList.Exists(x => x.Username == room),
+                        data = userList
+                                .Where(x => x.Username == room)
+                                .Select(y => new
+                                {
+                                    RateExpireDate = y.RateExpireDate,
+                                    NewsExpireDate = y.NewsExpireDate,
+                                    Username = y.Username,
+                                    Keywords = y.Keywords,
+                                    DeviceAccess = y.DeviceAccess.Where(i => i.DeviceId == deviceId),
+                                    IsActive = y.IsActive,
+                                    Id = y.Id,
+                                    Topics = y.Topics
+                                })
+                    }
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in Client() method");
+                await Clients.Caller.SendAsync("error", "Something went wrong while processing your request.");
+            }
+        }
+        public async Task GetAllClient()
                 {
-                    await Clients.Client(kvp.Key).SendAsync("clientDetails", new { status = false });
-                }
-
-                // Instrument data (unchanged)
-                var enrichedData = await GetSymbolRatesByClientIdAsync(room);
-                if (enrichedData.IsSuccess)
+            try
                 {
-                    var instrumentPayload = System.Text.Json.JsonSerializer.Serialize(enrichedData.Data);
-                    var compressed = Compress(instrumentPayload);
-                    await Clients.Caller.SendAsync("userInstrument", new { data = compressed });
-                }
-                else
+                var connId = Context.ConnectionId;
+                IDatabase db = _redis.GetDatabase();
+                var userDetailsRaw = await db.StringGetAsync(UserDetailsKey);
+                _store.Add("AllClient", Context.ConnectionId);
+                var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
+                //await Clients.Client(connId).SendAsync(
+                //    "ReceiveAllClient", 
+                //    new { 
+                //        status = true, 
+                //        data = userList.Select(x => new { x.Id, x.Username }) 
+                //    }
+                //);
+                await Clients.All.SendAsync(
+                   "ReceiveAllClient",
+                   new
                 {
-                    await Clients.Caller.SendAsync("userInstrument", new { data = Array.Empty<byte>() });
+                       status = true,
+                       data = userList.Select(x => new { x.Id, x.Username })
                 }
+               );
             }
             catch (Exception ex)
             {

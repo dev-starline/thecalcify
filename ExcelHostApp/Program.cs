@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Reuters.Repositories;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json;
@@ -58,7 +61,23 @@ builder.Services.AddControllers()
 
 
 builder.Services.AddSingleton<IUserIdProvider, QueryStringUserIdProvider>();
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("127.0.0.1:6379"));
+// Register a singleton Redis connection
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+    ConnectionMultiplexer.Connect("127.0.0.1:6379"));
+
+// Use that connection for SignalR Redis backplane
+builder.Services.AddSignalR().AddStackExchangeRedis(options =>
+{
+    var multiplexer = builder.Services.BuildServiceProvider().GetRequiredService<IConnectionMultiplexer>();
+    options.ConnectionFactory = async writer =>
+    {
+        writer.WriteLine("Connecting to Redis...");
+        return multiplexer;
+    };
+});
+
+//builder.Services.AddSignalR().AddStackExchangeRedis("127.0.0.1:6379");
+//builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("127.0.0.1:6379"));
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<ReutersService>();
@@ -68,11 +87,21 @@ builder.Services.AddScoped<ISelfSubscribeService, SelfSubscribeService>();
 builder.Services.AddScoped<ApplicationConstant>();
 builder.Services.AddHostedService<SubscribeRate>();
 builder.Services.AddSingleton<IJwtBlacklistService, JwtBlacklistService>();
-
+builder.Services.AddScoped<ICommonService, CommonService>();
+builder.Services.AddSingleton<ConnectionStore>();
 
 builder.Services.AddOpenApi();
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);
+//builder.Services.AddHttpClient<CommonService>(client =>
+//{
+//    client.BaseAddress = new Uri(builder.Configuration.GetSection("publishUrl").Value); // or your deployed domain
+//});
+builder.Services.AddHttpClient("MyApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration.GetSection("publishUrl").Value);
+});
+
 
 builder.Services.AddAuthentication(options =>
 {
@@ -87,6 +116,7 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
+        ClockSkew = TimeSpan.Zero, // ⛔ disables grace 
         ValidIssuer = jwtSettings["Issuer"],
         ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(key)
@@ -137,6 +167,7 @@ app.UseHttpsRedirection();
 
 app.UseSession();
 app.UseDefaultFiles();
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();

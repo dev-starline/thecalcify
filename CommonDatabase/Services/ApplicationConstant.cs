@@ -293,9 +293,17 @@ namespace CommonDatabase.Services
             var identifiers = userMap[username];
             var keys = identifiers.Select(id => (RedisKey)id).ToArray();
             var values = await _redisDb.StringGetAsync(keys);
-            var dbInstruments = (await _context.Instruments.Where(i => i.ClientId == clientId && identifiers.Contains(i.Identifier) && i.IsMapped == true)
-                    .Select(i => new SubscribeInstrumentView { Identifier = i.Identifier, Contract = i.Contract })
-                    .ToListAsync()).DistinctBy(i => i.Identifier).ToDictionary(i => i.Identifier, i => i, StringComparer.OrdinalIgnoreCase);
+            var dbInstruments = (
+                                    await _context.Instruments.Where(i => 
+                                        i.ClientId == clientId && 
+                                        identifiers.Contains(i.Identifier) && 
+                                        i.IsMapped == true
+                                    ).Select(i => new SubscribeInstrumentView { 
+                                        Identifier = i.Identifier, 
+                                        Contract = i.Contract 
+                                    }).ToListAsync()
+                                ).DistinctBy(i => i.Identifier)
+                                .ToDictionary(i => i.Identifier, i => i, StringComparer.OrdinalIgnoreCase);
 
          
             var updatedValues = values.Where(val => !val.IsNullOrEmpty)

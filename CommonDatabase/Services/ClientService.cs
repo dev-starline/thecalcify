@@ -1,4 +1,5 @@
-﻿using CommonDatabase.DTO;
+﻿using Azure.Core;
+using CommonDatabase.DTO;
 using CommonDatabase.Interfaces;
 using CommonDatabase.Models;
 using Google.Apis.Auth.OAuth2;
@@ -21,13 +22,14 @@ namespace CommonDatabase.Services {
         private readonly ApplicationConstant _constant;      
         private readonly IConfiguration _configuration;
         private readonly System.Net.Http.IHttpClientFactory _httpClientFactory;
-
-        public ClientService(AppDbContext context, ApplicationConstant constant, IConfiguration configuration, System.Net.Http.IHttpClientFactory httpClientFactory)
+        private readonly ICommonService _commonService;
+        public ClientService(AppDbContext context, ApplicationConstant constant, IConfiguration configuration, System.Net.Http.IHttpClientFactory httpClientFactory, ICommonService commonService)
         {
             _context = context;
             _constant = constant;
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
+            _commonService = commonService;
         }
 
         public async Task<IEnumerable<ClientUser>> GetClientListAsync()
@@ -47,6 +49,8 @@ namespace CommonDatabase.Services {
             await _context.Client.AddAsync(client); 
             await _context.SaveChangesAsync();
             await _constant.PushClientDetails(); 
+            var newClient = _context.Client.Where(x => x.Username == client.Username).FirstOrDefault();
+            Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(newClient.Id,newClient.Username)).Wait();
             return ApiResponse.Ok(client, "Client added successfully."); 
         }
 
@@ -93,6 +97,7 @@ namespace CommonDatabase.Services {
             _context.Client.Update(existing);
             await _context.SaveChangesAsync();
             await _constant.PushClientDetails();
+            Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(existing.Id, existing.Username)).Wait();
             return ApiResponse.Ok(existing, "Client updated successfully.");
         }
 
@@ -102,8 +107,18 @@ namespace CommonDatabase.Services {
             var client = await _context.Client.FindAsync(id);
             if (client == null)
                 return ApiResponse.Fail("Client not found.");
+
+            // Delete related devices first
+            var itemsToDelete = await _context.ClientDevices
+                .Where(u => u.ClientId == client.Id)
+                .ToListAsync();
+
+            _context.ClientDevices.RemoveRange(itemsToDelete);
             _context.Client.Remove(client);
-            await _context.SaveChangesAsync();
+
+            await _context.SaveChangesAsync(); // ✅ Single commit
+
+            await _commonService.GetDeviceAccessSummaryAsync(client.Id, client.Username); // ✅ No blocking
             
             var responseData = new { clientId = id };
             return ApiResponse.Ok(responseData, "Client deleted successfully.");

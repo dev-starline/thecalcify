@@ -1,4 +1,5 @@
-﻿using CommonDatabase.Models;
+﻿using CommonDatabase.DTO;
+using CommonDatabase.Models;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -22,8 +23,9 @@ namespace CommonDatabase
         public DbSet<SelfSubscribe> SelfSubscriber { get; set; }
 
         public DbSet<WatchInstrument> WatchInstrument { get; set; }
-       
-
+        public DbSet<ClientDevices> ClientDevices { get; set; }
+        public DbSet<DeviceAccessRawDto> DeviceAccessRawDto { get; set; }
+        public DbSet<ClientAccessModel> ClientAccessModel { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

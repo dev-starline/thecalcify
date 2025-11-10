@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using CommonDatabase.DTO;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CommonDatabase.Models
@@ -31,7 +32,8 @@ namespace CommonDatabase.Models
         public string? IPAddress { get; set; }
         public string? DeviceToken { get; set; }
         public DateTime? UpdateDate { get; set; } = DateTime.UtcNow;
-
+        public string Topics { get; set; } = "";
+        public string Keywords { get; set; } = "";
     }
 
     public class ClientDetailsDto
@@ -49,5 +51,18 @@ namespace CommonDatabase.Models
         public DateTime RateExpiredDate { get; set; }
     }
 
+    public class NewsNotification
+    {
+        public string HeadLine { get; set; }
+        public string Fragment { get; set; }
+        public string VersionedGuid { get; set; }
+        public string SortTimestamp { get; set; }
+        public DateTime FirstCreated { get; set; }
+    }
+    public class ReceiveNewsDto
+    {
+        public List<DeviceNotificationDto> ClientList { get; set; }
+        public NewsNotification NewsList { get; set; }
+    }
 
 }

@@ -8,5 +8,8 @@ namespace CommonDatabase.Interfaces
     {
         Task<ApiResponse> LoginAsync(AdminLogin loginDto);
         Task<ApiResponse> ValidateClientLogin(ClientAuth clientLogin);
+        Task<ApiResponse> ClientLogout(LogoutRequest logoutRequest);
+        Task<ApiResponse> UpdateStatusDnd(StatusDnd status);
+        Task<ApiResponse> UpdateTopicKeyword(TopicKeyword status);
     }
 }
