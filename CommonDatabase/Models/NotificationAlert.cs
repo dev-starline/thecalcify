@@ -38,6 +38,7 @@ namespace CommonDatabase.Models
         public DateTime CreateDate { get; set; } = DateTime.UtcNow;
 
         public DateTime MDate { get; set; } = DateTime.UtcNow; // Updated on modify
+        public int ClientDeviceId { get; set; }
     }
 
 
@@ -51,6 +52,7 @@ namespace CommonDatabase.Models
         public string? Condition { get; set; }
         public string? Flag { get; set; }
         public decimal Rate { get; set; }
+        public string DeviceId { get; set; }
     }
 
 

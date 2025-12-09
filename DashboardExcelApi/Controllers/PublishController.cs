@@ -87,10 +87,11 @@ namespace DashboardExcelApi.Controllers
             {
                 //if (item.IsActive)
                 //{
-                    await _hubContext.Clients.Group(item.Username).SendAsync(
+                    await _hubContext.Clients.Group($"{item.Username}_{item.DeviceId}").SendAsync(
                         "ReceiveNewsNotification",
                         receiveNewsDto.NewsList
                     );
+
                 //}
             }
             return Ok();

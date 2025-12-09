@@ -103,7 +103,7 @@ namespace CommonDatabase.Services
             Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(user.Id, user.Username)).Wait();
 
 
-            var token = GenerateJwtToken(user.Id, user.Username, UserRole.Client, user.IsNews,user.IsRate, login.DeviceToken, user.RateExpiredDate,user.NewsExpiredDate);
+            var token = GenerateJwtToken(user.Id, user.Username, UserRole.Client, login.DeviceId, login.DeviceType, user.IsNews,user.IsRate, login.DeviceToken, user.RateExpiredDate,user.NewsExpiredDate);
             return ApiResponse.Ok(new
             {
                 Token = token,DeviceToken = login.DeviceToken,
@@ -114,8 +114,8 @@ namespace CommonDatabase.Services
 
 
 
-        private string GenerateJwtToken(int id, string userName, UserRole role, bool isNews = false,
-            bool isRate = false,string deviceToken = null,DateTime? rateExpiredDate = null,
+        private string GenerateJwtToken(int id, string userName, UserRole role, string deviceId = null, string deviceType = null, bool isNews = false,
+            bool isRate = false, string deviceToken = null, DateTime? rateExpiredDate = null,
             DateTime? newsExpiredDate = null)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
@@ -140,6 +140,10 @@ namespace CommonDatabase.Services
                 claims.Add(new Claim("IsRate", isRate.ToString()));
                 if (!string.IsNullOrWhiteSpace(deviceToken))
                     claims.Add(new Claim("DeviceToken", deviceToken));
+                if (!string.IsNullOrWhiteSpace(deviceId))
+                    claims.Add(new Claim("DeviceId", deviceId));
+                if (!string.IsNullOrWhiteSpace(deviceType))
+                    claims.Add(new Claim("DeviceType", deviceType));
                 if (rateExpiredDate.HasValue)
                     claims.Add(new Claim("RateExpiredDate", rateExpiredDate.Value.ToString("o")));
                 if (newsExpiredDate.HasValue)

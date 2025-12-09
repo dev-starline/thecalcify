@@ -149,14 +149,29 @@ namespace DashboardExcelApi
         {
             try
             {
-                var connId = Context.ConnectionId;
-                _store.Add(room, Context.ConnectionId);
+                var connectionId = Context.ConnectionId;
+
+                //// Remove from old room
+                if (ConnectionGroups.TryRemove(connectionId, out var groups))
+                {
+                    foreach (var group in groups.Distinct())
+                    {
+                        await Groups.RemoveFromGroupAsync(connectionId, group);
+                    }
+                }
+
+                await Groups.AddToGroupAsync(Context.ConnectionId, $"{room}_{deviceId}" );
+                ConnectionGroups.AddOrUpdate(
+                    Context.ConnectionId,
+                    new List<string> { $"{room}_{deviceId}" },
+                    (_, existing) => { existing.Add($"{room}_{deviceId}"); return existing; }
+                );
 
                 IDatabase db = _redis.GetDatabase();
                 var userDetailsRaw = await db.StringGetAsync(UserDetailsKey);
 
                 var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
-                await Clients.Client(connId).SendAsync(
+                await Clients.Client(connectionId).SendAsync(
                     "ReceiveMessage",
                     new
                     {
@@ -192,21 +207,14 @@ namespace DashboardExcelApi
                 var userDetailsRaw = await db.StringGetAsync(UserDetailsKey);
                 _store.Add("AllClient", Context.ConnectionId);
                 var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
-                //await Clients.Client(connId).SendAsync(
-                //    "ReceiveAllClient", 
-                //    new { 
-                //        status = true, 
-                //        data = userList.Select(x => new { x.Id, x.Username }) 
-                //    }
-                //);
                 await Clients.All.SendAsync(
-                   "ReceiveAllClient",
-                   new
-                {
+                    "ReceiveAllClient",
+                    new
+                    {
                        status = true,
                        data = userList.Select(x => new { x.Id, x.Username })
-                }
-               );
+                    }
+                );
             }
             catch (Exception ex)
             {

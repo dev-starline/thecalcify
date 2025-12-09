@@ -170,7 +170,7 @@ namespace CommonDatabase.Services {
                 bool exists = await _context.NotificationAlerts.AnyAsync(a =>
                     a.Identifier == input.Identifier &&
                     a.Rate == input.Rate &&
-                    a.ClientId == input.ClientId &&
+                    a.ClientId == input.ClientId && a.ClientDeviceId == input.ClientDeviceId &&
                     a.Flag == input.Flag &&
                     a.Type == input.Type &&
                     a.Condition == input.Condition);
@@ -202,9 +202,45 @@ namespace CommonDatabase.Services {
             return ApiResponse.Ok(responseData, "Alert  saved successfully.");
         }
 
-        public async Task<ApiResponse> GetNotificationsAsync(int clientId)
+        public async Task<ApiResponse> GetNotificationsAsync(int clientId, string deviceId, string deviceType)
         {
-            var alerts = await _context.NotificationAlerts.Where(n => n.ClientId == clientId).OrderByDescending(n => n.CreateDate) .ToListAsync();
+            //var alerts = await _context.NotificationAlerts
+            //                    .Where(n => n.ClientId == clientId)
+            //                    .OrderByDescending(n => n.CreateDate)
+            //                    .ToListAsync();
+
+            //var alerts = (from n in _context.NotificationAlerts
+            //              join i in _context.Instruments on new { n.ClientId, n.Identifier } equals new { i.ClientId, i.Identifier }
+            //              join cd in _context.ClientDevices on new { ClientDeviceId = n.ClientDeviceId } equals new { ClientDeviceId = cd.Id }
+
+            //              where i.IsMapped == true && i.ClientId == clientId
+            //              select new
+            //              {
+            //                n.Id,
+            //                n.Identifier,
+            //                n.Rate,
+            //                n.Flag,
+            //                n.Condition,
+            //                n.Type,
+            //                n.IsPassed,
+            //                n.AlertDate,
+            //                n.CreateDate,
+            //                n.MDate
+            //              }).ToList();
+            var alerts = await _context.NotificationAlerts
+                            .Join(_context.Instruments,
+                                n => new { n.ClientId, n.Identifier },
+                                i => new { i.ClientId, i.Identifier },
+                                (n, i) => new { NotificationAlert = n, Instrument = i })
+                            .Join(_context.ClientDevices,
+                                joined => joined.NotificationAlert.ClientDeviceId,
+                                cd => cd.Id,
+                                (joined, cd) => new { joined.NotificationAlert, joined.Instrument, ClientDevice = cd })
+                            .Where(joined => joined.Instrument.IsMapped == true && joined.NotificationAlert.ClientId == clientId && 
+                                    joined.ClientDevice.DeviceId == deviceId)
+                            .Select(joined => joined.NotificationAlert)
+                            .OrderByDescending(n => n.CreateDate)
+                            .ToListAsync();
 
             var responseData = alerts.Select(a => new
             {
@@ -225,7 +261,7 @@ namespace CommonDatabase.Services {
         public async Task<ApiResponse> MarkRateAlertPassedAsync(int clientId, string symbol, int id)
         {
             var alert = await (from a in _context.NotificationAlerts join c in _context.Client on a.ClientId equals c.Id
-                where a.Id == id && a.ClientId == clientId && a.Identifier.Equals(symbol, StringComparison.OrdinalIgnoreCase) && !a.IsPassed && a.AlertDate == null select a ).FirstOrDefaultAsync();
+                where a.Id == id && a.ClientId == clientId && a.Identifier.Equals(symbol) && !a.IsPassed && a.AlertDate == null select a ).FirstOrDefaultAsync();
             if (alert == null) 
                 return ApiResponse.Fail("No matching pending alert found, or client does not exist.");
             alert.IsPassed = true;
