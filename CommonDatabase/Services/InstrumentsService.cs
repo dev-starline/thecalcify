@@ -9,11 +9,12 @@ namespace CommonDatabase.Services
     {
         private readonly AppDbContext _context;
         private readonly ApplicationConstant _constant;
-
-        public InstrumentsService(AppDbContext context, ApplicationConstant constant)
+        private readonly ICommonService _commonService;
+        public InstrumentsService(AppDbContext context, ApplicationConstant constant, ICommonService commonService)
         {
             _context = context;
             _constant = constant;
+            _commonService = commonService;
         }
 
         public async Task<ApiResponse> GetInstrumentListByClientAsync(int clientId)
@@ -81,8 +82,10 @@ namespace CommonDatabase.Services
                 }
             }
 
-            await _context.SaveChangesAsync();           
+            await _context.SaveChangesAsync();
             int clientId = input.First().ClientId;
+            string? clientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == clientId))?.Username;
+            Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(clientId, clientUsername)).Wait();
             await _constant.SetIdentifireRedisAsync();
             return await GetInstrumentListByClientAsync(clientId);
         }

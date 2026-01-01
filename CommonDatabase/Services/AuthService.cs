@@ -27,7 +27,7 @@ namespace CommonDatabase.Services
         private readonly IConnectionMultiplexer _redis;
         private readonly ICommonService _commonService;
         // Redis key templates (centralised for easier change)
-        private const string ClientDetailsKey = "UserDetails";
+        //private const string ClientDetailsKey = "UserDetails";
         public AuthService(AppDbContext context, IConfiguration configuration, IConnectionMultiplexer redis, ICommonService commonService)
         {
             _context = context;
@@ -70,13 +70,18 @@ namespace CommonDatabase.Services
                 var device = _context.ClientDevices
                             .FirstOrDefault(x => 
                                 x.ClientId == user.Id &&
-                                x.DeviceToken == login.DeviceToken && 
+                                //x.DeviceToken == login.DeviceToken && 
                                 x.DeviceType == login.DeviceType && 
                                 x.DeviceId == login.DeviceId
                              );
                 var clientDevices = new ClientDevices();
                 if (device == null)
                 {
+                    var deviceHistory = await _context.ClientDevices.FirstOrDefaultAsync(a => a.ClientId != user.Id && a.DeviceId == login.DeviceId);
+                    if (deviceHistory != null)
+                    {
+                        _context.ClientDevices.Remove(deviceHistory);
+                    }
                     clientDevices.ClientId = user.Id;
                     clientDevices.DeviceId = login.DeviceId;
                     clientDevices.DeviceToken = login.DeviceToken;
@@ -90,6 +95,12 @@ namespace CommonDatabase.Services
                 }
                 else
                 {
+                    var deviceHistory = await _context.ClientDevices.FirstOrDefaultAsync(a => a.ClientId != user.Id && a.DeviceId == login.DeviceId);
+                    if (deviceHistory != null)
+                    {
+                        _context.ClientDevices.Remove(deviceHistory);
+                    }
+                    device.DeviceToken = login.DeviceToken;
                     device.LastLogin = device.UpdatedDate;
                     device.UpdatedDate = DateTime.Now;
                     device.IsLogout = false;

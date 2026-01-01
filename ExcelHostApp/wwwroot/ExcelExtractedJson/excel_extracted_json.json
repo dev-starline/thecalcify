@@ -1,0 +1,4374 @@
+{
+  "totalRows": 26,
+  "totalColumns": 12,
+  "cells": {
+    "A1": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B1": {
+      "value": "SPOT 995",
+      "formula": "SPOT 995",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#ACB9CA",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C1": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D1": {
+      "value": "SPOT 999",
+      "formula": "SPOT 999",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#ACB9CA",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E1": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F1": {
+      "value": "Comex 995",
+      "formula": "Comex 995",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#ACB9CA",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G1": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H1": {
+      "value": "Comex 999",
+      "formula": "Comex 999",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#ACB9CA",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I1": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J1": {
+      "value": "SILVER SPOT",
+      "formula": "SILVER SPOT",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#ACB9CA",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K1": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L1": {
+      "value": "SILVER COMEX",
+      "formula": "SILVER COMEX",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#ACB9CA",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "A2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L2": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "A3": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B3": {
+      "value": "4312.07",
+      "formula": "=RTD(\"thecalcify\", ,\"GOLDSPOT_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C3": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D3": {
+      "value": "4312.07",
+      "formula": "=RTD(\"thecalcify\", ,\"GOLDSPOT_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E3": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F3": {
+      "value": "4343.7",
+      "formula": "=RTD(\"thecalcify\", ,\"GOLDCOMEX_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G3": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H3": {
+      "value": "4343.7",
+      "formula": "=RTD(\"thecalcify\", ,\"GOLDCOMEX_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I3": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J3": {
+      "value": "63.884",
+      "formula": "=RTD(\"thecalcify\", ,\"SILVERSPOT_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K3": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "L3": {
+      "value": "64.175",
+      "formula": "=RTD(\"thecalcify\", ,\"SILVERCOMEX_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A4": {
+      "value": "Premium",
+      "formula": "Premium",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B4": {
+      "value": "0",
+      "formula": "0",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C4": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D4": {
+      "value": "0",
+      "formula": "0",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E4": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F4": {
+      "value": "0",
+      "formula": "0",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G4": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H4": {
+      "value": "0",
+      "formula": "0",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I4": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J4": {
+      "value": "0",
+      "formula": "0",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K4": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L4": {
+      "value": "0",
+      "formula": "=J4",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A5": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B5": {
+      "value": "4312.07",
+      "formula": "=SUM(B3+B4)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C5": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D5": {
+      "value": "4312.07",
+      "formula": "=SUM(D3+D4)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E5": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F5": {
+      "value": "4343.7",
+      "formula": "=SUM(F3+F4)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G5": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H5": {
+      "value": "4343.7",
+      "formula": "=SUM(H3+H4)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I5": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J5": {
+      "value": "63.884",
+      "formula": "=SUM(J3+J4)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K5": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L5": {
+      "value": "64.175",
+      "formula": "=SUM(L3+L4)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A6": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B6": {
+      "value": "90.43",
+      "formula": "=RTD(\"thecalcify\", ,\"INRSPOT_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C6": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D6": {
+      "value": "90.43",
+      "formula": "=RTD(\"thecalcify\", ,\"INRSPOT_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E6": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F6": {
+      "value": "90.43",
+      "formula": "=RTD(\"thecalcify\", ,\"INRSPOT_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G6": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H6": {
+      "value": "90.43",
+      "formula": "=RTD(\"thecalcify\", ,\"INRSPOT_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I6": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J6": {
+      "value": "90.43",
+      "formula": "=RTD(\"thecalcify\", ,\"INRSPOT_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K6": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L6": {
+      "value": "90.43",
+      "formula": "=RTD(\"thecalcify\", ,\"INRSPOT_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A7": {
+      "value": "INTER BANK",
+      "formula": "INTER BANK",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B7": {
+      "value": "0",
+      "formula": "0",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C7": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D7": {
+      "value": "0",
+      "formula": "0",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E7": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F7": {
+      "value": "0",
+      "formula": "0",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G7": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H7": {
+      "value": "0",
+      "formula": "=F7",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I7": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J7": {
+      "value": "0",
+      "formula": "0",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K7": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L7": {
+      "value": "0",
+      "formula": "=J7",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A8": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B8": {
+      "value": "389940.4901",
+      "formula": "=SUM(B5*(B6+B7))",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C8": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D8": {
+      "value": "389940.4901",
+      "formula": "=SUM(D5*(D6+D7))",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E8": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F8": {
+      "value": "392800.791",
+      "formula": "=SUM(F5*(F6+F7))",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G8": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H8": {
+      "value": "392800.791",
+      "formula": "=SUM(H5*(H6+H7))",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I8": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J8": {
+      "value": "5777.03012",
+      "formula": "=SUM(J5*(J6+J7))",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K8": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L8": {
+      "value": "5803.34525",
+      "formula": "=SUM(L5*(L6+L7))",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A9": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B9": {
+      "value": "31.99",
+      "formula": "31.99",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C9": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D9": {
+      "value": "32.15",
+      "formula": "32.15",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E9": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F9": {
+      "value": "31.99",
+      "formula": "31.99",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G9": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H9": {
+      "value": "32.15",
+      "formula": "32.15",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I9": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J9": {
+      "value": "32.15",
+      "formula": "32.15",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K9": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L9": {
+      "value": "32.15",
+      "formula": "32.15",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A10": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B10": {
+      "value": "12474196.278299",
+      "formula": "=SUM(B8*B9)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C10": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D10": {
+      "value": "12536586.756715",
+      "formula": "=SUM(D8*D9)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E10": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F10": {
+      "value": "12565697.30409",
+      "formula": "=SUM(F8*F9)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G10": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H10": {
+      "value": "12628545.43065",
+      "formula": "=SUM(H8*H9)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I10": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J10": {
+      "value": "185731.518358",
+      "formula": "=SUM(J8*J9)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K10": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L10": {
+      "value": "186577.5497875",
+      "formula": "=SUM(L8*L9)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A11": {
+      "value": "C.DUTY",
+      "formula": "C.DUTY",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B11": {
+      "value": "731860.8",
+      "formula": "=RTD(\"thecalcify\", ,\"CDUTY\",\"High\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C11": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D11": {
+      "value": "731860.8",
+      "formula": "=RTD(\"thecalcify\", ,\"CDUTY\",\"High\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E11": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F11": {
+      "value": "731860.8",
+      "formula": "=RTD(\"thecalcify\", ,\"CDUTY\",\"High\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G11": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H11": {
+      "value": "731860.8",
+      "formula": "=RTD(\"thecalcify\", ,\"CDUTY\",\"High\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I11": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J11": {
+      "value": "10786.18",
+      "formula": "=RTD(\"thecalcify\", ,\"CDUTY\",\"Low\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K11": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "L11": {
+      "value": "10786.18",
+      "formula": "=RTD(\"thecalcify\", ,\"CDUTY\",\"Low\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A12": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B12": {
+      "value": "13206057.078299",
+      "formula": "=SUM(B10+B11)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C12": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D12": {
+      "value": "13268447.556715",
+      "formula": "=SUM(D10+D11)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E12": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F12": {
+      "value": "13297558.10409",
+      "formula": "=SUM(F10+F11)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G12": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H12": {
+      "value": "13360406.23065",
+      "formula": "=SUM(H10+H11)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I12": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J12": {
+      "value": "196517.698358",
+      "formula": "=SUM(J10+J11)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K12": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L12": {
+      "value": "197363.7297875",
+      "formula": "=SUM(L10+L11)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A13": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B13": {
+      "value": "100",
+      "formula": "100",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C13": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D13": {
+      "value": "100",
+      "formula": "100",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E13": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F13": {
+      "value": "100",
+      "formula": "100",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G13": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H13": {
+      "value": "100",
+      "formula": "100",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I13": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J13": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K13": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L13": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "A14": {
+      "value": "SPOT COSTING",
+      "formula": "SPOT COSTING",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B14": {
+      "value": "132060.57078299",
+      "formula": "=SUM(B12/B13)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFF00",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C14": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D14": {
+      "value": "132684.47556715",
+      "formula": "=SUM(D12/D13)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFF00",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E14": {
+      "value": "COMEX COSTING",
+      "formula": "COMEX COSTING",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F14": {
+      "value": "132975.5810409",
+      "formula": "=SUM(F12/F13)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFF00",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G14": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H14": {
+      "value": "133604.0623065",
+      "formula": "=SUM(H12/H13)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFF00",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I14": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J14": {
+      "value": "196517.698358",
+      "formula": "=J12",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFF00",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K14": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "L14": {
+      "value": "197363.7297875",
+      "formula": "=L12",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFF00",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A15": {
+      "value": "FUTURE",
+      "formula": "FUTURE",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B15": {
+      "value": "133930",
+      "formula": "=RTD(\"thecalcify\", ,\"GOLDFUTURE_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 16.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C15": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 16.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D15": {
+      "value": "133930",
+      "formula": "=RTD(\"thecalcify\", ,\"GOLDFUTURE_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 16.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E15": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 16.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F15": {
+      "value": "133930",
+      "formula": "=RTD(\"thecalcify\", ,\"GOLDFUTURE_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 16.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G15": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 16.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H15": {
+      "value": "133930",
+      "formula": "=RTD(\"thecalcify\", ,\"GOLDFUTURE_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 16.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I15": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J15": {
+      "value": "198949",
+      "formula": "=RTD(\"thecalcify\", ,\"SILVERFUTURE_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K15": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "L15": {
+      "value": "198949",
+      "formula": "=RTD(\"thecalcify\", ,\"SILVERFUTURE_I\",\"Ask\")",
+      "type": "rtd",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "J16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L16": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "A17": {
+      "value": "SPOT-FUTURE",
+      "formula": "SPOT-FUTURE",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B17": {
+      "value": "-1869.42921700998",
+      "formula": "=SUM(B14-B15)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C17": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D17": {
+      "value": "-1245.52443284998",
+      "formula": "=SUM(D14-D15)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E17": {
+      "value": "COMEX -FUTURE",
+      "formula": "COMEX -FUTURE",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F17": {
+      "value": "-954.418959099974",
+      "formula": "=SUM(F14-F15)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G17": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H17": {
+      "value": "-325.937693499989",
+      "formula": "=SUM(H14-H15)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I17": {
+      "value": "SPOT-FUTURE",
+      "formula": "SPOT-FUTURE",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "J17": {
+      "value": "-2431.30164200001",
+      "formula": "=SUM(J14-J15)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K17": {
+      "value": "COMEX -FUTURE",
+      "formula": "COMEX -FUTURE",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "L17": {
+      "value": "-1585.27021250001",
+      "formula": "=SUM(L14-L15)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "F18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "J18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L18": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A19": {
+      "value": "FUTURE -SPOT",
+      "formula": "FUTURE -SPOT",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B19": {
+      "value": "1869.42921700998",
+      "formula": "=SUM(B15-B14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "C19": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "D19": {
+      "value": "1245.52443284998",
+      "formula": "=SUM(D15-D14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E19": {
+      "value": "FUTURE -COMEX",
+      "formula": "FUTURE -COMEX",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "F19": {
+      "value": "954.418959099974",
+      "formula": "=SUM(F15-F14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "G19": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "H19": {
+      "value": "325.937693499989",
+      "formula": "=SUM(H15-H14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I19": {
+      "value": "FUTURE -SPOT",
+      "formula": "FUTURE -SPOT",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "J19": {
+      "value": "2431.30164200001",
+      "formula": "=SUM(J15-J14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "K19": {
+      "value": "FUTURE -COMEX",
+      "formula": "FUTURE -COMEX",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L19": {
+      "value": "1585.27021250001",
+      "formula": "=SUM(L15-L14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#B4C6E7",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "C20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "D20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "E20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "F20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "G20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "H20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "I20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "J20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L20": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "A21": {
+      "value": "SPOT",
+      "formula": "SPOT",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B21": {
+      "value": "Diff 995/999",
+      "formula": "Diff 995/999",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "C21": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "D21": {
+      "value": "-623.904784159997",
+      "formula": "=SUM(B14-D14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFC000",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E21": {
+      "value": "COMEX",
+      "formula": "COMEX",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "F21": {
+      "value": "Diff 995/999",
+      "formula": "Diff 995/999",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "G21": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "H21": {
+      "value": "-628.481265599985",
+      "formula": "=SUM(F14-H14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFC000",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I21": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "J21": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K21": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L21": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "A22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "C22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "D22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "F22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "G22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "H22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "J22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L22": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "A23": {
+      "value": "SPOT-COMEX",
+      "formula": "SPOT-COMEX",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B23": {
+      "value": "Diff 995/995",
+      "formula": "Diff 995/995",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "C23": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "D23": {
+      "value": "-915.010257910006",
+      "formula": "=SUM(B14-F14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#92D050",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E23": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "F23": {
+      "value": "Diff 999/999",
+      "formula": "Diff 999/999",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "G23": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "H23": {
+      "value": "-919.586739349994",
+      "formula": "=SUM(D14-H14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#92D050",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I23": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "J23": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K23": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L23": {
+      "value": "-846.031429499999",
+      "formula": "=SUM(J14-L14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#92D050",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "C24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "D24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "F24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "G24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "2",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "H24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "J24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L24": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A25": {
+      "value": "COMEX-SPOT",
+      "formula": "COMEX-SPOT",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B25": {
+      "value": "Diff 995/995",
+      "formula": "Diff 995/995",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "C25": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "D25": {
+      "value": "915.010257910006",
+      "formula": "=SUM(F14-B14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#F4B084",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "E25": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "F25": {
+      "value": "Diff 999/999",
+      "formula": "Diff 999/999",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFD966",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "G25": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "H25": {
+      "value": "919.586739349994",
+      "formula": "=SUM(H14-D14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#92D050",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I25": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "J25": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K25": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L25": {
+      "value": "846.031429499999",
+      "formula": "=SUM(L14-J14)",
+      "type": "formula",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#F4B084",
+        "numberFormat": "2",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "A26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "B26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "C26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "D26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "E26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "F26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "G26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "H26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 14.0,
+        "fontStyle": "b",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "Center",
+        "verticalAlign": "Center"
+      }
+    },
+    "I26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "J26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "K26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    },
+    "L26": {
+      "value": null,
+      "formula": "",
+      "type": "static",
+      "format": {
+        "fontSize": 11.0,
+        "fontStyle": "r",
+        "fontColor": "#000000",
+        "backgroundColor": "#FFFFFF",
+        "numberFormat": "General",
+        "horizontalAlign": "",
+        "verticalAlign": "Bottom"
+      }
+    }
+  }
+}

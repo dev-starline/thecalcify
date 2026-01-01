@@ -114,7 +114,15 @@ namespace CommonDatabase.DTO
         public string DeviceId { get; set; }
         public bool IsDND { get; set; }
     }
-
+    [Keyless]
+    public class ClientWiseInstrumentList
+    {
+        //public string Token { get; set; }
+        public string Username { get; set; }
+        public string Identifier { get; set; }
+        public string Contract { get; set; }
+        public long RowId { get; set; }
+    }
     public enum DeviceType
     {
         android,

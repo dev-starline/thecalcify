@@ -1,0 +1,385 @@
+<!DOCTYPE html><html><head><meta charset='UTF-8'>
+<style>
+table.excel{border-collapse:collapse}
+table.excel td{border:1px solid #ccc;padding:4px;min-width:60px;white-space:nowrap}
+.s0{font-size:11px;color:#000000;background-color:#FFFFFF;vertical-align:Bottom}
+.s1{font-size:14px;font-weight:bold;color:#000000;background-color:#ACB9CA;text-align:Center;vertical-align:Center}
+.s2{font-size:14px;color:#000000;background-color:#FFFFFF;text-align:Center;vertical-align:Center}
+.s3{font-size:14px;font-weight:bold;color:#000000;background-color:#ACB9CA;vertical-align:Bottom}
+.s4{font-size:14px;color:#000000;background-color:#FFD966;vertical-align:Bottom}
+.s5{font-size:14px;font-weight:bold;color:#000000;background-color:#FFFF00;text-align:Center;vertical-align:Center}
+.s6{font-size:14px;color:#000000;background-color:#FFD966;text-align:Center;vertical-align:Center}
+.s7{font-size:16px;color:#000000;background-color:#FFFFFF;text-align:Center;vertical-align:Center}
+.s8{font-size:14px;font-weight:bold;color:#000000;background-color:#B4C6E7;text-align:Center;vertical-align:Center}
+.s9{font-size:14px;color:#000000;background-color:#FFFFFF;vertical-align:Bottom}
+.s10{font-size:14px;font-weight:bold;color:#000000;background-color:#FFC000;text-align:Center;vertical-align:Center}
+.s11{font-size:14px;font-weight:bold;color:#000000;background-color:#92D050;text-align:Center;vertical-align:Center}
+.s12{font-size:14px;font-weight:bold;color:#000000;background-color:#F4B084;text-align:Center;vertical-align:Center}
+.s13{font-size:14px;font-weight:bold;color:#000000;background-color:#FFFFFF;text-align:Center;vertical-align:Center}
+</style></head><body>
+<table class='excel'>
+<tr>
+<td id='A1' class='s0'></td>
+<td id='B1' class='s1'>SPOT 995</td>
+<td id='C1' class='s2'></td>
+<td id='D1' class='s1'>SPOT 999</td>
+<td id='E1' class='s2'></td>
+<td id='F1' class='s1'>Comex 995</td>
+<td id='G1' class='s2'></td>
+<td id='H1' class='s1'>Comex 999</td>
+<td id='I1' class='s2'></td>
+<td id='J1' class='s3'>SILVER SPOT</td>
+<td id='K1' class='s0'></td>
+<td id='L1' class='s3'>SILVER COMEX</td>
+</tr>
+<tr>
+<td id='A2' class='s0'></td>
+<td id='B2' class='s2'></td>
+<td id='C2' class='s2'></td>
+<td id='D2' class='s2'></td>
+<td id='E2' class='s2'></td>
+<td id='F2' class='s2'></td>
+<td id='G2' class='s2'></td>
+<td id='H2' class='s2'></td>
+<td id='I2' class='s2'></td>
+<td id='J2' class='s0'></td>
+<td id='K2' class='s0'></td>
+<td id='L2' class='s0'></td>
+</tr>
+<tr>
+<td id='A3' class='s0'></td>
+<td id='B3' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;GOLDSPOT_I&quot;,&quot;Ask&quot;)</td>
+<td id='C3' class='s2'></td>
+<td id='D3' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;GOLDSPOT_I&quot;,&quot;Ask&quot;)</td>
+<td id='E3' class='s2'></td>
+<td id='F3' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;GOLDCOMEX_I&quot;,&quot;Ask&quot;)</td>
+<td id='G3' class='s2'></td>
+<td id='H3' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;GOLDCOMEX_I&quot;,&quot;Ask&quot;)</td>
+<td id='I3' class='s2'></td>
+<td id='J3' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;SILVERSPOT_I&quot;,&quot;Ask&quot;)</td>
+<td id='K3' class='s2'></td>
+<td id='L3' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;SILVERCOMEX_I&quot;,&quot;Ask&quot;)</td>
+</tr>
+<tr>
+<td id='A4' class='s4'>Premium</td>
+<td id='B4' class='s2'>0</td>
+<td id='C4' class='s2'></td>
+<td id='D4' class='s2'>0</td>
+<td id='E4' class='s2'></td>
+<td id='F4' class='s2'>0</td>
+<td id='G4' class='s2'></td>
+<td id='H4' class='s2'>0</td>
+<td id='I4' class='s2'></td>
+<td id='J4' class='s2'>0</td>
+<td id='K4' class='s0'></td>
+<td id='L4' class='s2'>=J4</td>
+</tr>
+<tr>
+<td id='A5' class='s0'></td>
+<td id='B5' class='s2'>=SUM(B3+B4)</td>
+<td id='C5' class='s2'></td>
+<td id='D5' class='s2'>=SUM(D3+D4)</td>
+<td id='E5' class='s2'></td>
+<td id='F5' class='s2'>=SUM(F3+F4)</td>
+<td id='G5' class='s2'></td>
+<td id='H5' class='s2'>=SUM(H3+H4)</td>
+<td id='I5' class='s2'></td>
+<td id='J5' class='s2'>=SUM(J3+J4)</td>
+<td id='K5' class='s0'></td>
+<td id='L5' class='s2'>=SUM(L3+L4)</td>
+</tr>
+<tr>
+<td id='A6' class='s0'></td>
+<td id='B6' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;INRSPOT_I&quot;,&quot;Ask&quot;)</td>
+<td id='C6' class='s2'></td>
+<td id='D6' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;INRSPOT_I&quot;,&quot;Ask&quot;)</td>
+<td id='E6' class='s2'></td>
+<td id='F6' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;INRSPOT_I&quot;,&quot;Ask&quot;)</td>
+<td id='G6' class='s2'></td>
+<td id='H6' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;INRSPOT_I&quot;,&quot;Ask&quot;)</td>
+<td id='I6' class='s2'></td>
+<td id='J6' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;INRSPOT_I&quot;,&quot;Ask&quot;)</td>
+<td id='K6' class='s0'></td>
+<td id='L6' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;INRSPOT_I&quot;,&quot;Ask&quot;)</td>
+</tr>
+<tr>
+<td id='A7' class='s4'>INTER BANK</td>
+<td id='B7' class='s2'>0</td>
+<td id='C7' class='s2'></td>
+<td id='D7' class='s2'>0</td>
+<td id='E7' class='s2'></td>
+<td id='F7' class='s2'>0</td>
+<td id='G7' class='s2'></td>
+<td id='H7' class='s2'>=F7</td>
+<td id='I7' class='s2'></td>
+<td id='J7' class='s2'>0</td>
+<td id='K7' class='s0'></td>
+<td id='L7' class='s2'>=J7</td>
+</tr>
+<tr>
+<td id='A8' class='s0'></td>
+<td id='B8' class='s2'>=SUM(B5*(B6+B7))</td>
+<td id='C8' class='s2'></td>
+<td id='D8' class='s2'>=SUM(D5*(D6+D7))</td>
+<td id='E8' class='s2'></td>
+<td id='F8' class='s2'>=SUM(F5*(F6+F7))</td>
+<td id='G8' class='s2'></td>
+<td id='H8' class='s2'>=SUM(H5*(H6+H7))</td>
+<td id='I8' class='s2'></td>
+<td id='J8' class='s2'>=SUM(J5*(J6+J7))</td>
+<td id='K8' class='s0'></td>
+<td id='L8' class='s2'>=SUM(L5*(L6+L7))</td>
+</tr>
+<tr>
+<td id='A9' class='s0'></td>
+<td id='B9' class='s2'>31.99</td>
+<td id='C9' class='s2'></td>
+<td id='D9' class='s2'>32.15</td>
+<td id='E9' class='s2'></td>
+<td id='F9' class='s2'>31.99</td>
+<td id='G9' class='s2'></td>
+<td id='H9' class='s2'>32.15</td>
+<td id='I9' class='s2'></td>
+<td id='J9' class='s2'>32.15</td>
+<td id='K9' class='s0'></td>
+<td id='L9' class='s2'>32.15</td>
+</tr>
+<tr>
+<td id='A10' class='s0'></td>
+<td id='B10' class='s2'>=SUM(B8*B9)</td>
+<td id='C10' class='s2'></td>
+<td id='D10' class='s2'>=SUM(D8*D9)</td>
+<td id='E10' class='s2'></td>
+<td id='F10' class='s2'>=SUM(F8*F9)</td>
+<td id='G10' class='s2'></td>
+<td id='H10' class='s2'>=SUM(H8*H9)</td>
+<td id='I10' class='s2'></td>
+<td id='J10' class='s2'>=SUM(J8*J9)</td>
+<td id='K10' class='s0'></td>
+<td id='L10' class='s2'>=SUM(L8*L9)</td>
+</tr>
+<tr>
+<td id='A11' class='s4'>C.DUTY</td>
+<td id='B11' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;CDUTY&quot;,&quot;High&quot;)</td>
+<td id='C11' class='s2'></td>
+<td id='D11' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;CDUTY&quot;,&quot;High&quot;)</td>
+<td id='E11' class='s2'></td>
+<td id='F11' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;CDUTY&quot;,&quot;High&quot;)</td>
+<td id='G11' class='s2'></td>
+<td id='H11' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;CDUTY&quot;,&quot;High&quot;)</td>
+<td id='I11' class='s2'></td>
+<td id='J11' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;CDUTY&quot;,&quot;Low&quot;)</td>
+<td id='K11' class='s2'></td>
+<td id='L11' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;CDUTY&quot;,&quot;Low&quot;)</td>
+</tr>
+<tr>
+<td id='A12' class='s0'></td>
+<td id='B12' class='s2'>=SUM(B10+B11)</td>
+<td id='C12' class='s2'></td>
+<td id='D12' class='s2'>=SUM(D10+D11)</td>
+<td id='E12' class='s2'></td>
+<td id='F12' class='s2'>=SUM(F10+F11)</td>
+<td id='G12' class='s2'></td>
+<td id='H12' class='s2'>=SUM(H10+H11)</td>
+<td id='I12' class='s2'></td>
+<td id='J12' class='s2'>=SUM(J10+J11)</td>
+<td id='K12' class='s0'></td>
+<td id='L12' class='s2'>=SUM(L10+L11)</td>
+</tr>
+<tr>
+<td id='A13' class='s0'></td>
+<td id='B13' class='s2'>100</td>
+<td id='C13' class='s2'></td>
+<td id='D13' class='s2'>100</td>
+<td id='E13' class='s2'></td>
+<td id='F13' class='s2'>100</td>
+<td id='G13' class='s2'></td>
+<td id='H13' class='s2'>100</td>
+<td id='I13' class='s2'></td>
+<td id='J13' class='s0'></td>
+<td id='K13' class='s0'></td>
+<td id='L13' class='s0'></td>
+</tr>
+<tr>
+<td id='A14' class='s4'>SPOT COSTING</td>
+<td id='B14' class='s5'>=SUM(B12/B13)</td>
+<td id='C14' class='s2'></td>
+<td id='D14' class='s5'>=SUM(D12/D13)</td>
+<td id='E14' class='s6'>COMEX COSTING</td>
+<td id='F14' class='s5'>=SUM(F12/F13)</td>
+<td id='G14' class='s2'></td>
+<td id='H14' class='s5'>=SUM(H12/H13)</td>
+<td id='I14' class='s2'></td>
+<td id='J14' class='s5'>=J12</td>
+<td id='K14' class='s2'></td>
+<td id='L14' class='s5'>=L12</td>
+</tr>
+<tr>
+<td id='A15' class='s4'>FUTURE</td>
+<td id='B15' class='s7'>=RTD(&quot;thecalcify&quot;, ,&quot;GOLDFUTURE_I&quot;,&quot;Ask&quot;)</td>
+<td id='C15' class='s7'></td>
+<td id='D15' class='s7'>=RTD(&quot;thecalcify&quot;, ,&quot;GOLDFUTURE_I&quot;,&quot;Ask&quot;)</td>
+<td id='E15' class='s7'></td>
+<td id='F15' class='s7'>=RTD(&quot;thecalcify&quot;, ,&quot;GOLDFUTURE_I&quot;,&quot;Ask&quot;)</td>
+<td id='G15' class='s7'></td>
+<td id='H15' class='s7'>=RTD(&quot;thecalcify&quot;, ,&quot;GOLDFUTURE_I&quot;,&quot;Ask&quot;)</td>
+<td id='I15' class='s2'></td>
+<td id='J15' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;SILVERFUTURE_I&quot;,&quot;Ask&quot;)</td>
+<td id='K15' class='s2'></td>
+<td id='L15' class='s2'>=RTD(&quot;thecalcify&quot;, ,&quot;SILVERFUTURE_I&quot;,&quot;Ask&quot;)</td>
+</tr>
+<tr>
+<td id='A16' class='s0'></td>
+<td id='B16' class='s2'></td>
+<td id='C16' class='s2'></td>
+<td id='D16' class='s2'></td>
+<td id='E16' class='s2'></td>
+<td id='F16' class='s2'></td>
+<td id='G16' class='s2'></td>
+<td id='H16' class='s2'></td>
+<td id='I16' class='s2'></td>
+<td id='J16' class='s0'></td>
+<td id='K16' class='s0'></td>
+<td id='L16' class='s0'></td>
+</tr>
+<tr>
+<td id='A17' class='s4'>SPOT-FUTURE</td>
+<td id='B17' class='s8'>=SUM(B14-B15)</td>
+<td id='C17' class='s2'></td>
+<td id='D17' class='s8'>=SUM(D14-D15)</td>
+<td id='E17' class='s6'>COMEX -FUTURE</td>
+<td id='F17' class='s8'>=SUM(F14-F15)</td>
+<td id='G17' class='s2'></td>
+<td id='H17' class='s8'>=SUM(H14-H15)</td>
+<td id='I17' class='s4'>SPOT-FUTURE</td>
+<td id='J17' class='s8'>=SUM(J14-J15)</td>
+<td id='K17' class='s6'>COMEX -FUTURE</td>
+<td id='L17' class='s8'>=SUM(L14-L15)</td>
+</tr>
+<tr>
+<td id='A18' class='s9'></td>
+<td id='B18' class='s2'></td>
+<td id='C18' class='s2'></td>
+<td id='D18' class='s2'></td>
+<td id='E18' class='s2'></td>
+<td id='F18' class='s2'></td>
+<td id='G18' class='s2'></td>
+<td id='H18' class='s2'></td>
+<td id='I18' class='s9'></td>
+<td id='J18' class='s9'></td>
+<td id='K18' class='s9'></td>
+<td id='L18' class='s2'></td>
+</tr>
+<tr>
+<td id='A19' class='s4'>FUTURE -SPOT</td>
+<td id='B19' class='s8'>=SUM(B15-B14)</td>
+<td id='C19' class='s2'></td>
+<td id='D19' class='s8'>=SUM(D15-D14)</td>
+<td id='E19' class='s4'>FUTURE -COMEX</td>
+<td id='F19' class='s8'>=SUM(F15-F14)</td>
+<td id='G19' class='s2'></td>
+<td id='H19' class='s8'>=SUM(H15-H14)</td>
+<td id='I19' class='s4'>FUTURE -SPOT</td>
+<td id='J19' class='s8'>=SUM(J15-J14)</td>
+<td id='K19' class='s4'>FUTURE -COMEX</td>
+<td id='L19' class='s8'>=SUM(L15-L14)</td>
+</tr>
+<tr>
+<td id='A20' class='s9'></td>
+<td id='B20' class='s9'></td>
+<td id='C20' class='s9'></td>
+<td id='D20' class='s9'></td>
+<td id='E20' class='s9'></td>
+<td id='F20' class='s9'></td>
+<td id='G20' class='s9'></td>
+<td id='H20' class='s9'></td>
+<td id='I20' class='s0'></td>
+<td id='J20' class='s0'></td>
+<td id='K20' class='s0'></td>
+<td id='L20' class='s0'></td>
+</tr>
+<tr>
+<td id='A21' class='s4'>SPOT</td>
+<td id='B21' class='s4'>Diff 995/999</td>
+<td id='C21' class='s9'></td>
+<td id='D21' class='s10'>=SUM(B14-D14)</td>
+<td id='E21' class='s4'>COMEX</td>
+<td id='F21' class='s4'>Diff 995/999</td>
+<td id='G21' class='s9'></td>
+<td id='H21' class='s10'>=SUM(F14-H14)</td>
+<td id='I21' class='s0'></td>
+<td id='J21' class='s0'></td>
+<td id='K21' class='s0'></td>
+<td id='L21' class='s0'></td>
+</tr>
+<tr>
+<td id='A22' class='s9'></td>
+<td id='B22' class='s9'></td>
+<td id='C22' class='s9'></td>
+<td id='D22' class='s2'></td>
+<td id='E22' class='s9'></td>
+<td id='F22' class='s9'></td>
+<td id='G22' class='s9'></td>
+<td id='H22' class='s2'></td>
+<td id='I22' class='s0'></td>
+<td id='J22' class='s0'></td>
+<td id='K22' class='s0'></td>
+<td id='L22' class='s0'></td>
+</tr>
+<tr>
+<td id='A23' class='s4'>SPOT-COMEX</td>
+<td id='B23' class='s4'>Diff 995/995</td>
+<td id='C23' class='s9'></td>
+<td id='D23' class='s11'>=SUM(B14-F14)</td>
+<td id='E23' class='s9'></td>
+<td id='F23' class='s4'>Diff 999/999</td>
+<td id='G23' class='s9'></td>
+<td id='H23' class='s11'>=SUM(D14-H14)</td>
+<td id='I23' class='s0'></td>
+<td id='J23' class='s0'></td>
+<td id='K23' class='s0'></td>
+<td id='L23' class='s11'>=SUM(J14-L14)</td>
+</tr>
+<tr>
+<td id='A24' class='s9'></td>
+<td id='B24' class='s9'></td>
+<td id='C24' class='s9'></td>
+<td id='D24' class='s2'></td>
+<td id='E24' class='s9'></td>
+<td id='F24' class='s9'></td>
+<td id='G24' class='s9'></td>
+<td id='H24' class='s2'></td>
+<td id='I24' class='s0'></td>
+<td id='J24' class='s0'></td>
+<td id='K24' class='s0'></td>
+<td id='L24' class='s2'></td>
+</tr>
+<tr>
+<td id='A25' class='s4'>COMEX-SPOT</td>
+<td id='B25' class='s4'>Diff 995/995</td>
+<td id='C25' class='s9'></td>
+<td id='D25' class='s12'>=SUM(F14-B14)</td>
+<td id='E25' class='s9'></td>
+<td id='F25' class='s4'>Diff 999/999</td>
+<td id='G25' class='s9'></td>
+<td id='H25' class='s11'>=SUM(H14-D14)</td>
+<td id='I25' class='s0'></td>
+<td id='J25' class='s0'></td>
+<td id='K25' class='s0'></td>
+<td id='L25' class='s12'>=SUM(L14-J14)</td>
+</tr>
+<tr>
+<td id='A26' class='s0'></td>
+<td id='B26' class='s0'></td>
+<td id='C26' class='s0'></td>
+<td id='D26' class='s0'></td>
+<td id='E26' class='s0'></td>
+<td id='F26' class='s0'></td>
+<td id='G26' class='s0'></td>
+<td id='H26' class='s13'></td>
+<td id='I26' class='s0'></td>
+<td id='J26' class='s0'></td>
+<td id='K26' class='s0'></td>
+<td id='L26' class='s0'> </td>
+</tr>
+</table><script src="http://localhost:5278/ExtensionJs/my-custom-script.js"></script></body></html>

@@ -9,5 +9,6 @@ namespace CommonDatabase.Interfaces
     public interface ICommonService
     {
         Task GetDeviceAccessSummaryAsync(int ClientId, string Username);
+        Task GetUserListOfSymbolAsync(int ClientId, string Username);
     }
 }

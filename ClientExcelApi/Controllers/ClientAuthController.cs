@@ -154,6 +154,7 @@ namespace ClientExcelApi.Controllers
             }
             input.Type = input.Type?.Trim().ToLower() switch { "bid" => "0", "ask" => "1", "ltp" => "2", _ => input.Type };
             var result = await _clientService.MarkRateAlertPassedAsync(input.ClientId, input.Symbol, input.Id);
+           
             if (result.IsSuccess)
             {
                 var payload = new
@@ -170,8 +171,9 @@ namespace ClientExcelApi.Controllers
                         input.Rate
                     }
                 };
+                var groupName = GroupNameResolver.Resolve(payload.Username);
                 var compressed = Compress(JsonSerializer.Serialize(payload));
-                await _hubContext.Clients.Group($"{payload.Username}_{ input.DeviceId}").SendAsync("rateAlertNotification", compressed);
+                await _hubContext.Clients.Group($"{groupName}_{ input.DeviceId}").SendAsync("rateAlertNotification", compressed);
             }
             return Ok(result);
         }
