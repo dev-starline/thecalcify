@@ -1,4 +1,5 @@
-﻿using CommonDatabase.DTO;
+﻿using CommonDatabase;
+using CommonDatabase.DTO;
 using CommonDatabase.Interfaces;
 using CommonDatabase.Models;
 using FirebaseAdmin.Messaging;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.IO.Compression;
@@ -17,25 +19,32 @@ namespace DashboardExcelApi.Controllers
     [ApiController]
     public class PublishController : ControllerBase
     {
+        private readonly IConfiguration _configuration;
         private readonly ICommonService _commonService;
         private readonly IConnectionMultiplexer _redis;
         private readonly IDatabase _redisDb;
         private readonly IHubContext<ExcelHub> _hubContext;
         private const string UserDetailsKey = "UserDetails";
         public readonly ConnectionStore _connectionStore;
-        public PublishController(IHubContext<ExcelHub> hubContext, ICommonService commonService, IConnectionMultiplexer redis, ConnectionStore connectionStore)
+        private readonly string prefix = "";
+        private readonly AppDbContext _context;
+        public PublishController(IHubContext<ExcelHub> hubContext, ICommonService commonService, IConnectionMultiplexer redis, ConnectionStore connectionStore, IConfiguration configuration, AppDbContext context)
         {
             _commonService = commonService;
             _redis = redis;
             _hubContext = hubContext;
             _redisDb = redis.GetDatabase();
             _connectionStore = connectionStore;
+            _configuration = configuration;
+            prefix = _configuration["Redis:Prefix"];
+            _context = context;
         }
 
         [HttpGet("PublishExcelData")]
         public async Task<IActionResult> PublishExcelData(string Username)
         {
-            var userDetailsRaw = await _redisDb.StringGetAsync(UserDetailsKey);
+            var groupName = GroupNameResolver.Resolve(Username);
+            var userDetailsRaw = await _redisDb.StringGetAsync($"{prefix}_{UserDetailsKey}");
 
 
             var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
@@ -44,7 +53,8 @@ namespace DashboardExcelApi.Controllers
             //foreach (var item in userList)
             //{
             //    var getAllConnect = _connectionStore.GetAllConnectionIds();
-            await _hubContext.Clients.All.SendAsync(
+            var groupNameAll = GroupNameResolver.Resolve("CalcifyAllClient");
+            await _hubContext.Clients.Group(groupNameAll).SendAsync(
                    "ReceiveAllClient",
                    new
                    {
@@ -52,7 +62,7 @@ namespace DashboardExcelApi.Controllers
                        data = userList.Select(x => new { x.Id, x.Username })
                    }
                );
-            var connId = _connectionStore.GetConnectionId(Username);
+            var connId = _connectionStore.GetConnectionId(groupName);
 
             if (connId != null)
             {
@@ -63,7 +73,7 @@ namespace DashboardExcelApi.Controllers
                 //        data = userList.Where(x => x.Username == Username) 
                 //    }
                 //);
-                await _hubContext.Clients.Group(Username).SendAsync(
+                await _hubContext.Clients.Group(groupName).SendAsync(
                     "ReceiveMessage",
                     new
                     {
@@ -85,12 +95,20 @@ namespace DashboardExcelApi.Controllers
 
             foreach (var item in receiveNewsDto.ClientList)
             {
-                //if (item.IsActive)
+                var groupName = GroupNameResolver.Resolve(item.Username);
+                //if (item.DeviceId is not null)
                 //{
-                    await _hubContext.Clients.Group(item.Username).SendAsync(
-                        "ReceiveNewsNotification",
-                        receiveNewsDto.NewsList
-                    );
+                //    await _hubContext.Clients.Group($"{item.Username}_{item.DeviceId}").SendAsync(
+                //        "ReceiveNewsNotification",
+                //        receiveNewsDto.NewsList
+                //    );
+                //}
+                //else
+                //{
+                await _hubContext.Clients.Group(groupName).SendAsync(
+                       "ReceiveNewsNotification",
+                       receiveNewsDto.NewsList
+                   );
                 //}
             }
             return Ok();
@@ -101,13 +119,53 @@ namespace DashboardExcelApi.Controllers
         public async Task<IActionResult> ActiveUsers([FromRoute] string? username)
         {
 
-            var userDetailsRaw = await _redisDb.StringGetAsync(UserDetailsKey);
+            var userDetailsRaw = await _redisDb.StringGetAsync($"{prefix}_{UserDetailsKey}");
             var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
             if (username != null)
             {
                 return Ok(userList.Where(x=> x.Username == username).FirstOrDefault());
             }
             return Ok(userList);
+        }
+        [HttpGet("publish-subscriber")]
+        public async Task<IActionResult> PublishSubscriber(string symbol, string symboljson)
+        {
+            //var groupName = GroupNameResolver.Resolve(symbol);
+            await _hubContext.Clients.Group(symbol).SendAsync("excelRate", Compress(symboljson.ToString()));
+
+            return Ok();
+        }
+
+        [AllowAnonymous]
+        [HttpGet("PublishUserListOfSymbol/{username?}")]
+        public async Task<IActionResult> PublishUserListOfSymbol([FromRoute] string? username)
+        {
+            var groupName = GroupNameResolver.Resolve(username);
+            int ClientId = await _context.Client.Where(x => x.Username == username).Select(x => x.Id).FirstOrDefaultAsync();
+            //var identifiers = await _context.Instruments
+            //            .Where(a => a.ClientId == ClientId && a.IsMapped)
+            //            .Select(a => new { i = a.Identifier, n = a.Contract })
+            //            .ToListAsync();
+
+            ////string listOfSymbol = string.Join(",", identifiers);
+            //await _hubContext.Clients.Group(username).SendAsync(
+            //        "UserListOfSymbol", identifiers
+            //    );
+            var rawUserResults = await _context.ClientWiseInstrumentList
+                .FromSqlInterpolated($"EXEC dbo.usp_ClientWiseInstumentList {ClientId}")
+                .ToListAsync();
+
+
+            var identifiers = rawUserResults.OrderBy(x => x.RowId).Select(r => new { i = r.Identifier, n = r.Contract }).ToList();
+            await _hubContext.Clients.Group(groupName).SendAsync("UserListOfSymbol", identifiers);
+            return Ok();
+        }
+        private byte[] Compress(string json)
+        {
+            using var output = new MemoryStream();
+            using (var gzip = new GZipStream(output, CompressionMode.Compress))
+            using (var writer = new StreamWriter(gzip)) writer.Write(json);
+            return output.ToArray();
         }
     }
 }

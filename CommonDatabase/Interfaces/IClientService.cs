@@ -13,7 +13,7 @@ namespace CommonDatabase.Interfaces
         Task<ApiResponse> UpdateClientAsync(ClientUser client, string ipAddress, DateTime rateExpiredDate, DateTime newsExpiredDate);
         Task<ApiResponse> DeleteClientAsync(int id);
         Task<ApiResponse> CreateAndSendAlert(NotificationAlert input);
-        Task<ApiResponse> GetNotificationsAsync(int clientId);
+        Task<ApiResponse> GetNotificationsAsync(int clientId, string deviceId, string deviceType);
         Task<ApiResponse> MarkRateAlertPassedAsync(int clientId, string symbol,int Id);
         Task<ApiResponse> AddWatchInstrumentAsync(WatchInstrument watchInstrument, int clientId);
         Task<ApiResponse> GetWatchInstrumentAsync(int clientId);       

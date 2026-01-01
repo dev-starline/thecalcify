@@ -100,6 +100,20 @@ namespace ClientExcelApi.Controllers
         public async Task<IActionResult> SendNotification([FromBody] NotificationAlert input)
         {
             var clientIdClaim = User.FindFirst("Id")?.Value;
+            var deviceId = User.FindFirst("DeviceId")?.Value;
+            var deviceType = User.FindFirst("DeviceType")?.Value;
+            //input.ClientDeviceId = int.Parse(ClientDeviceId);
+            var clientDevice = await _context.ClientDevices
+                                    .FirstOrDefaultAsync(cd => 
+                                        cd.ClientId.ToString() == clientIdClaim &&
+                                        cd.DeviceId == deviceId &&
+                                        cd.DeviceType == deviceType
+                                    );
+            if (clientDevice == null)
+            {
+                return BadRequest(ApiResponse.Fail("Client device not found."));
+            }
+            input.ClientDeviceId = clientDevice.Id;
             if (string.IsNullOrEmpty(clientIdClaim) || !int.TryParse(clientIdClaim, out int clientId) || clientId <= 0)
             {
                 return BadRequest(ApiResponse.Fail("Invalid or missing ClientId in token."));
@@ -119,16 +133,18 @@ namespace ClientExcelApi.Controllers
         public async Task<IActionResult> GetNotifications()
         {
             var clientIdClaim = User.FindFirst("Id")?.Value;
-
+            var deviceId = User.FindFirst("DeviceId")?.Value;
+            var deviceType = User.FindFirst("DeviceType")?.Value;
             if (string.IsNullOrEmpty(clientIdClaim) || !int.TryParse(clientIdClaim, out int clientId) || clientId <= 0)
             {
                 return BadRequest(ApiResponse.Fail("Invalid or missing ClientId in token."));
             }
 
-            var result = await _clientService.GetNotificationsAsync(clientId);
+            var result = await _clientService.GetNotificationsAsync(clientId, deviceId, deviceType);
             return Ok(result);
         }
 
+        [AllowAnonymous]
         [HttpPost("ratePassed")]
         public async Task<IActionResult> MarkAlertPassed([FromBody] MarkPassedInput input)
         {
@@ -138,6 +154,7 @@ namespace ClientExcelApi.Controllers
             }
             input.Type = input.Type?.Trim().ToLower() switch { "bid" => "0", "ask" => "1", "ltp" => "2", _ => input.Type };
             var result = await _clientService.MarkRateAlertPassedAsync(input.ClientId, input.Symbol, input.Id);
+           
             if (result.IsSuccess)
             {
                 var payload = new
@@ -154,8 +171,9 @@ namespace ClientExcelApi.Controllers
                         input.Rate
                     }
                 };
+                var groupName = GroupNameResolver.Resolve(payload.Username);
                 var compressed = Compress(JsonSerializer.Serialize(payload));
-                await _hubContext.Clients.User(payload.Username).SendAsync("rateAlertNotification", compressed);
+                await _hubContext.Clients.Group($"{groupName}_{ input.DeviceId}").SendAsync("rateAlertNotification", compressed);
             }
             return Ok(result);
         }

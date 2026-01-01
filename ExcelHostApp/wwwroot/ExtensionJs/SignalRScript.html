@@ -1,0 +1,286 @@
+﻿<html>  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+      <script> 
+        // ==================== OPTIMIZED DATA STRUCTURES ====================
+        let gridData = {
+            cells: {}, // cellId -> cellInfo
+            cellsBySymbol: {}, // symbol -> [cellIds] - for O(1) lookup
+            dependencyGraph: {}, // cellId -> [dependent cellIds]
+            cellValues: {},
+            invokeSymbols: [],
+        };
+
+        // ==================== OPTIMIZED DATA STRUCTURES ====================
+        let gridData = {
+            cells: {}, // cellId -> cellInfo
+            cellsBySymbol: {}, // symbol -> [cellIds] - for O(1) lookup
+            dependencyGraph: {}, // cellId -> [dependent cellIds]
+            cellValues: {},
+            invokeSymbols: [],
+        };
+
+        const fieldMap = {
+            Ask: "a",
+            Bid: "b",
+            LTP: "ltp",
+            High: "h",
+            Low: "l",
+            Open: "o",
+            Close: "c",
+            Change: "d",
+            Vendor: "v",
+            Timestamp: "t",
+            ATP: "atp",
+            "Bid Quantity": "bq",
+            "Total Bid Quantity": "tbq",
+            "Ask Quantity": "sq",
+            "Total Ask Quantity": "tsq",
+            Volume: "vt",
+            "Open Interest": "oi",
+            "Last Traded Quantity": "ltq",
+            Identifier: "i",
+            Name: "n",
+        };
+
+        // ==================== UTILITY FUNCTIONS ====================
+
+        function extractCellsFromFormula(formula) {
+            if (!formula) return [];
+            const cellPattern = /([A-Z]+\d+)/g;
+            const matches = formula.match(cellPattern);
+            return matches ? [...new Set(matches)] : [];
+        }
+
+        function parseRTDFormula(formula) {
+            if (!formula || !formula.includes("RTD")) return null;
+            const parts = formula.split('"');
+            return {
+                symbol: parts.length > 3 ? parts[3]?.trim() : null,
+                field: parts.length > 5 ? fieldMap[parts[5]?.trim()] : null,
+            };
+        }
+
+        function getCellType(formula) {
+            if (!formula || !formula.startsWith("=")) return "static";
+            if (formula.includes("RTD")) return "rtd";
+            return "formula";
+        }
+
+        function evaluateFormula(expression, cellValues) {
+            try {
+                let expr = expression
+                    .replace(/^=SUM\(/, "")
+                    .replace(/\)$/, "")
+                    .replace(/^=/, "");
+
+                const cellRefs = extractCellsFromFormula(expr);
+                for (const cellRef of cellRefs) {
+                    const value = cellValues[cellRef];
+                    if (value === null || value === undefined || value === "") {
+                        return "--";
+                    }
+                    const numValue = parseFloat(value);
+                    if (isNaN(numValue)) return "--";
+                    expr = expr.replaceAll(cellRef, numValue);
+                }
+                const result = Function('"use strict"; return (' + expr + ")")();
+                return isFinite(result) ? result.toFixed(2) : "--";
+            } catch (error) {
+                console.log("evaluateFormula error:", error);
+                return "--";
+            }
+        }
+
+        // ==================== BUILD DEPENDENCY GRAPH ====================
+
+        function buildDependencyGraph() {
+            // For each formula cell, add it to dependents of its source cells
+            for (const cellId in gridData.cells) {
+                const cellInfo = gridData.cells[cellId];
+                if (cellInfo.type === "formula" && cellInfo.emitCells) {
+                    for (const sourceCellId of cellInfo.emitCells) {
+                        if (!gridData.dependencyGraph[sourceCellId]) {
+                            gridData.dependencyGraph[sourceCellId] = [];
+                        }
+                        gridData.dependencyGraph[sourceCellId].push(cellId);
+                    }
+                    if (cellInfo.emitCells.length == 1) {
+                        cellInfo.element.textContent =
+                            gridData.cells[cellInfo.emitCells[0]].formula;
+                    }
+                }
+            }
+        }
+
+        // ==================== COLLECT ALL ROWS DATA ====================
+        function collectRowsData() {
+            const table = document.querySelector("table.excel");
+            const rows = table.querySelectorAll("tr");
+            let invokeSymbols = [];
+
+            rows.forEach((row, rowIdx) => {
+                const cells = row.querySelectorAll("td");
+                cells.forEach((cell, colIdx) => {
+                    const cellId = cell.id;
+                    const formula = cell.textContent.trim();
+
+                    if (!cellId) return;
+
+                    const cellType = getCellType(formula);
+                    let symbol = null;
+                    let field = null;
+                    let emitCells = null;
+
+                    if (cellType === "rtd") {
+                        const rtdInfo = parseRTDFormula(formula);
+                        symbol = rtdInfo?.symbol;
+                        field = rtdInfo?.field;
+
+                        if (symbol && field) {
+                            // Add to symbol index
+                            if (!gridData.cellsBySymbol[symbol]) {
+                                gridData.cellsBySymbol[symbol] = [];
+                            }
+                            gridData.cellsBySymbol[symbol].push({
+                                cellId,
+                                field,
+                                element: cell,
+                            });
+
+                            // Track unique symbols
+                            if (!invokeSymbols.includes(symbol)) {
+                                invokeSymbols.push(symbol);
+                            }
+                        }
+                    } else if (cellType === "formula") {
+                        emitCells = extractCellsFromFormula(formula);
+                    }
+
+                    gridData.cells[cellId] = {
+                        id: cellId,
+                        type: cellType,
+                        formula: formula,
+                        symbol,
+                        field,
+                        emitCells,
+                        element: cell,
+                    };
+
+                    if (cellType === "static" && !formula.startsWith("=")) {
+                        gridData.cellValues[cellId] = formula;
+                    }
+                });
+            });
+            gridData.invokeSymbols = invokeSymbols;
+            buildDependencyGraph();
+            connectSignalR();
+        }
+
+        // ==================== SIGNALR FUNCTIONS ====================
+        function connectSignalR() {
+            try {
+                const signalR_URL =
+                    "http://api.thecalcify.com/excel?user=calcify&auth=Starline@1008&type=mobile";
+                signalRConnection = new signalR.HubConnectionBuilder()
+                    .withUrl(signalR_URL, {
+                        accessTokenFactory: () =>
+                            document.cookie.replace(
+                                /(?:(?:^|.*;\s*)AuthToken\s*\=\s*([^;]*).*$)|^.*$/,
+                                "$1"
+                            ),
+                        transport:
+                            signalR.HttpTransportType.WebSockets |
+                            signalR.HttpTransportType.ServerSentEvents |
+                            signalR.HttpTransportType.LongPolling,
+                    })
+                    .withAutomaticReconnect()
+                    .build();
+
+                signalRConnection.on("excelRate", handleExcelRates);
+                signalRConnection
+                    .start()
+                    .then(() => {
+                        // Invoke symbols after connection
+                        if (gridData.invokeSymbols.length > 0) {
+                            signalRConnection.invoke(
+                                "SubscribeSymbols",
+                                gridData.invokeSymbols
+                            );
+                        }
+                    })
+                    .catch((e) => {
+                        alert(`Signal R Connection error : ${e}`);
+                        console.log("connectSignalR error :", e);
+                    });
+            } catch (error) {
+                console.error("SignalR connection error:", error);
+                throw error;
+            }
+        }
+        // ==================== UPDATE CELL VALUES ====================
+        function updateCellValue(cellId, value) {
+            const cellInfo = gridData.cells[cellId];
+            if (!cellInfo) return;
+            gridData.cellValues[cellId] = value;
+            cellInfo.element.textContent = value;
+            // Update dependent formulas using dependency graph - O(1) lookup
+            updateDependentFormulas(cellId);
+        }
+
+        function updateDependentFormulas(changedCellId) {
+            const dependents = gridData.dependencyGraph[changedCellId];
+            if (!dependents || dependents.length === 0) return;
+
+            // Only update cells that depend on this cell
+            for (const depCellId of dependents) {
+                evaluateAndUpdateFormula(depCellId);
+            }
+        }
+
+        function evaluateAndUpdateFormula(cellId) {
+            const cellInfo = gridData.cells[cellId];
+            if (cellInfo.type !== "formula" || !cellInfo.formula) return;
+
+            const dependentValues = {};
+            for (const depCellId of cellInfo.emitCells) {
+                dependentValues[depCellId] = gridData.cellValues[depCellId] || 0;
+            }
+
+            const result = evaluateFormula(cellInfo.formula, dependentValues);
+            gridData.cellValues[cellId] = result;
+            cellInfo.element.textContent = result;
+
+            // Cascade updates using dependency graph
+            updateDependentFormulas(cellId);
+        }
+        // ==================== HANDLE SIGNALR EVENTS ====================
+
+        function handleExcelRates(r) {
+            try {
+                const compressed = Uint8Array.from(atob(r), (c) => c.charCodeAt(0));
+                const data = JSON.parse(pako.ungzip(compressed, { to: "string" }));
+                const symbol = data.i;
+                if (!symbol) return;
+                // Update all RTD cells with this symbol
+                for (const cellId in gridData.cells) {
+                    const cellInfo = gridData.cells[cellId];
+                    if (cellInfo.type === "rtd" && cellInfo.symbol === symbol) {
+                        const fieldValue = data[cellInfo.field];
+                        if (fieldValue !== undefined && fieldValue !== null) {
+                            updateCellValue(cellId, fieldValue);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error("handleExcelRates error:", error);
+            }
+        }
+        // ==================== INITIALIZE ====================
+        document.addEventListener("DOMContentLoaded", function () {
+            collectRowsData();
+            console.log("Excel sheet initialized and ready");
+        });
+
+    </script>
+</html> 

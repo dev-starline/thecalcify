@@ -27,7 +27,7 @@ namespace CommonDatabase.Services
         private readonly IConnectionMultiplexer _redis;
         private readonly ICommonService _commonService;
         // Redis key templates (centralised for easier change)
-        private const string ClientDetailsKey = "UserDetails";
+        //private const string ClientDetailsKey = "UserDetails";
         public AuthService(AppDbContext context, IConfiguration configuration, IConnectionMultiplexer redis, ICommonService commonService)
         {
             _context = context;
@@ -70,13 +70,18 @@ namespace CommonDatabase.Services
                 var device = _context.ClientDevices
                             .FirstOrDefault(x => 
                                 x.ClientId == user.Id &&
-                                x.DeviceToken == login.DeviceToken && 
+                                //x.DeviceToken == login.DeviceToken && 
                                 x.DeviceType == login.DeviceType && 
                                 x.DeviceId == login.DeviceId
                              );
                 var clientDevices = new ClientDevices();
                 if (device == null)
                 {
+                    var deviceHistory = await _context.ClientDevices.FirstOrDefaultAsync(a => a.ClientId != user.Id && a.DeviceId == login.DeviceId);
+                    if (deviceHistory != null)
+                    {
+                        _context.ClientDevices.Remove(deviceHistory);
+                    }
                     clientDevices.ClientId = user.Id;
                     clientDevices.DeviceId = login.DeviceId;
                     clientDevices.DeviceToken = login.DeviceToken;
@@ -90,6 +95,12 @@ namespace CommonDatabase.Services
                 }
                 else
                 {
+                    var deviceHistory = await _context.ClientDevices.FirstOrDefaultAsync(a => a.ClientId != user.Id && a.DeviceId == login.DeviceId);
+                    if (deviceHistory != null)
+                    {
+                        _context.ClientDevices.Remove(deviceHistory);
+                    }
+                    device.DeviceToken = login.DeviceToken;
                     device.LastLogin = device.UpdatedDate;
                     device.UpdatedDate = DateTime.Now;
                     device.IsLogout = false;
@@ -103,7 +114,7 @@ namespace CommonDatabase.Services
             Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(user.Id, user.Username)).Wait();
 
 
-            var token = GenerateJwtToken(user.Id, user.Username, UserRole.Client, user.IsNews,user.IsRate, login.DeviceToken, user.RateExpiredDate,user.NewsExpiredDate);
+            var token = GenerateJwtToken(user.Id, user.Username, UserRole.Client, login.DeviceId, login.DeviceType, user.IsNews,user.IsRate, login.DeviceToken, user.RateExpiredDate,user.NewsExpiredDate);
             return ApiResponse.Ok(new
             {
                 Token = token,DeviceToken = login.DeviceToken,
@@ -114,8 +125,8 @@ namespace CommonDatabase.Services
 
 
 
-        private string GenerateJwtToken(int id, string userName, UserRole role, bool isNews = false,
-            bool isRate = false,string deviceToken = null,DateTime? rateExpiredDate = null,
+        private string GenerateJwtToken(int id, string userName, UserRole role, string deviceId = null, string deviceType = null, bool isNews = false,
+            bool isRate = false, string deviceToken = null, DateTime? rateExpiredDate = null,
             DateTime? newsExpiredDate = null)
         {
             var jwtSettings = _configuration.GetSection("Jwt");
@@ -140,6 +151,10 @@ namespace CommonDatabase.Services
                 claims.Add(new Claim("IsRate", isRate.ToString()));
                 if (!string.IsNullOrWhiteSpace(deviceToken))
                     claims.Add(new Claim("DeviceToken", deviceToken));
+                if (!string.IsNullOrWhiteSpace(deviceId))
+                    claims.Add(new Claim("DeviceId", deviceId));
+                if (!string.IsNullOrWhiteSpace(deviceType))
+                    claims.Add(new Claim("DeviceType", deviceType));
                 if (rateExpiredDate.HasValue)
                     claims.Add(new Claim("RateExpiredDate", rateExpiredDate.Value.ToString("o")));
                 if (newsExpiredDate.HasValue)

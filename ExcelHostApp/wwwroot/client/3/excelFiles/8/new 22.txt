@@ -1,0 +1,23 @@
+Aishhpra Gems Testing Points
+Done - 1.Open Order Me All Order Show Hone Chahiye (Coin Order Front And Admin Both Side)
+Done - 2.Coin Me Premium Me Blank Value Accept Nahi Honi Chahiye
+Done - 3.Div/Multiply Me 0 Enter Karne Par Save Nahi Hona Chahiye 
+Done - 4.Orders Searching Me Alphabet Input enter Karke Search Karne Par Admin Stop Ho Raha Hai
+Done - 5.Orders Me Trade Type Me 1 Likha Hua aa Raha Hai (All OPEN,CLOSE, DELETE)
+Done - 6.Remove Extra Filed In Excel File :- OpenOrderID, ClientID, SymbolID, Mac, Rank, IsSelected 
+Done - 7.Delete Pending Time Not working
+Done - 8.Stock Add Karne Par Save All Button Work Nahi Kar Raha
+Done - 9.Master Me Se Hedge/Kyc Page Hide Karne Par Front side Se Hide Nahi Ho Rahe
+Done - 10.GOLD And SILVER Me New Coin Add Karne Par Common Premium Zero(0) Ho Raha Hai
+11.Coin Page Design Not Proper
+Done - 12.Add Logos In Bank
+Done - 13.Coin Order Re-open Karne Par Trade From Me 1 Likha Hua Aata Hai (All OPEN,CLOSE, DELETE)
+Done - 14.Coin Me Trade Karne Par Real time Order Show Nahi Ho Rahe (Open)
+Done - 15.User Details Me Edit Button Par click Karne Par Admin Stop Ho Raha Hai
+Done - 16.Is Bill With Gst Not working
+Done - 17.Limit Edit Ke Time Margin Recount Nahi Hona Chaiye
+Done - 18.Admin Trade Me Kuchh Enter Kare Bina Save Karne PAr Admin Stop Ho Raha Hai
+Done - 19.Coin Order Close Karne Par Stock Me Add Nahi Hona Chahiye
+Done - 20.Coin Header Hide Karne Par Front Side Coin Hide Nahi Ho Rahe
+Done - 21.coin Header Name Change Nahi Ho Rahe
+Done - 22.Limit Pass Hone Ke Bad Limit Delete Nahi Honi Chahiye

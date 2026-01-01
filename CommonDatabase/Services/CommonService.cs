@@ -18,16 +18,16 @@ namespace CommonDatabase.Services
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
         private readonly IConnectionMultiplexer _redis;
-        private const string ClientDetailsKey = "UserDetails";
+        private const string UserDetailsKey = "UserDetails";
         private readonly HttpClient _httpClient;
-
+        private readonly string prefix = "";
         public CommonService(AppDbContext context, IConfiguration configuration, IConnectionMultiplexer redis, IHttpClientFactory factory)
         {
             _context = context;
             _configuration = configuration;
             _redis = redis;
             _httpClient = factory.CreateClient("MyApi");
-
+            prefix = _configuration["Redis:Prefix"];
 
         }
         public async Task GetDeviceAccessSummaryAsync(int ClientId, string Username)
@@ -91,11 +91,23 @@ namespace CommonDatabase.Services
                         }
                     ).ToList()
                 }).ToList();
-                var userDetailsRaw = await db.StringSetAsync(ClientDetailsKey, JsonSerializer.Serialize(clientDto));
+                var userDetailsRaw = await db.StringSetAsync($"{prefix}_{UserDetailsKey}", JsonSerializer.Serialize(clientDto));
                 //}
                 await _httpClient.GetAsync($"api/Publish/PublishExcelData?Username={Username}");
 
                 //return result;
+            }
+            catch (Exception ex)
+            {
+                //Log.Error(ex, "Failed to fetch device access summary for ClientId {ClientId}", ClientId);
+                //throw ex;
+            }
+        }
+        public async Task GetUserListOfSymbolAsync(int ClientId, string Username)
+        {
+            try
+            {
+                await _httpClient.GetAsync($"api/Publish/PublishUserListOfSymbol/{Username}");
             }
             catch (Exception ex)
             {

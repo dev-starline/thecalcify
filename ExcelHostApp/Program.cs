@@ -167,11 +167,53 @@ app.UseHttpsRedirection();
 
 app.UseSession();
 app.UseDefaultFiles();
+app.UseStaticFiles(); // Make sure this is present
+
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapHub<ExcelHub>("/excel");
+//app.MapHub<ExcelHub>("/excel");
+//app.UseEndpoints(endpoints =>
+//{
+//    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+//    var hubRoute = env switch
+//    {
+//        "Development" => "/dev-excel",
+//        "QA" => "/qa-excel",
+//        "Production" => "/prod-excel",
+//        _ => "/excel"
+//    };
+
+//    endpoints.MapHub<ExcelHub>(hubRoute);
+//});
+app.UseEndpoints(endpoints =>
+{
+    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+    switch (env)
+    {
+        case "Development":
+            endpoints.MapHub<ExcelHub>("/dev-excel");
+            break;
+
+        case "QA":
+            endpoints.MapHub<ExcelHub>("/qa-excel");
+            break;
+
+        case "Production":
+            // Map both routes in Production
+            endpoints.MapHub<ExcelHub>("/prod-excel");
+            endpoints.MapHub<ExcelHub>("/excel");
+            break;
+
+        default:
+            endpoints.MapHub<ExcelHub>("/excel");
+            break;
+    }
+});
+
 app.Run();

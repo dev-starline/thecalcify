@@ -26,6 +26,9 @@ namespace CommonDatabase
         public DbSet<ClientDevices> ClientDevices { get; set; }
         public DbSet<DeviceAccessRawDto> DeviceAccessRawDto { get; set; }
         public DbSet<ClientAccessModel> ClientAccessModel { get; set; }
+        public DbSet<ExcelFilePath> ExcelFilePath { get; set; }
+        public DbSet<MarketWatch> MarketWatch { get; set; }
+        public DbSet<ClientWiseInstrumentList> ClientWiseInstrumentList { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

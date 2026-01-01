@@ -27,7 +27,8 @@ namespace CommonDatabase.Services
         private readonly string _adminNodeUrl;
         private readonly string _rateAlertNodeUrl;
         private const string UserInstrumentKeyPrefix = "userInstrument:";
-        public ApplicationConstant(AppDbContext context, IConfiguration configuration, IConnectionMultiplexer redis)
+        private readonly string prefix = "";
+        public ApplicationConstant(AppDbContext context, IConfiguration configuration, IConnectionMultiplexer redis, IHttpClientFactory factory)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
@@ -35,7 +36,8 @@ namespace CommonDatabase.Services
             _adminNodeUrl = _configuration["adminNodeUrl"] ?? throw new ArgumentNullException("adminNodeUrl config is missing");
             _rateAlertNodeUrl = _configuration["rateAlertNodeUrl"] ?? throw new ArgumentNullException("rateAlertNodeUrl config is missing");
             _redisDb = _redis.GetDatabase();
-            _httpClient = new HttpClient();
+            _httpClient = factory.CreateClient("MyApi");
+            prefix = _configuration["Redis:Prefix"];
         }
 
         /// <summary>
@@ -52,7 +54,8 @@ namespace CommonDatabase.Services
         public async Task SetSelfSubscriberToRedis(SelfSubscribe s)
         {
             var json = ConvertSelfSubscriberToRedisJson(s);
-            await _redisDb.StringSetAsync(s.Identifier, json);
+            await _redisDb.StringSetAsync($"{prefix}_{s.Identifier}", json);
+            await _httpClient.GetAsync($"api/Publish/publish-subscriber?symbol={s.Identifier}&symboljson={json}");
         }
 
         public async Task RemoveSelfSubscriberFromRedis(SelfSubscribe subscriber)
@@ -161,11 +164,11 @@ namespace CommonDatabase.Services
 
                 if (IsEmptyJsonObject(jsonString))
                 {
-                    await _redisDb.KeyDeleteAsync("userInstrument");
+                    await _redisDb.KeyDeleteAsync($"{prefix}_userInstrument");
                 }
                 else
                 {
-                    await SetValueInRedisAsync("userInstrument", jsonString!);
+                    await SetValueInRedisAsync($"{prefix}_userInstrument", jsonString!);
                 }
             }
 
@@ -273,7 +276,7 @@ namespace CommonDatabase.Services
 
         public async Task<object> GetSymbolRatesByClientIdAsync(string username, int clientId)
         {
-            var userInstrumentJson = await _redisDb.StringGetAsync("userInstrument");
+            var userInstrumentJson = await _redisDb.StringGetAsync($"{prefix}_userInstrument");
             if (userInstrumentJson.IsNullOrEmpty)
                 return ApiResponse.Fail("No instruments found for this user");
 
@@ -292,6 +295,15 @@ namespace CommonDatabase.Services
 
             var identifiers = userMap[username];
             var keys = identifiers.Select(id => (RedisKey)id).ToArray();
+            for (int i = 0; i < keys.Length; i++)
+            {
+                if (keys[i] == "CDUTY")
+                {
+                    keys[i] = $"{prefix}_{keys[i]}";
+                    break;
+                }
+            }
+
             var values = await _redisDb.StringGetAsync(keys);
             var dbInstruments = (
                                     await _context.Instruments.Where(i => 
@@ -337,7 +349,9 @@ namespace CommonDatabase.Services
         {
             return System.Text.Json.JsonSerializer.Serialize(new
             {
-                n = s.Name,i = s.Identifier,b = s.Bid,a = s.Ask,ltp = s.Ltp,h = s.High,l = s.Low,t = s.Mdate?.ToString("hh:mm:ss tt"),o = s.Open,c = s.Close,
+                n = s.Name,i = s.Identifier,b = s.Bid,a = s.Ask,ltp = s.Ltp,h = s.High,l = s.Low,
+                t = new DateTimeOffset(s.Mdate.Value).ToUnixTimeSeconds(),
+                o = s.Open,c = s.Close,
                 d = "--",v = "SELF"
             });
         }
@@ -362,7 +376,7 @@ namespace CommonDatabase.Services
                 IDatabase db = _redis.GetDatabase();
 
                 // Expect per-user redis key like "userInstrument:someuser". 
-                var userInstrumentKey = UserInstrumentKeyPrefix + username;
+                var userInstrumentKey = $"{prefix}_{UserInstrumentKeyPrefix}" + username;
                 var userInstrumentJson = await db.StringGetAsync(userInstrumentKey);
                 if (userInstrumentJson.IsNullOrEmpty)
                     return ApiResponse.Fail("No instruments found for this user in redis");

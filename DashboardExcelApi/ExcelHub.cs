@@ -4,6 +4,7 @@ using CommonDatabase.Models;
 using FirebaseAdmin.Messaging;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -12,6 +13,7 @@ using System.Collections.Concurrent;
 using System.IO.Compression;
 using System.Text;
 using System.Text.RegularExpressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace DashboardExcelApi
 {
@@ -39,7 +41,7 @@ namespace DashboardExcelApi
             public DateTime ConnectedAt { get; set; }
             public string Room { get; set; } = string.Empty;
         }
-
+        private readonly IConfiguration _configuration;
         // Shared connections map (thread-safe)
         private static readonly ConcurrentDictionary<string, ConnectionMetadata> ActiveConnections = new();
         private static readonly ConcurrentDictionary<string, List<string>> ConnectionGroups = new();
@@ -48,18 +50,21 @@ namespace DashboardExcelApi
         private readonly ILogger<ExcelHub> _logger;
 
         // Redis key templates (centralised for easier change)
-        private const string ClientDetailsKey = "clientDetails"; 
+        private readonly string prefix = "";
+        //private const string ClientDetailsKey = "clientDetails"; 
         private const string UserInstrumentKeyPrefix = "userInstrument:"; 
         private const string UserDetailsKey = "UserDetails";
         private readonly ConnectionStore _store;
 
 
-        public ExcelHub(IConnectionMultiplexer redis, AppDbContext context, ILogger<ExcelHub> logger, ConnectionStore store)
+        public ExcelHub(IConnectionMultiplexer redis, AppDbContext context, ILogger<ExcelHub> logger, ConnectionStore store, IConfiguration configuration)
         {
             _redis = redis ?? throw new ArgumentNullException(nameof(redis));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _store = store;
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            prefix = _configuration["Redis:Prefix"];
         }
 
 
@@ -106,6 +111,8 @@ namespace DashboardExcelApi
         {
             try
             {
+                var groupName = GroupNameResolver.Resolve(room);
+
                 var connectionId = Context.ConnectionId;
 
                 // Remove from old room
@@ -117,26 +124,63 @@ namespace DashboardExcelApi
                     }
                 }
 
-                await Groups.AddToGroupAsync(Context.ConnectionId, room);
+                await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
                 ConnectionGroups.AddOrUpdate(
                     Context.ConnectionId,
-                    new List<string> { room },
-                    (_, existing) => { existing.Add(room); return existing; }
+                    new List<string> { groupName },
+                    (_, existing) => { existing.Add(groupName); return existing; }
                 );
 
-                _store.Add(room, Context.ConnectionId);
+                _store.Add(groupName, Context.ConnectionId);
 
                 IDatabase db = _redis.GetDatabase();
-                var userDetailsRaw = await db.StringGetAsync(UserDetailsKey);
+                var userDetailsRaw = await db.StringGetAsync($"{prefix}_{UserDetailsKey}");
 
                 var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
-                await Clients.Group(room).SendAsync(
+                await Clients.Group(groupName).SendAsync(
                     "ReceiveMessage", 
                     new { 
                         status = userList.Exists(x => x.Username == room), 
                         data = userList.Where(x => x.Username == room) 
-                }
+                    }
                 );
+                int ClientId = await _context.Client.Where(x => x.Username == room).Select(x => x.Id).FirstOrDefaultAsync();
+                ////var identifiers = await _context.Instruments
+                ////        .Where(a => a.ClientId == ClientId && a.IsMapped)
+                ////        .Select(a => new { i = a.Identifier, n = a.Contract })
+                ////        .ToListAsync();
+                //var identifiers = await ( from d in
+                //                    (from s in _context.Subscribe 
+                //                  join i in _context.Instruments
+                //                  on s.Identifier equals i.Identifier
+                //                  where i.IsMapped == true 
+                //                  select new { c= i.ClientId, i = i.Identifier, n = i.Contract }) 
+                //                   join c in _context.Client
+                //                        on d.c equals c.Id
+                //                          where c.Id == ClientId
+                //                          select new { i = d.i, n = d.n }
+
+                //                  ).ToListAsync();
+
+                ////var identifierList = (from d in identifiers 
+                ////                     join c in _context.Client
+                ////                        on d.c equals c.Id
+                ////                    where c.Id == ClientId
+                ////                     select new {  i = d.i, n = d.n }).ToList();
+                ////string listOfSymbol = string.Join(",", identifiers);
+                ///
+                // var rawUserResults = await _context.ClientWiseInstrumentList
+                //.FromSqlRaw(
+                //    "EXEC dbo.usp_ClientWiseInstumentList @ClientId", ClientId
+                //)
+                //.ToListAsync();
+                var rawUserResults = await _context.ClientWiseInstrumentList
+                 .FromSqlInterpolated($"EXEC dbo.usp_ClientWiseInstumentList {ClientId}")
+                 .ToListAsync();
+
+
+                var identifiers = rawUserResults.OrderBy(x => x.RowId).Select(r => new { i = r.Identifier, n = r.Contract }).ToList();
+                await Clients.Group(groupName).SendAsync("UserListOfSymbol", identifiers);
             }
             catch (Exception ex)
                 {
@@ -149,14 +193,30 @@ namespace DashboardExcelApi
         {
             try
             {
-                var connId = Context.ConnectionId;
-                _store.Add(room, Context.ConnectionId);
+                var groupName = GroupNameResolver.Resolve(room);
+                var connectionId = Context.ConnectionId;
+
+                //// Remove from old room
+                if (ConnectionGroups.TryRemove(connectionId, out var groups))
+                {
+                    foreach (var group in groups.Distinct())
+                    {
+                        await Groups.RemoveFromGroupAsync(connectionId, group);
+                    }
+                }
+
+                await Groups.AddToGroupAsync(Context.ConnectionId, $"{groupName}_{deviceId}" );
+                ConnectionGroups.AddOrUpdate(
+                    Context.ConnectionId,
+                    new List<string> { $"{groupName}_{deviceId}" },
+                    (_, existing) => { existing.Add($"{groupName}_{deviceId}"); return existing; }
+                );
 
                 IDatabase db = _redis.GetDatabase();
-                var userDetailsRaw = await db.StringGetAsync(UserDetailsKey);
+                var userDetailsRaw = await db.StringGetAsync($"{prefix}_{UserDetailsKey}");
 
                 var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
-                await Clients.Client(connId).SendAsync(
+                await Clients.Client(connectionId).SendAsync(
                     "ReceiveMessage",
                     new
                     {
@@ -184,29 +244,37 @@ namespace DashboardExcelApi
             }
         }
         public async Task GetAllClient()
-                {
+        {
             try
-                {
+            {
+                var groupName = GroupNameResolver.Resolve("CalcifyAllClient");
                 var connId = Context.ConnectionId;
                 IDatabase db = _redis.GetDatabase();
-                var userDetailsRaw = await db.StringGetAsync(UserDetailsKey);
-                _store.Add("AllClient", Context.ConnectionId);
-                var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
-                //await Clients.Client(connId).SendAsync(
-                //    "ReceiveAllClient", 
-                //    new { 
-                //        status = true, 
-                //        data = userList.Select(x => new { x.Id, x.Username }) 
-                //    }
-                //);
-                await Clients.All.SendAsync(
-                   "ReceiveAllClient",
-                   new
+                var userDetailsRaw = await db.StringGetAsync($"{prefix}_{UserDetailsKey}");
+                //_store.Add("AllClient", Context.ConnectionId);
+                //// Remove from old room
+                if (ConnectionGroups.TryRemove(connId, out var groups))
                 {
+                    foreach (var group in groups.Distinct())
+                    {
+                        await Groups.RemoveFromGroupAsync(connId, group);
+                    }
+                }
+                await Groups.AddToGroupAsync(connId, groupName);
+                ConnectionGroups.AddOrUpdate(
+                    Context.ConnectionId,
+                    new List<string> { groupName },
+                    (_, existing) => { existing.Add(groupName); return existing; }
+                );
+                var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
+                await Clients.Group(groupName).SendAsync(
+                    "ReceiveAllClient",
+                    new
+                    {
                        status = true,
                        data = userList.Select(x => new { x.Id, x.Username })
-                }
-               );
+                    }
+                );
             }
             catch (Exception ex)
             {
@@ -215,7 +283,33 @@ namespace DashboardExcelApi
             }
         }
 
-
+        public async Task SymbolLastTick(List<string> symbols)
+        {
+            try
+            {
+                var connId = Context.ConnectionId;
+                IDatabase db = _redis.GetDatabase();
+                foreach (var symbol in symbols)
+                {
+                    var symbolData = "";
+                    if (symbol == "CDUTY")
+                    {
+                        symbolData = await db.StringGetAsync($"{prefix}_{symbol}");
+                    }
+                    else
+                    {
+                        symbolData = await db.StringGetAsync(symbol);
+                    }
+                    
+                    await Clients.Client(connId).SendAsync("excelRate", Compress(symbolData));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in Client() method");
+                await Clients.Caller.SendAsync("error", "Something went wrong while processing your request.");
+            }
+        }
         public async Task SubscribeSymbols(List<string> symbols)
         {
             if (symbols == null || symbols.Count == 0)
@@ -249,7 +343,7 @@ namespace DashboardExcelApi
 
                 int clientId = client.Id;
                 IDatabase db = _redis.GetDatabase();               
-                var userInstrumentKey = UserInstrumentKeyPrefix + username;
+                var userInstrumentKey = $"{prefix}_{UserInstrumentKeyPrefix}" + username;
                 var userInstrumentJson = await db.StringGetAsync(userInstrumentKey);
                 if (userInstrumentJson.IsNullOrEmpty)
                     return ApiResponse.Fail("No instruments found for this user in redis");
