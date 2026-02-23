@@ -39,6 +39,7 @@
   <ItemGroup>
     <Folder Include="Controllers\" />
     <Folder Include="db\dev\" />
+    <Folder Include="wwwroot\sheets\" />
   </ItemGroup>
 
 </Project>
