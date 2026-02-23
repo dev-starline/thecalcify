@@ -365,7 +365,10 @@ FodyWeavers.xsd
 # Build artifacts
 bin/
 obj/
+
+# wwwroot exclusions
 wwwroot/sheets/
+
 
 # Visual Studio
 .vs/
