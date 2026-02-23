@@ -1,5 +1,6 @@
 ﻿using CommonDatabase;
 using CommonDatabase.DTO;
+using CommonDatabase.Enum;
 using CommonDatabase.Models;
 using FirebaseAdmin.Messaging;
 using Microsoft.AspNetCore.SignalR;
@@ -45,7 +46,7 @@ namespace DashboardExcelApi
         // Shared connections map (thread-safe)
         private static readonly ConcurrentDictionary<string, ConnectionMetadata> ActiveConnections = new();
         private static readonly ConcurrentDictionary<string, List<string>> ConnectionGroups = new();
-        private readonly IConnectionMultiplexer _redis;
+        //private readonly IConnectionMultiplexer _redis;
         private readonly AppDbContext _context;
         private readonly ILogger<ExcelHub> _logger;
 
@@ -55,16 +56,19 @@ namespace DashboardExcelApi
         private const string UserInstrumentKeyPrefix = "userInstrument:"; 
         private const string UserDetailsKey = "UserDetails";
         private readonly ConnectionStore _store;
+        private readonly HubNotifier _hubNotifier;
+        private readonly IDatabase _db;
 
-
-        public ExcelHub(IConnectionMultiplexer redis, AppDbContext context, ILogger<ExcelHub> logger, ConnectionStore store, IConfiguration configuration)
+        public ExcelHub(IConnectionMultiplexer redis, AppDbContext context, ILogger<ExcelHub> logger, ConnectionStore store, IConfiguration configuration, HubNotifier hubNotifier)
         {
-            _redis = redis ?? throw new ArgumentNullException(nameof(redis));
+            //_redis = redis ?? throw new ArgumentNullException(nameof(redis));
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _store = store;
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             prefix = _configuration["Redis:Prefix"];
+            _hubNotifier = hubNotifier;
+            _db = redis.GetDatabase();
         }
 
 
@@ -81,18 +85,8 @@ namespace DashboardExcelApi
             var connectionId = Context?.ConnectionId;
             if (!string.IsNullOrEmpty(connectionId))
             {
-                //ActiveConnections.TryRemove(connectionId, out _);
-                // Remove from in-memory group
-                if (ConnectionGroups.TryRemove(connectionId, out var groups))
-                {
-                    foreach (var group in groups.Distinct())
-                    {
-                        await Groups.RemoveFromGroupAsync(connectionId, group);
-                    }
-
-                }
-
-                await Clients.All.SendAsync("UserDisconnected", Context.ConnectionId);
+                await _hubNotifier.RemoveAllGroupsAsync(ConnectionGroups, Groups, Context.ConnectionId);
+                await _hubNotifier.SendToAllAsync(HubMethodName.UserDisconnected, Context.ConnectionId);
             }
 
             await base.OnDisconnectedAsync(ex);
@@ -103,7 +97,7 @@ namespace DashboardExcelApi
             _logger.LogInformation($"Connected: {Context.ConnectionId}");
             _store.RemoveByConnection(Context.ConnectionId);
 
-            await Clients.Client(Context.ConnectionId).SendAsync("UserConnected", Context.ConnectionId);
+            await _hubNotifier.SendToClientAsync(Context.ConnectionId, HubMethodName.UserConnected, Context.ConnectionId);
             await base.OnConnectedAsync();
         }
 
@@ -112,80 +106,52 @@ namespace DashboardExcelApi
             try
             {
                 var groupName = GroupNameResolver.Resolve(room);
-
                 var connectionId = Context.ConnectionId;
 
-                // Remove from old room
-                if (ConnectionGroups.TryRemove(connectionId, out var groups))
+                await _hubNotifier.RemoveAllGroupsAsync(ConnectionGroups, Groups, connectionId);
+                await _hubNotifier.AddConnectionToGroupAsync(Context, groupName);
+                await _hubNotifier.AddOrUpdateGroup(ConnectionGroups, connectionId, groupName);
+                _store.Add(groupName, connectionId);
+
+                var userDetailsRaw = await _db.StringGetAsync($"{prefix}_{UserDetailsKey}");
+                var userList = string.IsNullOrEmpty(userDetailsRaw)
+                    ? new List<ClientDto>()
+                    : JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw);
+
+                var clientDevices = new
                 {
-                    foreach (var group in groups.Distinct())
-                    {
-                        await Groups.RemoveFromGroupAsync(connectionId, group);
-                    }
+                    status = userList.Exists(x => x.Username == room),
+                    data = userList.Where(x => x.Username == room)
+                };
+
+                await _hubNotifier.SendToGroupAsync(groupName, HubMethodName.ReceiveMessage, clientDevices);
+
+                int clientId = await _context.Client
+                    .Where(x => x.Username == room)
+                    .Select(x => x.Id)
+                    .FirstOrDefaultAsync();
+
+                if (clientId == 0)
+                {
+                    await _hubNotifier.SendToCallerAsync(Context, HubMethodName.Error, "Client not found.");
+                    return;
                 }
 
-                await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
-                ConnectionGroups.AddOrUpdate(
-                    Context.ConnectionId,
-                    new List<string> { groupName },
-                    (_, existing) => { existing.Add(groupName); return existing; }
-                );
-
-                _store.Add(groupName, Context.ConnectionId);
-
-                IDatabase db = _redis.GetDatabase();
-                var userDetailsRaw = await db.StringGetAsync($"{prefix}_{UserDetailsKey}");
-
-                var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
-                await Clients.Group(groupName).SendAsync(
-                    "ReceiveMessage", 
-                    new { 
-                        status = userList.Exists(x => x.Username == room), 
-                        data = userList.Where(x => x.Username == room) 
-                    }
-                );
-                int ClientId = await _context.Client.Where(x => x.Username == room).Select(x => x.Id).FirstOrDefaultAsync();
-                ////var identifiers = await _context.Instruments
-                ////        .Where(a => a.ClientId == ClientId && a.IsMapped)
-                ////        .Select(a => new { i = a.Identifier, n = a.Contract })
-                ////        .ToListAsync();
-                //var identifiers = await ( from d in
-                //                    (from s in _context.Subscribe 
-                //                  join i in _context.Instruments
-                //                  on s.Identifier equals i.Identifier
-                //                  where i.IsMapped == true 
-                //                  select new { c= i.ClientId, i = i.Identifier, n = i.Contract }) 
-                //                   join c in _context.Client
-                //                        on d.c equals c.Id
-                //                          where c.Id == ClientId
-                //                          select new { i = d.i, n = d.n }
-
-                //                  ).ToListAsync();
-
-                ////var identifierList = (from d in identifiers 
-                ////                     join c in _context.Client
-                ////                        on d.c equals c.Id
-                ////                    where c.Id == ClientId
-                ////                     select new {  i = d.i, n = d.n }).ToList();
-                ////string listOfSymbol = string.Join(",", identifiers);
-                ///
-                // var rawUserResults = await _context.ClientWiseInstrumentList
-                //.FromSqlRaw(
-                //    "EXEC dbo.usp_ClientWiseInstumentList @ClientId", ClientId
-                //)
-                //.ToListAsync();
                 var rawUserResults = await _context.ClientWiseInstrumentList
-                 .FromSqlInterpolated($"EXEC dbo.usp_ClientWiseInstumentList {ClientId}")
-                 .ToListAsync();
+                    .FromSqlInterpolated($"EXEC dbo.usp_ClientWiseInstumentList {clientId}")
+                    .ToListAsync();
 
+                var identifiers = rawUserResults
+                    .OrderBy(x => x.RowId)
+                    .Select(r => new { i = r.Identifier, n = r.Contract, sc = r.SubContract })
+                    .ToList();
 
-                var identifiers = rawUserResults.OrderBy(x => x.RowId).Select(r => new { i = r.Identifier, n = r.Contract }).ToList();
-                await Clients.Group(groupName).SendAsync("UserListOfSymbol", identifiers);
+                await _hubNotifier.SendToGroupAsync(groupName, HubMethodName.UserListOfSymbol, identifiers);
             }
             catch (Exception ex)
-                {
+            {
                 _logger.LogError(ex, "Error in Client() method");
-                await Clients.Caller.SendAsync("error", "Something went wrong while processing your request.");
+                await _hubNotifier.SendToCallerAsync(Context, HubMethodName.Error, "Something went wrong while processing your request.");
             }
         }
 
@@ -196,51 +162,44 @@ namespace DashboardExcelApi
                 var groupName = GroupNameResolver.Resolve(room);
                 var connectionId = Context.ConnectionId;
 
-                //// Remove from old room
-                if (ConnectionGroups.TryRemove(connectionId, out var groups))
+                // Remove all groups for this connection
+                await _hubNotifier.RemoveAllGroupsAsync(ConnectionGroups, Groups, connectionId);
+
+                // Add to device-specific group
+                var deviceGroup = $"{groupName}_{deviceId}";
+                await _hubNotifier.AddConnectionToGroupAsync(Context, deviceGroup);
+                await _hubNotifier.AddOrUpdateGroup(ConnectionGroups, connectionId, deviceGroup);
+
+                // Load user details from Redis
+                var userDetailsRaw = await _db.StringGetAsync($"{prefix}_{UserDetailsKey}");
+                var userList = string.IsNullOrEmpty(userDetailsRaw)
+                    ? new List<ClientDto>()
+                    : JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw);
+
+                var clientDevices = new
                 {
-                    foreach (var group in groups.Distinct())
+                    status = userList.Exists(x => x.Username == room),
+                    data = userList
+                    .Where(x => x.Username == room)
+                    .Select(y => new
                     {
-                        await Groups.RemoveFromGroupAsync(connectionId, group);
-                    }
-                }
+                        y.RateExpireDate,
+                        y.NewsExpireDate,
+                        y.Username,
+                        y.Keywords,
+                        DeviceAccess = y.DeviceAccess.FirstOrDefault(i => i.DeviceId == deviceId),
+                        y.IsActive,
+                        y.Id,
+                        y.Topics
+                    })
+                };
 
-                await Groups.AddToGroupAsync(Context.ConnectionId, $"{groupName}_{deviceId}" );
-                ConnectionGroups.AddOrUpdate(
-                    Context.ConnectionId,
-                    new List<string> { $"{groupName}_{deviceId}" },
-                    (_, existing) => { existing.Add($"{groupName}_{deviceId}"); return existing; }
-                );
-
-                IDatabase db = _redis.GetDatabase();
-                var userDetailsRaw = await db.StringGetAsync($"{prefix}_{UserDetailsKey}");
-
-                var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
-                await Clients.Client(connectionId).SendAsync(
-                    "ReceiveMessage",
-                    new
-                    {
-                        status = userList.Exists(x => x.Username == room),
-                        data = userList
-                                .Where(x => x.Username == room)
-                                .Select(y => new
-                                {
-                                    RateExpireDate = y.RateExpireDate,
-                                    NewsExpireDate = y.NewsExpireDate,
-                                    Username = y.Username,
-                                    Keywords = y.Keywords,
-                                    DeviceAccess = y.DeviceAccess.Where(i => i.DeviceId == deviceId),
-                                    IsActive = y.IsActive,
-                                    Id = y.Id,
-                                    Topics = y.Topics
-                                })
-                    }
-                );
+                await _hubNotifier.SendToClientAsync(connectionId, HubMethodName.ReceiveMessage, clientDevices);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in Client() method");
-                await Clients.Caller.SendAsync("error", "Something went wrong while processing your request.");
+                _logger.LogError(ex, "Error in ClientWithDevice() method");
+                await _hubNotifier.SendToCallerAsync(Context, HubMethodName.Error, "Something went wrong while processing your request.");
             }
         }
         public async Task GetAllClient()
@@ -249,65 +208,59 @@ namespace DashboardExcelApi
             {
                 var groupName = GroupNameResolver.Resolve("CalcifyAllClient");
                 var connId = Context.ConnectionId;
-                IDatabase db = _redis.GetDatabase();
-                var userDetailsRaw = await db.StringGetAsync($"{prefix}_{UserDetailsKey}");
-                //_store.Add("AllClient", Context.ConnectionId);
-                //// Remove from old room
-                if (ConnectionGroups.TryRemove(connId, out var groups))
+
+                // Remove all groups for this connection
+                await _hubNotifier.RemoveAllGroupsAsync(ConnectionGroups, Groups, connId);
+
+                // Add to group
+                await _hubNotifier.AddConnectionToGroupAsync(Context, groupName);
+                await _hubNotifier.AddOrUpdateGroup(ConnectionGroups, connId, groupName);
+
+                // Load user details from Redis
+                var userDetailsRaw = await _db.StringGetAsync($"{prefix}_{UserDetailsKey}");
+                var userList = string.IsNullOrEmpty(userDetailsRaw)
+                    ? new List<ClientDto>()
+                    : JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw);
+
+                var clientDevices = new
                 {
-                    foreach (var group in groups.Distinct())
-                    {
-                        await Groups.RemoveFromGroupAsync(connId, group);
-                    }
-                }
-                await Groups.AddToGroupAsync(connId, groupName);
-                ConnectionGroups.AddOrUpdate(
-                    Context.ConnectionId,
-                    new List<string> { groupName },
-                    (_, existing) => { existing.Add(groupName); return existing; }
-                );
-                var userList = JsonConvert.DeserializeObject<List<ClientDto>>(userDetailsRaw!);
-                await Clients.Group(groupName).SendAsync(
-                    "ReceiveAllClient",
-                    new
-                    {
-                       status = true,
-                       data = userList.Select(x => new { x.Id, x.Username })
-                    }
-                );
+                    status = userList.Any(),
+                    data = userList.Select(x => new { x.Id, x.Username })
+                };
+
+                await _hubNotifier.SendToGroupAsync(groupName, HubMethodName.ReceiveAllClient, clientDevices);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error in Client() method");
-                await Clients.Caller.SendAsync("error", "Something went wrong while processing your request.");
+                _logger.LogError(ex, "Error in GetAllClient() method");
+                await _hubNotifier.SendToCallerAsync(Context, HubMethodName.Error, "Something went wrong while processing your request.");
             }
         }
 
         public async Task SymbolLastTick(List<string> symbols)
         {
+            var connId = Context.ConnectionId;
             try
             {
-                var connId = Context.ConnectionId;
-                IDatabase db = _redis.GetDatabase();
                 foreach (var symbol in symbols)
                 {
                     var symbolData = "";
                     if (symbol == "CDUTY")
                     {
-                        symbolData = await db.StringGetAsync($"{prefix}_{symbol}");
+                        symbolData = await _db.StringGetAsync($"{prefix}_{symbol}");
                     }
                     else
                     {
-                        symbolData = await db.StringGetAsync(symbol);
+                        symbolData = await _db.StringGetAsync(symbol);
                     }
-                    
-                    await Clients.Client(connId).SendAsync("excelRate", Compress(symbolData));
+
+                    await _hubNotifier.SendToClientAsync(connId, HubMethodName.excelRate, Compress(symbolData));
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error in Client() method");
-                await Clients.Caller.SendAsync("error", "Something went wrong while processing your request.");
+                await _hubNotifier.SendToCallerAsync(Context, HubMethodName.Error, "Something went wrong while processing your request.");
             }
         }
         public async Task SubscribeSymbols(List<string> symbols)
@@ -317,14 +270,14 @@ namespace DashboardExcelApi
 
             foreach (var symbol in symbols.Where(s => !string.IsNullOrWhiteSpace(s)))
             {
-                await Groups.AddToGroupAsync(Context.ConnectionId, symbol.Trim());
+                await _hubNotifier.AddConnectionToGroupAsync(Context, symbol.Trim());
             }
         }
 
         public async Task SubscribeUsers(string user)
         {
             if (string.IsNullOrWhiteSpace(user)) return;
-            await Groups.AddToGroupAsync(Context.ConnectionId, user.Trim());
+            await _hubNotifier.AddConnectionToGroupAsync(Context, user.Trim());
         }
 
         /// <summary>
@@ -342,9 +295,8 @@ namespace DashboardExcelApi
                     return ApiResponse.Fail("Client not found");
 
                 int clientId = client.Id;
-                IDatabase db = _redis.GetDatabase();               
                 var userInstrumentKey = $"{prefix}_{UserInstrumentKeyPrefix}" + username;
-                var userInstrumentJson = await db.StringGetAsync(userInstrumentKey);
+                var userInstrumentJson = await _db.StringGetAsync(userInstrumentKey);
                 if (userInstrumentJson.IsNullOrEmpty)
                     return ApiResponse.Fail("No instruments found for this user in redis");
                 Dictionary<string, List<string>>? userMap;
@@ -367,7 +319,7 @@ namespace DashboardExcelApi
 
                 
                 var keys = identifiers.Select(id => (RedisKey)id).ToArray();
-                var values = await db.StringGetAsync(keys);
+                var values = await _db.StringGetAsync(keys);
               
                 var dbInstruments = await _context.Instruments.Where(i => i.ClientId == clientId && identifiers.Contains(i.Identifier) && i.IsMapped)
                     .Select(i => new SubscribeInstrumentView { Identifier = i.Identifier, Contract = i.Contract }).ToListAsync();

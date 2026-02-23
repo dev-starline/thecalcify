@@ -34,6 +34,8 @@ namespace CommonDatabase.Models
         public DateTime? UpdateDate { get; set; } = DateTime.UtcNow;
         public string Topics { get; set; } = "";
         public string Keywords { get; set; } = "";
+        public string Puid { get; set; } = "0";
+        public int SubClientLimit { get; set; }
     }
 
     public class ClientDetailsDto

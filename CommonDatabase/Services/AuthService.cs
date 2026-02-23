@@ -26,8 +26,6 @@ namespace CommonDatabase.Services
         private readonly IConfiguration _configuration;
         private readonly IConnectionMultiplexer _redis;
         private readonly ICommonService _commonService;
-        // Redis key templates (centralised for easier change)
-        //private const string ClientDetailsKey = "UserDetails";
         public AuthService(AppDbContext context, IConfiguration configuration, IConnectionMultiplexer redis, ICommonService commonService)
         {
             _context = context;
@@ -49,7 +47,6 @@ namespace CommonDatabase.Services
 
         public async Task<ApiResponse> ValidateClientLogin(ClientAuth login)
         {
-            //var user = await _context.Client.FirstOrDefaultAsync(u => u.Username == login.Username);
             var user = await _context.Client.FromSqlInterpolated($@"
                                 SELECT * FROM Client 
                                 WHERE Username = {login.Username} COLLATE Latin1_General_CS_AS")
@@ -65,23 +62,36 @@ namespace CommonDatabase.Services
                 return ApiResponse.Fail("User is not active");
             }
 
+            if (user.Puid != null && user.Puid != "0")
+            {
+                var Puid = user.Puid.Split("~").Select(int.Parse).ToList();
+                var isParentActive = await _context.Client
+                                    .AnyAsync(c => Puid.Contains(c.Id) && !c.IsActive);
+                if (isParentActive)
+                {
+                    return ApiResponse.Fail("Parent id is not active");
+                }
+            }
+
             if (!string.IsNullOrWhiteSpace(login.DeviceToken))
             {
                 var device = _context.ClientDevices
                             .FirstOrDefault(x => 
                                 x.ClientId == user.Id &&
-                                //x.DeviceToken == login.DeviceToken && 
-                                x.DeviceType == login.DeviceType && 
+                                x.DeviceType == login.DeviceType &&
                                 x.DeviceId == login.DeviceId
                              );
                 var clientDevices = new ClientDevices();
+                var deviceHistory = await _context.ClientDevices.Where(a => (a.ClientId != user.Id && a.DeviceId == login.DeviceId) || (a.ClientId == user.Id && a.DeviceId != login.DeviceId)).ToListAsync();
+                if (deviceHistory != null)
+                {
+                    await _context.ClientDevices.Where(a => (a.ClientId != user.Id && a.DeviceId == login.DeviceId) || (a.ClientId == user.Id && a.DeviceId != login.DeviceId))
+                             .ExecuteUpdateAsync(setters => setters
+                                  .SetProperty(n => n.IsLogout, true)
+                                  .SetProperty(b => b.UpdatedDate, b => DateTime.Now));
+                }
                 if (device == null)
                 {
-                    var deviceHistory = await _context.ClientDevices.FirstOrDefaultAsync(a => a.ClientId != user.Id && a.DeviceId == login.DeviceId);
-                    if (deviceHistory != null)
-                    {
-                        _context.ClientDevices.Remove(deviceHistory);
-                    }
                     clientDevices.ClientId = user.Id;
                     clientDevices.DeviceId = login.DeviceId;
                     clientDevices.DeviceToken = login.DeviceToken;
@@ -91,15 +101,10 @@ namespace CommonDatabase.Services
                     clientDevices.LastLogin = DateTime.Now;
                     clientDevices.IsActive = true;
                     clientDevices.IsDND = false;
-                    _context.ClientDevices.AddAsync(clientDevices);
+                    await _context.ClientDevices.AddAsync(clientDevices);
                 }
                 else
                 {
-                    var deviceHistory = await _context.ClientDevices.FirstOrDefaultAsync(a => a.ClientId != user.Id && a.DeviceId == login.DeviceId);
-                    if (deviceHistory != null)
-                    {
-                        _context.ClientDevices.Remove(deviceHistory);
-                    }
                     device.DeviceToken = login.DeviceToken;
                     device.LastLogin = device.UpdatedDate;
                     device.UpdatedDate = DateTime.Now;
@@ -110,9 +115,7 @@ namespace CommonDatabase.Services
                 await _context.SaveChangesAsync();
             }
             
-            //await GetDeviceAccessSummaryAsync(user.Id);
             Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(user.Id, user.Username)).Wait();
-
 
             var token = GenerateJwtToken(user.Id, user.Username, UserRole.Client, login.DeviceId, login.DeviceType, user.IsNews,user.IsRate, login.DeviceToken, user.RateExpiredDate,user.NewsExpiredDate);
             return ApiResponse.Ok(new
@@ -122,8 +125,6 @@ namespace CommonDatabase.Services
                 expireTime = user.RateExpiredDate ?? new DateTime(2025, 10, 20, 0, 0, 0),
             }, "Login successful");
         }
-
-
 
         private string GenerateJwtToken(int id, string userName, UserRole role, string deviceId = null, string deviceType = null, bool isNews = false,
             bool isRate = false, string deviceToken = null, DateTime? rateExpiredDate = null,
@@ -184,8 +185,10 @@ namespace CommonDatabase.Services
                 return ApiResponse.Ok("Device not found.");
             }
             var client = await _context.Client.FirstOrDefaultAsync(a => a.Id == request.UserId);
-            _context.ClientDevices.Remove(device);
-            await _context.SaveChangesAsync();
+            await _context.ClientDevices.Where(b => b.ClientId == request.UserId && b.DeviceId == request.DeviceId)
+                          .ExecuteUpdateAsync(setters => setters
+                               .SetProperty(n => n.IsLogout, true)
+                               .SetProperty(b => b.UpdatedDate, b => DateTime.Now));
             Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(request.UserId, client.Username)).Wait();
             return ApiResponse.Ok( "Logout successful.");
         }
@@ -198,7 +201,6 @@ namespace CommonDatabase.Services
                 return ApiResponse.Ok("Device not found.");
             }
             var client = await _context.Client.FirstOrDefaultAsync(a => a.Id == status.UserId);
-            //_context.ClientDevices.Remove(device);
             device.UpdatedDate = DateTime.Now;
             device.IsDND = status.IsDND;
             _context.Attach(device);
@@ -216,7 +218,6 @@ namespace CommonDatabase.Services
                 return ApiResponse.Ok("Device not found.");
             }
             var client = await _context.Client.FirstOrDefaultAsync(a => a.Id == status.UserId);
-            //_context.ClientDevices.Remove(device);
             device.UpdateDate = DateTime.Now;
             if (status.IsTopic)
             {
@@ -238,8 +239,7 @@ namespace CommonDatabase.Services
             else
             {
                 return ApiResponse.Ok("Keywords updated successful.");
-            }
-            
+            } 
         }
     }
 }

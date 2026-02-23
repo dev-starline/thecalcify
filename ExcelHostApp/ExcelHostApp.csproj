@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\client\**" />
+    <Content Remove="wwwroot\client\**" />
+    <EmbeddedResource Remove="wwwroot\client\**" />
+    <None Remove="wwwroot\client\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="FirebaseAdmin" Version="3.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.5" />
@@ -31,7 +38,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-    <Folder Include="wwwroot\client\" />
+    <Folder Include="db\dev\" />
   </ItemGroup>
 
 </Project>

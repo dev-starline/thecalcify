@@ -18,8 +18,10 @@ namespace CommonDatabase.Models
 
         public int ClientId { get; set; }
 
-        [Precision(18, 6)]
+        
         [Required]
+        [Precision(18, 6)]
+        [Range(typeof(decimal), "0", "999999999999.999999", ErrorMessage = "{0} is out of range. Allowed range: {1} to {2}.")]
         public decimal Rate { get; set; }
 
         [Required]

@@ -89,7 +89,7 @@ builder.Services.AddHostedService<SubscribeRate>();
 builder.Services.AddSingleton<IJwtBlacklistService, JwtBlacklistService>();
 builder.Services.AddScoped<ICommonService, CommonService>();
 builder.Services.AddSingleton<ConnectionStore>();
-
+builder.Services.AddScoped<HubNotifier>();
 builder.Services.AddOpenApi();
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);

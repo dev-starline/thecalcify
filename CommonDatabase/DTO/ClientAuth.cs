@@ -55,6 +55,9 @@ namespace CommonDatabase.DTO
         public DateTime RateExpireDate { get; set; }
         public string Topics { get; set; }
         public string Keywords { get; set; }
+        public bool IsParent { get; set; }
+        public int SubClientLimit { get; set; } = 0;
+        public int PendingSubClient { get; set; } = 0;
         public List<DeviceAccessDto> DeviceAccess { get; set; }
     }
     public class DeviceAccessDto
@@ -92,6 +95,9 @@ namespace CommonDatabase.DTO
         public DateTime RateExpiredDate { get; set; }
         public string Topics { get; set; }
         public string Keywords { get; set; }
+        public bool IsParent { get; set; }
+        public int SubClientLimit { get; set; } = 0;
+        public int PendingSubClient { get; set; } = 0;
     }
     public class LogoutRequest
     {
@@ -121,6 +127,7 @@ namespace CommonDatabase.DTO
         public string Username { get; set; }
         public string Identifier { get; set; }
         public string Contract { get; set; }
+        public string SubContract { get; set; }
         public long RowId { get; set; }
     }
     public enum DeviceType
