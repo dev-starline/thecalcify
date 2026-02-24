@@ -367,7 +367,7 @@ bin/
 obj/
 
 # wwwroot exclusions
-wwwroot/sheets/
+ExcelHostApp/wwwroot/sheets/
 
 
 # Visual Studio
