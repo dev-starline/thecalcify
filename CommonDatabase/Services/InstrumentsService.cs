@@ -87,28 +87,32 @@ namespace CommonDatabase.Services
                         
 
                         var subClient = await _context.Client.Where(b => b.Puid == client.Id.ToString()).Select(x => x.Id).ToListAsync();
-                        if (await _context.Instruments
+                        if (!instrument.IsMapped)
+                        {
+                            if (await _context.Instruments
                             .AnyAsync(b => subClient.Contains(b.ClientId) && b.Identifier == existingInstrument.Identifier))
-                        {
+                            {
 
-                            await _context.Instruments
-                            .Where(b => subClient.Contains(b.ClientId) && b.Identifier == existingInstrument.Identifier)
-                            .ExecuteUpdateAsync(setters => setters
-                                // Conditional updates for flags
-                                .SetProperty(
-                                    n => n.IsMapped,
-                                    n => existingInstrument.IsMapped
-                                )
+                                await _context.Instruments
+                                .Where(b => subClient.Contains(b.ClientId) && b.Identifier == existingInstrument.Identifier)
+                                .ExecuteUpdateAsync(setters => setters
+                                    // Conditional updates for flags
+                                    .SetProperty(
+                                        n => n.IsMapped,
+                                        n => existingInstrument.IsMapped
+                                    )
 
-                                // Always update timestamp
-                                .SetProperty(b => b.Mdate, b => DateTime.Now)
-                            );
+                                    // Always update timestamp
+                                    .SetProperty(b => b.Mdate, b => DateTime.Now)
+                                );
+                            }
+                            foreach (var subClientId in subClient)
+                            {
+                                string? subClientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == subClientId))?.Username;
+                                Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(subClientId, subClientUsername)).Wait();
+                            }
                         }
-                        foreach (var subClientId in subClient)
-                        {
-                            string? subClientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == subClientId))?.Username;
-                            Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(subClientId, subClientUsername)).Wait();
-                        }
+                        
                     }
                     else
                     {
