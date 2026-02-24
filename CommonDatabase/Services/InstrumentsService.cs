@@ -56,8 +56,9 @@ namespace CommonDatabase.Services
         {
             if (input == null || !input.Any())
                 return ApiResponse.Fail("Input list is empty.");
-            string[] arrIdentifier = [];
+            List<string> NoMappedIdentifierInParent =new List<string>();
             int clientId = input.First().ClientId;
+            string parentUsername = "";
             foreach (var instrument in input)
             {
                
@@ -120,8 +121,10 @@ namespace CommonDatabase.Services
                 }
                 else
                 {
-                    var parentClient = await _context.Client.Where(b => b.Id == instrument.ClientId).Select(x => x.Puid).FirstOrDefaultAsync();
-                    var parentInstruments = await _context.Instruments.Where(x => x.ClientId == int.Parse(parentClient) && x.Identifier == instrument.Identifier).FirstOrDefaultAsync();
+                    var childClient = await _context.Client.Where(b => b.Id == instrument.ClientId).FirstOrDefaultAsync();
+                    var parentClient = await _context.Client.Where(b => b.Id == int.Parse(childClient.Puid)).FirstOrDefaultAsync();
+                    parentUsername = parentClient.FirmName;
+                    var parentInstruments = await _context.Instruments.Where(x => x.ClientId == int.Parse(childClient.Puid) && x.Identifier == instrument.Identifier).FirstOrDefaultAsync();
                     var isInstumentExists = await _context.Instruments.AnyAsync(b => b.ClientId == instrument.ClientId && b.Identifier == instrument.Identifier);
                     if (parentInstruments != null)
                     {
@@ -147,18 +150,27 @@ namespace CommonDatabase.Services
                             await _context.Instruments.AddAsync(instrument);
                            
                         }
+                       
                     }
-
+                    if (parentInstruments == null || !parentInstruments.IsMapped)
+                    {
+                        NoMappedIdentifierInParent.Add(instrument.Identifier);
+                    }
                     await _context.SaveChangesAsync();
                     string? clientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == clientId))?.Username;
                     Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(clientId, clientUsername)).Wait();
                 }
             }
 
-           
-           
+            var getInstrument = await GetInstrumentListByClientAsync(clientId);
+
+
             await _constant.SetIdentifireRedisAsync();
-            return await GetInstrumentListByClientAsync(clientId);
+            return ApiResponse.Ok(
+               getInstrument.Data, NoMappedIdentifierInParent.Count > 0 ? $"{string.Join(", ", NoMappedIdentifierInParent.Select(x => x))} not mapped in {parentUsername}.": "Success" 
+
+
+                );
         }
 
         public async Task<ApiResponse> GetSymbolsByUserIdAsync(int userId)
