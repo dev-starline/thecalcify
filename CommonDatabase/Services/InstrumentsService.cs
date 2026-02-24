@@ -167,9 +167,9 @@ namespace CommonDatabase.Services
 
             await _constant.SetIdentifireRedisAsync();
             return ApiResponse.Ok(
-               getInstrument.Data, NoMappedIdentifierInParent.Count > 0 ? $"{string.Join(", ", NoMappedIdentifierInParent.Select(x => x))} not mapped in {parentUsername}.": "Success" 
-
-
+               getInstrument.Data, 
+               NoMappedIdentifierInParent.Count > 0 ? $"{string.Join(", ", NoMappedIdentifierInParent.Select(x => x))} not mapped in {parentUsername}."
+                                                    : "Success" 
                 );
         }
 
