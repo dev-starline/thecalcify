@@ -37,7 +37,7 @@ namespace CommonDatabase.Services {
 
         public async Task<IEnumerable<ClientUser>> GetClientListAsync()
         {
-            return await _context.Client.ToListAsync();
+            return await _context.Client.Where(x => x.Puid == "0").ToListAsync();
         }
         public async Task<IEnumerable<ClientListDto>> GetClientListDtoAsync()
         {
@@ -102,11 +102,12 @@ namespace CommonDatabase.Services {
 
                 client.RateExpiredDate = parentClient.RateExpiredDate;
                 client.NewsExpiredDate = parentClient.NewsExpiredDate;
+                client.FirmName = parentClient.FirmName;
             }
             // Get next value from sequence
             int nextUserNameNumber = GetNextUserNameNumber();
             client.Username = nextUserNameNumber.ToString();
-            client.Password = GenerateRandomPassword(8);
+            client.Password = client.Username + GenerateRandomPassword(2);
 
             await _context.Client.AddAsync(client);
             await _context.SaveChangesAsync();
@@ -191,7 +192,7 @@ namespace CommonDatabase.Services {
                     // Always update expired dates
                     .SetProperty(n => n.NewsExpiredDate, newsExpiredDate)
                     .SetProperty(n => n.RateExpiredDate, rateExpiredDate)
-
+                    .SetProperty(n => n.FirmName, existing.FirmName)
                     // Conditional updates for flags
                     .SetProperty(
                         n => n.IsNews,
@@ -480,7 +481,9 @@ namespace CommonDatabase.Services {
         }
         private string GenerateRandomPassword(int length = 8)
         {
-            const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
+            //const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
+
+            const string validChars = "1234567890";
             char[] result = new char[length];
             using (var rng = RandomNumberGenerator.Create())
             {
