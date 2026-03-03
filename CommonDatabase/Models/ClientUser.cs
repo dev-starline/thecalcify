@@ -8,10 +8,10 @@ namespace CommonDatabase.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
+        //[Required]
         [MaxLength(30)]
         public string Username { get; set; } = string.Empty;
-        [Required]
+        //[Required]
         public string Password { get; set; } = string.Empty;
         [Required]
         public string FirmName { get; set; } = string.Empty;
