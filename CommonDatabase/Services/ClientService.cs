@@ -14,6 +14,7 @@ using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
@@ -82,7 +83,7 @@ namespace CommonDatabase.Services {
                 if (duplicate.MobileNo == client.MobileNo)
                     return ApiResponse.Fail("Mobile number already exists.");
             }
-
+           
             client.IPAddress = ipAddress;
             client.RateExpiredDate = rateExpiredDate;
             client.NewsExpiredDate = newsExpiredDate;
@@ -102,6 +103,10 @@ namespace CommonDatabase.Services {
                 client.RateExpiredDate = parentClient.RateExpiredDate;
                 client.NewsExpiredDate = parentClient.NewsExpiredDate;
             }
+            // Get next value from sequence
+            int nextUserNameNumber = GetNextUserNameNumber();
+            client.Username = nextUserNameNumber.ToString();
+            client.Password = GenerateRandomPassword(8);
 
             await _context.Client.AddAsync(client);
             await _context.SaveChangesAsync();
@@ -473,6 +478,33 @@ namespace CommonDatabase.Services {
                         .ToListAsync();
             return clients;
         }
+        private string GenerateRandomPassword(int length = 8)
+        {
+            const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
+            char[] result = new char[length];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                byte[] buffer = new byte[sizeof(uint)];
+                for (int i = 0; i < length; i++)
+                {
+                    rng.GetBytes(buffer);
+                    uint num = BitConverter.ToUInt32(buffer, 0);
+                    result[i] = validChars[(int)(num % validChars.Length)];
+                }
+            }
+            return new string(result);
+        }
+        public int GetNextUserNameNumber()
+        {
+            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = "SELECT NEXT VALUE FOR dbo.UserNameSequence";
+                _context.Database.OpenConnection();
+                var result = command.ExecuteScalar();
+                return Convert.ToInt32(result);
+            }
+        }
+
     }
 }
 public  class HierarchyBuilder
