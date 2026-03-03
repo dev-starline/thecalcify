@@ -58,18 +58,25 @@ namespace ClientExcelApi.Controllers
                     ? cleanedHtml.Replace("</body>", $"{newScript}</body>")
                     : cleanedHtml + newScript;
 
-                var clientId = User.FindFirst("Id")?.Value;
-                // 4️⃣ Save to file
+                var claimClientId = User.FindFirst("Id")?.Value;
+                var client = await _context.Client.Where(x => x.Id == int.Parse(claimClientId)).FirstOrDefaultAsync();
+                int clientId = (client.Puid == "0" ? client.Id : int.Parse(client.Puid));
 
                 //var excelData = await _context.ExcelFilePath.Where(e => e.ClientId.ToString() == clientId && EF.Functions.Like(e.SheetName, $"%{clientId}_%_{fileNameWithExtension}%")).FirstOrDefaultAsync();
-                var excelData = await _context.ExcelFilePath.Where(e => e.ClientId.ToString() == clientId && e.SheetName == fileName.Trim() && e.Type == "html").FirstOrDefaultAsync();
+                var excelData = await _context.ExcelFilePath
+                            .Where(e => 
+                                e.ClientId == clientId && 
+                                e.SheetName == fileName.Trim() && 
+                                e.Type == "html")
+                            .FirstOrDefaultAsync();
+
                 int sheetId = 0;
 
                 if (excelData == null)
                 {
                     var excel = new ExcelFilePath()
                     {
-                        ClientId = int.Parse(clientId),
+                        ClientId = clientId,
                         CreatedDate = DateTime.Now,
                         ModifiedDate = DateTime.Now,
                         SheetName = fileName,
@@ -101,17 +108,35 @@ namespace ClientExcelApi.Controllers
                 await System.IO.File.WriteAllTextAsync(path, updatedHtml);
 
                 await _context.ExcelFilePath
-                            .Where(b => b.Id == sheetId)
-                            .ExecuteUpdateAsync(setters => setters
-                            .SetProperty(b => b.SheetName, fileName)
-                            .SetProperty(b => b.FilePath, $"{sbdir.ToString()}/{htmlFileName}")
-                            .SetProperty(b => b.ModifiedDate, b => DateTime.Now));
+                        .Where(b => b.Id == sheetId)
+                        .ExecuteUpdateAsync(setters => setters
+                        .SetProperty(b => b.SheetName, fileName)
+                        .SetProperty(b => b.FilePath, $"{sbdir.ToString()}/{htmlFileName}")
+                        .SetProperty(b => b.ModifiedDate, b => DateTime.Now));
 
                 await _context.SaveChangesAsync();
 
                 var username = User.FindFirst("userName")?.Value;
-                var groupName = GroupNameResolver.Resolve(username);
-                await _hubContext.Clients.Group(groupName).SendAsync("SheetUpdated", true);
+                //var groupName = GroupNameResolver.Resolve(username);
+
+                List<string> clientUsernames = new List<string>();
+                if (client.Puid == "0")
+                {
+                    clientUsernames.Add(client.Username);
+                    clientUsernames.AddRange(_context.Client.Where(x => x.Puid == client.Id.ToString()).Select(x => x.Username).ToList());
+                }
+                else          
+                {
+                    var parentClient = await _context.Client.Where(x => x.Id == int.Parse(client.Puid)).FirstOrDefaultAsync();
+                    clientUsernames.Add(parentClient.Username);
+                    clientUsernames.AddRange(_context.Client.Where(x => x.Puid == parentClient.Id.ToString()).Select(x => x.Username).ToList());
+                }
+                foreach (var clientUsername in clientUsernames)
+                {
+                    var clientGroupName = GroupNameResolver.Resolve(clientUsername);
+                    await _hubContext.Clients.Group(clientGroupName).SendAsync("SheetUpdated", true);
+                }
+                //await _hubContext.Clients.Group(groupName).SendAsync("SheetUpdated", true);
 
                 return Ok(new ApiResponse{
                     IsSuccess = true, 
@@ -130,8 +155,13 @@ namespace ClientExcelApi.Controllers
         {
             try
             {
-                var clientId = User.FindFirst("Id")?.Value;
-                var fileList = _context.ExcelFilePath.Where(x => x.ClientId == int.Parse(clientId)).AsEnumerable();
+                var claimClientId = User.FindFirst("Id")?.Value;
+                var client = await _context.Client.Where(x => x.Id == int.Parse(claimClientId)).FirstOrDefaultAsync();
+                int clientId = (client.Puid == "0" ? client.Id : int.Parse(client.Puid));
+                //var fileList = _context.ExcelFilePath.Where(x => x.ClientId == int.Parse(clientId)).AsEnumerable();
+                var fileList = _context.ExcelFilePath
+                            .Where(x => x.ClientId == clientId)
+                            .AsEnumerable();
 
                 return Ok(new ApiResponse
                 {
@@ -152,8 +182,10 @@ namespace ClientExcelApi.Controllers
         {
             try
             {
-                var clientId = User.FindFirst("Id")?.Value;
-                
+                var claimClientId = User.FindFirst("Id")?.Value;
+                var client = await _context.Client.Where(x=>x.Id == int.Parse(claimClientId)).FirstOrDefaultAsync();
+                int clientId = (client.Puid == "0" ? client.Id : int.Parse(client.Puid));
+
                 var sheetEntries = new List<SheetEntry>();
                 StringBuilder sbdir = new StringBuilder();
                 sbdir.Append("wwwroot/ExcelExtractedJson");
@@ -164,8 +196,14 @@ namespace ClientExcelApi.Controllers
                 {
                     string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
 
+                    //var response = await _context.ExcelFilePath
+                    //                .Where(x => x.ClientId == int.Parse(clientId) && x.SheetName == fileNameWithoutExtension && x.Type == "json")
+                    //                .FirstOrDefaultAsync();
                     var response = await _context.ExcelFilePath
-                                    .Where(x => x.ClientId == int.Parse(clientId) && x.SheetName == fileNameWithoutExtension && x.Type == "json")
+                                    .Where(x => 
+                                        x.ClientId == clientId && 
+                                        x.SheetName == fileNameWithoutExtension && 
+                                        x.Type == "json")
                                     .FirstOrDefaultAsync();
 
                     string editableCellsJson = GetDefaultEditedCells(fileNameWithoutExtension);
@@ -175,7 +213,7 @@ namespace ClientExcelApi.Controllers
                         var excelData = new ExcelFilePath()
                         {
                             // Assign properties as needed
-                            ClientId = int.Parse(clientId),
+                            ClientId = clientId,
                             SheetName = fileNameWithoutExtension,
                             Type = "json",
                             FilePath = editableCellsJson,
@@ -187,7 +225,10 @@ namespace ClientExcelApi.Controllers
                     }
                 }
 
-                var fileList = await _context.ExcelFilePath.Where(x => x.ClientId == int.Parse(clientId)).ToListAsync();
+                //var fileList = await _context.ExcelFilePath.Where(x => x.ClientId == int.Parse(clientId)).ToListAsync();
+                var fileList = await _context.ExcelFilePath
+                            .Where(x => x.ClientId == clientId)
+                            .ToListAsync();
 
                 sheetEntries = fileList.Select(file => new SheetEntry
                 {
@@ -222,15 +263,24 @@ namespace ClientExcelApi.Controllers
         {
             try
             {
-                var clientId = User.FindFirst("Id")?.Value;
-                var data = await _context.ExcelFilePath.Where(x => x.ClientId == int.Parse(clientId) && x.Id == editableCells.SheetId && x.Type == "json").FirstOrDefaultAsync();
-                
+                var claimClientId = User.FindFirst("Id")?.Value;
+                var client = await _context.Client.Where(x => x.Id == int.Parse(claimClientId)).FirstOrDefaultAsync();
+                int clientId = (client.Puid == "0" ? client.Id : int.Parse(client.Puid));
+
+                //var data = await _context.ExcelFilePath.Where(x => x.ClientId == int.Parse(clientId) && x.Id == editableCells.SheetId && x.Type == "json").FirstOrDefaultAsync();
+                var data = await _context.ExcelFilePath
+                        .Where(x => 
+                            x.ClientId == clientId && 
+                            x.Id == editableCells.SheetId && 
+                            x.Type == "json")
+                        .FirstOrDefaultAsync();
+
                 if (data == null)
                 {
                     var excelData = new ExcelFilePath()
                     {
                         // Assign properties as needed
-                        ClientId = int.Parse(clientId),
+                        ClientId = clientId,
                         SheetName = editableCells.SheetName,
                         Type = "json",
                         FilePath = editableCells.editableCellsJson,
@@ -249,10 +299,27 @@ namespace ClientExcelApi.Controllers
 
                 await _context.SaveChangesAsync();
 
-                var username = User.FindFirst("userName")?.Value;
+                //var username = User.FindFirst("userName")?.Value;
 
-                var groupName = GroupNameResolver.Resolve(username);
-                await _hubContext.Clients.Group(groupName).SendAsync("SheetUpdated", true);
+                //var groupName = GroupNameResolver.Resolve(username);
+                //await _hubContext.Clients.Group(groupName).SendAsync("SheetUpdated", true);
+                List<string> clientUsernames = new List<string>();
+                if (client.Puid == "0")
+                {
+                    clientUsernames.Add(client.Username);
+                    clientUsernames.AddRange(_context.Client.Where(x => x.Puid == client.Id.ToString()).Select(x => x.Username).ToList());
+                }
+                else
+                {
+                    var parentClient = await _context.Client.Where(x => x.Id == int.Parse(client.Puid)).FirstOrDefaultAsync();
+                    clientUsernames.Add(parentClient.Username);
+                    clientUsernames.AddRange(_context.Client.Where(x => x.Puid == parentClient.Id.ToString()).Select(x => x.Username).ToList());
+                }
+                foreach (var clientUsername in clientUsernames)
+                {
+                    var clientGroupName = GroupNameResolver.Resolve(clientUsername);
+                    await _hubContext.Clients.Group(clientGroupName).SendAsync("SheetUpdated", true);
+                }
 
                 return Ok(new ApiResponse
                 {
@@ -272,8 +339,17 @@ namespace ClientExcelApi.Controllers
         {
             try
             {
-                var clientId = User.FindFirst("Id")?.Value;
-                var res = await _context.ExcelFilePath.Where(x => x.Id == id && x.ClientId == int.Parse(clientId)).FirstOrDefaultAsync();
+                var claimClientId = User.FindFirst("Id")?.Value;
+                var client = await _context.Client.Where(x => x.Id == int.Parse(claimClientId)).FirstOrDefaultAsync();
+                int clientId = (client.Puid == "0" ? client.Id : int.Parse(client.Puid));
+
+                //var res = await _context.ExcelFilePath.Where(x => x.Id == id && x.ClientId == int.Parse(clientId)).FirstOrDefaultAsync();
+                var res = await _context.ExcelFilePath
+                        .Where(x => 
+                            x.Id == id && 
+                            x.ClientId == clientId)
+                        .FirstOrDefaultAsync();
+
                 if (res == null)
                 {
                     return NotFound(new ApiResponse
@@ -304,10 +380,26 @@ namespace ClientExcelApi.Controllers
                         }
                         await _context.SaveChangesAsync();
 
-                        var username = User.FindFirst("userName")?.Value;
-                        var groupName = GroupNameResolver.Resolve(username);
-                        await _hubContext.Clients.Group(groupName).SendAsync("SheetUpdated", true);
-
+                        //var username = User.FindFirst("userName")?.Value;
+                        //var groupName = GroupNameResolver.Resolve(username);
+                        //await _hubContext.Clients.Group(groupName).SendAsync("SheetUpdated", true);
+                        List<string> clientUsernames = new List<string>();
+                        if (client.Puid == "0")
+                        {
+                            clientUsernames.Add(client.Username);
+                            clientUsernames.AddRange(_context.Client.Where(x => x.Puid == client.Id.ToString()).Select(x => x.Username).ToList());
+                        }
+                        else
+                        {
+                            var parentClient = await _context.Client.Where(x => x.Id == int.Parse(client.Puid)).FirstOrDefaultAsync();
+                            clientUsernames.Add(parentClient.Username);
+                            clientUsernames.AddRange(_context.Client.Where(x => x.Puid == parentClient.Id.ToString()).Select(x => x.Username).ToList());
+                        }
+                        foreach (var clientUsername in clientUsernames)
+                        {
+                            var clientGroupName = GroupNameResolver.Resolve(clientUsername);
+                            await _hubContext.Clients.Group(clientGroupName).SendAsync("SheetUpdated", true);
+                        }
                         return Ok(new ApiResponse
                         {
                             IsSuccess = true,
@@ -330,9 +422,16 @@ namespace ClientExcelApi.Controllers
         {
             try
             {
-                var clientId = User.FindFirst("Id")?.Value;
+                var claimClientId = User.FindFirst("Id")?.Value;
+                var client = await _context.Client.Where(x => x.Id == int.Parse(claimClientId)).FirstOrDefaultAsync();
+                int clientId = (client.Puid == "0" ? client.Id : int.Parse(client.Puid));
+
                 string cleanedHtml = "";
-                var res = await _context.ExcelFilePath.Where(x => x.Id == id && x.ClientId == int.Parse(clientId)).FirstOrDefaultAsync();
+                //var res = await _context.ExcelFilePath.Where(x => x.Id == id && x.ClientId == int.Parse(clientId)).FirstOrDefaultAsync();
+                var res = await _context.ExcelFilePath
+                        .Where(x => x.Id == id && x.ClientId == clientId)
+                        .FirstOrDefaultAsync();
+
                 if (res == null)
                 {
                     return NotFound(new ApiResponse

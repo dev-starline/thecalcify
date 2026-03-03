@@ -2,6 +2,7 @@
 using CommonDatabase.Interfaces;
 using CommonDatabase.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
 using System.Net;
 
 namespace CommonDatabase.Services
@@ -59,20 +60,20 @@ namespace CommonDatabase.Services
             List<string> NoMappedIdentifierInParent =new List<string>();
             int clientId = input.First().ClientId;
             string parentUsername = "";
-            foreach (var instrument in input)
-            {
-               
-                var client = await _context.Client.Where(c => c.Id == instrument.ClientId).FirstOrDefaultAsync();
-                if (client == null)
-                    return ApiResponse.Fail($"Client with ID {instrument.ClientId} does not exist.");
-                
-                var subscribeExists = await _context.Subscribe.AnyAsync(s => s.Identifier == instrument.Identifier);
-                if (!subscribeExists)
-                    continue;              
-                
+            var client = await _context.Client.Where(c => c.Id == clientId).FirstOrDefaultAsync();
+            if (client == null)
+                return ApiResponse.Fail($"Client with ID {clientId} does not exist.");
 
-                if (client.Puid == "0")
+            if (client.Puid == "0")
+            {
+                var subClient = await _context.Client.Where(b => b.Puid == client.Id.ToString()).Select(x => x.Id).ToListAsync();
+                
+                foreach (var instrument in input)
                 {
+                    var subscribeExists = await _context.Subscribe.AnyAsync(s => s.Identifier == instrument.Identifier);
+                    if (!subscribeExists)
+                        continue;
+
                     instrument.Mdate ??= DateTime.UtcNow;
                     var existingInstrument = await _context.Instruments.FirstOrDefaultAsync(i => i.Identifier == instrument.Identifier && i.ClientId == instrument.ClientId);
                     if (existingInstrument != null)
@@ -80,23 +81,21 @@ namespace CommonDatabase.Services
                         existingInstrument.Contract = instrument.Contract;
                         existingInstrument.IsMapped = instrument.IsMapped;
                         existingInstrument.Mdate = instrument.Mdate;
-
                         _context.Instruments.Update(existingInstrument);
-                       
 
-                        
-
-                        var subClient = await _context.Client.Where(b => b.Puid == client.Id.ToString()).Select(x => x.Id).ToListAsync();
                         if (!instrument.IsMapped)
                         {
                             if (await _context.Instruments
                             .AnyAsync(b => subClient.Contains(b.ClientId) && b.Identifier == existingInstrument.Identifier))
                             {
-
                                 await _context.Instruments
                                 .Where(b => subClient.Contains(b.ClientId) && b.Identifier == existingInstrument.Identifier)
                                 .ExecuteUpdateAsync(setters => setters
                                     // Conditional updates for flags
+                                    .SetProperty(
+                                        n => n.Contract,
+                                        n => existingInstrument.Contract
+                                    )
                                     .SetProperty(
                                         n => n.IsMapped,
                                         n => existingInstrument.IsMapped
@@ -106,28 +105,47 @@ namespace CommonDatabase.Services
                                     .SetProperty(b => b.Mdate, b => DateTime.Now)
                                 );
                             }
-                            foreach (var subClientId in subClient)
-                            {
-                                string? subClientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == subClientId))?.Username;
-                                Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(subClientId, subClientUsername)).Wait();
-                            }
                         }
-                        
+                        else
+                        {
+                            await _context.Instruments
+                                .Where(b => subClient.Contains(b.ClientId) && b.Identifier == existingInstrument.Identifier)
+                                .ExecuteUpdateAsync(setters => setters
+                                    // Conditional updates for flags
+                                    .SetProperty(
+                                        n => n.Contract,
+                                        n => existingInstrument.Contract
+                                    )
+
+                                    // Always update timestamp
+                                    .SetProperty(b => b.Mdate, b => DateTime.Now)
+                                );
+                        }
                     }
                     else
                     {
                         await _context.Instruments.AddAsync(instrument);
                     }
-
-                    await _context.SaveChangesAsync();
-                    string? clientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == clientId))?.Username;
-                    Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(clientId, clientUsername)).Wait();
                 }
-                else
+
+                foreach (var subClientId in subClient)
                 {
-                    var childClient = await _context.Client.Where(b => b.Id == instrument.ClientId).FirstOrDefaultAsync();
-                    var parentClient = await _context.Client.Where(b => b.Id == int.Parse(childClient.Puid)).FirstOrDefaultAsync();
-                    parentUsername = parentClient.FirmName;
+                    string? subClientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == subClientId))?.Username;
+                    Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(subClientId, subClientUsername)).Wait();
+                }
+
+                await _context.SaveChangesAsync();
+                string? clientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == clientId))?.Username;
+                Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(clientId, clientUsername)).Wait();
+            }
+            else
+            {
+                var childClient = await _context.Client.Where(b => b.Id == clientId).FirstOrDefaultAsync();
+                var parentClient = await _context.Client.Where(b => b.Id == int.Parse(childClient.Puid)).FirstOrDefaultAsync();
+                parentUsername = parentClient.FirmName;
+
+                foreach (var instrument in input)
+                {   
                     var parentInstruments = await _context.Instruments.Where(x => x.ClientId == int.Parse(childClient.Puid) && x.Identifier == instrument.Identifier).FirstOrDefaultAsync();
                     var isInstumentExists = await _context.Instruments.AnyAsync(b => b.ClientId == instrument.ClientId && b.Identifier == instrument.Identifier);
                     if (parentInstruments != null)
@@ -152,23 +170,20 @@ namespace CommonDatabase.Services
                             instrument.IsMapped = parentInstruments.IsMapped;
                             instrument.Mdate = DateTime.Now;
                             await _context.Instruments.AddAsync(instrument);
-                           
                         }
-                       
                     }
                     if (parentInstruments == null || !parentInstruments.IsMapped)
                     {
                         NoMappedIdentifierInParent.Add(instrument.Identifier);
                     }
                     await _context.SaveChangesAsync();
-                    string? clientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == clientId))?.Username;
-                    Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(clientId, clientUsername)).Wait();
                 }
+                //string? clientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == clientId))?.Username;
+                string? clientUsername = childClient?.Username;
+                Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(clientId, clientUsername)).Wait();
             }
 
             var getInstrument = await GetInstrumentListByClientAsync(clientId);
-
-
             await _constant.SetIdentifireRedisAsync();
             return ApiResponse.Ok(
                getInstrument.Data, 
