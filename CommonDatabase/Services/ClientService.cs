@@ -11,7 +11,10 @@ using Newtonsoft.Json;
 using StackExchange.Redis;
 using System;
 using System.Globalization;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
@@ -34,28 +37,101 @@ namespace CommonDatabase.Services {
 
         public async Task<IEnumerable<ClientUser>> GetClientListAsync()
         {
-            return await _context.Client.ToListAsync();
+            return await _context.Client.Where(x => x.Puid == "0").ToListAsync();
         }
+        public async Task<IEnumerable<ClientListDto>> GetClientListDtoAsync()
+        {
+            var Clients = await _context.Client
+                        .Select(x => new ClientListDto()
+                        {
+                            Id = x.Id,
+                            Username = x.Username,
+                            Password = x.Password,
+                            FirmName = x.FirmName,
+                            ClientName = x.ClientName,
+                            MobileNo = x.MobileNo,
+                            City = x.City,
+                            IsActive = x.IsActive,
+                            UpdateDate = x.UpdateDate,
+                            AccessNoOfNews = x.AccessNoOfNews,
+                            AccessNoOfRate = x.AccessNoOfRate,
+                            IsNews = x.IsNews,
+                            IsRate = x.IsRate,
+                            NewsExpiredDate = x.NewsExpiredDate,
+                            RateExpiredDate = x.RateExpiredDate,
+                            Puid = x.Puid,
+                            SubClient = new List<ClientListDto>(),
+                            SubClientLimit = x.SubClientLimit,
+                            PendingSubClient = x.SubClientLimit - (_context.Client.Where(c => c.Puid == x.Id.ToString()).Count())
+                        }).ToListAsync();
 
+            var builder = new HierarchyBuilder();
+            var hierarchy = builder.BuildHierarchy(Clients);
+            return hierarchy;
+        }
         public async Task<ApiResponse> AddClientAsync(ClientUser client, string ipAddress, DateTime rateExpiredDate, DateTime newsExpiredDate)
-        { 
-            var existingClient = await _context.Client.Where(c => c.Username == client.Username || c.MobileNo == client.MobileNo).Select(c => new { c.Username, c.MobileNo }).FirstOrDefaultAsync();
-            if (existingClient != null) {
-                if (existingClient.Username == client.Username && existingClient.MobileNo == client.MobileNo) 
-                    return ApiResponse.Fail("Username and Mobile number already exist."); }
-            client.IPAddress = ipAddress; 
-            client.RateExpiredDate = rateExpiredDate; 
-            client.NewsExpiredDate = newsExpiredDate; 
-            await _context.Client.AddAsync(client); 
+        {
+            var duplicate = await _context.Client
+                .Where(c => c.Username == client.Username || c.MobileNo == client.MobileNo)
+                .Select(c => new { c.Username, c.MobileNo })
+                .FirstOrDefaultAsync();
+
+            if (duplicate != null)
+            {
+                if (duplicate.Username == client.Username)
+                    return ApiResponse.Fail("Username already exists.");
+                if (duplicate.MobileNo == client.MobileNo)
+                    return ApiResponse.Fail("Mobile number already exists.");
+            }
+           
+            client.IPAddress = ipAddress;
+            client.RateExpiredDate = rateExpiredDate;
+            client.NewsExpiredDate = newsExpiredDate;
+
+            if (!string.IsNullOrEmpty(client.Puid) && client.Puid != "0")
+            {
+                var parentClient = await _context.Client.FirstOrDefaultAsync(x => x.Id.ToString() == client.Puid);
+                if (parentClient == null)
+                    return ApiResponse.Fail("Parent client not found.");
+
+                int parentInstruments = await _context.Instruments
+                    .CountAsync(x => x.ClientId == Convert.ToInt32(client.Puid));
+
+                if (parentInstruments <= 0)
+                    return ApiResponse.Fail("Add instrument in parent before creating subclient.");
+
+                client.RateExpiredDate = parentClient.RateExpiredDate;
+                client.NewsExpiredDate = parentClient.NewsExpiredDate;
+                client.FirmName = parentClient.FirmName;
+            }
+            // Get next value from sequence
+            int nextUserNameNumber = GetNextUserNameNumber();
+            client.Username = nextUserNameNumber.ToString();
+            client.Password = client.Username + GenerateRandomPassword(2);
+
+            await _context.Client.AddAsync(client);
             await _context.SaveChangesAsync();
-            await _constant.PushClientDetails(); 
-            var newClient = _context.Client.Where(x => x.Username == client.Username).FirstOrDefault();
-            Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(newClient.Id,newClient.Username)).Wait();
-            return ApiResponse.Ok(client, "Client added successfully."); 
+
+            if (!string.IsNullOrEmpty(client.Puid) && client.Puid != "0")
+            {
+                bool hasSubClientInstruments = await _context.Instruments
+                    .AnyAsync(x => x.ClientId == client.Id);
+
+                if (!hasSubClientInstruments)
+                {
+                    await _context.Database.ExecuteSqlInterpolatedAsync(
+                        $@"usp_BulkInsertInstrumentForSubClient {client.Puid}, {client.Id}");
+                }
+            }
+
+            await _constant.PushClientDetails();
+            await _commonService.GetDeviceAccessSummaryAsync(client.Id, client.Username);
+
+            var newData = await GetClientListDtoAsync();
+            return client.Puid == "0"
+                ? ApiResponse.Ok(newData.Where(x => x.Id == client.Id), "Client added successfully.")
+                : ApiResponse.Ok(newData.Where(x => x.Id.ToString() == client.Puid), "Client added successfully.");
         }
-
-
-
 
         public async Task<ApiResponse> UpdateClientAsync(ClientUser client, string ipAddress, DateTime rateExpiredDate, DateTime newsExpiredDate)
         {
@@ -63,7 +139,6 @@ namespace CommonDatabase.Services {
             if (existing == null)
                 return ApiResponse.Fail("Client not found.");
 
-           
             var duplicate = await _context.Client
                 .Where(c => (c.Username == client.Username || c.MobileNo == client.MobileNo) && c.Id != client.Id)
                 .Select(c => new { c.Username, c.MobileNo })
@@ -73,12 +148,24 @@ namespace CommonDatabase.Services {
             {
                 if (duplicate.Username == client.Username)
                     return ApiResponse.Fail("Username is already in use by another client.");
-
                 if (duplicate.MobileNo == client.MobileNo)
                     return ApiResponse.Fail("Mobile number is already in use by another client.");
             }
 
-     
+            if (!string.IsNullOrEmpty(client.Puid) && client.Puid != "0")
+            {
+                var parentClient = await _context.Client.FirstOrDefaultAsync(x => x.Id.ToString() == client.Puid);
+                if (parentClient == null)
+                    return ApiResponse.Fail("Parent client not found.");
+
+                if (!parentClient.IsRate && client.IsRate)
+                    return ApiResponse.Fail("Parent does not have rate access.");
+                if (!parentClient.IsNews && client.IsNews)
+                    return ApiResponse.Fail("Parent does not have news access.");
+                if (!parentClient.IsActive && client.IsActive)
+                    return ApiResponse.Fail("Parent is not active.");
+            }
+
             existing.Username = client.Username;
             existing.Password = client.Password;
             existing.FirmName = client.FirmName;
@@ -86,21 +173,57 @@ namespace CommonDatabase.Services {
             existing.MobileNo = client.MobileNo;
             existing.City = client.City;
             existing.IsActive = client.IsActive;
-            existing.IPAddress = ipAddress;          
+            existing.IPAddress = ipAddress;
             existing.IsNews = client.IsNews;
             existing.AccessNoOfNews = client.AccessNoOfNews;
             existing.IsRate = client.IsRate;
             existing.AccessNoOfRate = client.AccessNoOfRate;
             existing.NewsExpiredDate = newsExpiredDate;
             existing.RateExpiredDate = rateExpiredDate;
-            existing.UpdateDate = DateTime.UtcNow;
+            existing.UpdateDate = DateTime.Now;
+            existing.SubClientLimit = client.SubClientLimit;
             _context.Client.Update(existing);
             await _context.SaveChangesAsync();
+            if (existing.Puid == "0")
+            {
+                await _context.Client
+                .Where(b => b.Puid == existing.Id.ToString())
+                .ExecuteUpdateAsync(setters => setters
+                    // Always update expired dates
+                    .SetProperty(n => n.NewsExpiredDate, newsExpiredDate)
+                    .SetProperty(n => n.RateExpiredDate, rateExpiredDate)
+                    .SetProperty(n => n.FirmName, existing.FirmName)
+                    // Conditional updates for flags
+                    .SetProperty(
+                        n => n.IsNews,
+                        n => !client.IsNews ? client.IsNews : n.IsNews
+                    )
+                    .SetProperty(
+                        n => n.IsRate,
+                        n => !client.IsRate ? client.IsRate : n.IsRate
+                    )
+                    .SetProperty(
+                        n => n.IsActive,
+                        n => !client.IsActive ? client.IsActive : n.IsActive
+                    )
+
+                    // Always update timestamp
+                    .SetProperty(b => b.UpdateDate, b => DateTime.Now)
+                );
+            }
+
             await _constant.PushClientDetails();
             Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(existing.Id, existing.Username)).Wait();
-            return ApiResponse.Ok(existing, "Client updated successfully.");
+            var newData = await GetClientListDtoAsync();
+            if (client.Puid == "0")
+            {
+                return ApiResponse.Ok(newData.Where(x => x.Id == client.Id), "Client updated successfully.");
+            }
+            else
+            {
+                return ApiResponse.Ok(newData.Where(x => x.Id.ToString() == client.Puid), "Client updated successfully.");
+            }
         }
-
 
         public async Task<ApiResponse> DeleteClientAsync(int id)
         {
@@ -108,20 +231,40 @@ namespace CommonDatabase.Services {
             if (client == null)
                 return ApiResponse.Fail("Client not found.");
 
-            // Delete related devices first
-            var itemsToDelete = await _context.ClientDevices
-                .Where(u => u.ClientId == client.Id)
-                .ToListAsync();
+            // Delete related entities
+            await _context.ClientDevices.Where(u => u.ClientId == client.Id).ExecuteDeleteAsync();
+            await _context.Instruments.Where(u => u.ClientId == client.Id).ExecuteDeleteAsync();
 
-            _context.ClientDevices.RemoveRange(itemsToDelete);
+            if (client.Puid == "0")
+            {
+                var subClientIds = await _context.Client
+                    .Where(u => u.Puid == client.Id.ToString())
+                    .Select(x => x.Id)
+                    .ToListAsync();
+
+                await _context.Client.Where(u => subClientIds.Contains(u.Id)).ExecuteDeleteAsync();
+                await _context.ClientDevices.Where(u => subClientIds.Contains(u.ClientId)).ExecuteDeleteAsync();
+                await _context.Instruments.Where(u => subClientIds.Contains(u.ClientId)).ExecuteDeleteAsync();
+            }
+
             _context.Client.Remove(client);
+            await _context.SaveChangesAsync();
 
-            await _context.SaveChangesAsync(); // ✅ Single commit
+            // Post-deletion updates
+            await _commonService.GetDeviceAccessSummaryAsync(client.Id, client.Username);
 
-            await _commonService.GetDeviceAccessSummaryAsync(client.Id, client.Username); // ✅ No blocking
-            
-            var responseData = new { clientId = id };
-            return ApiResponse.Ok(responseData, "Client deleted successfully.");
+            if (client.Puid != "0")
+            {
+                var parentClient = await _context.Client
+                    .FirstOrDefaultAsync(x => x.Id.ToString() == client.Puid);
+                if (parentClient != null)
+                    await _commonService.GetDeviceAccessSummaryAsync(parentClient.Id, parentClient.Username);
+            }
+
+            var newData = await GetClientListDtoAsync();
+            return client.Puid == "0"
+                ? ApiResponse.Ok(newData.Where(x => x.Id == client.Id), "Client deleted successfully.")
+                : ApiResponse.Ok(newData.Where(x => x.Id.ToString() == client.Puid), "Client deleted successfully.");
         }
 
         public async Task<ApiResponse> CreateAndSendAlert(NotificationAlert input)
@@ -141,7 +284,6 @@ namespace CommonDatabase.Services {
             if (string.IsNullOrWhiteSpace(input.Type))
                 return ApiResponse.Fail("Type is required.");
 
-           
             var instrumentExists = await _context.Instruments.AnyAsync(i =>i.Identifier == input.Identifier && i.ClientId == input.ClientId && i.IsMapped == true);
 
             if (!instrumentExists)
@@ -204,40 +346,12 @@ namespace CommonDatabase.Services {
 
         public async Task<ApiResponse> GetNotificationsAsync(int clientId, string deviceId, string deviceType)
         {
-            //var alerts = await _context.NotificationAlerts
-            //                    .Where(n => n.ClientId == clientId)
-            //                    .OrderByDescending(n => n.CreateDate)
-            //                    .ToListAsync();
-
-            //var alerts = (from n in _context.NotificationAlerts
-            //              join i in _context.Instruments on new { n.ClientId, n.Identifier } equals new { i.ClientId, i.Identifier }
-            //              join cd in _context.ClientDevices on new { ClientDeviceId = n.ClientDeviceId } equals new { ClientDeviceId = cd.Id }
-
-            //              where i.IsMapped == true && i.ClientId == clientId
-            //              select new
-            //              {
-            //                n.Id,
-            //                n.Identifier,
-            //                n.Rate,
-            //                n.Flag,
-            //                n.Condition,
-            //                n.Type,
-            //                n.IsPassed,
-            //                n.AlertDate,
-            //                n.CreateDate,
-            //                n.MDate
-            //              }).ToList();
             var alerts = await _context.NotificationAlerts
                             .Join(_context.Instruments,
                                 n => new { n.ClientId, n.Identifier },
                                 i => new { i.ClientId, i.Identifier },
                                 (n, i) => new { NotificationAlert = n, Instrument = i })
-                            .Join(_context.ClientDevices,
-                                joined => joined.NotificationAlert.ClientDeviceId,
-                                cd => cd.Id,
-                                (joined, cd) => new { joined.NotificationAlert, joined.Instrument, ClientDevice = cd })
-                            .Where(joined => joined.Instrument.IsMapped == true && joined.NotificationAlert.ClientId == clientId && 
-                                    joined.ClientDevice.DeviceId == deviceId)
+                            .Where(joined => joined.Instrument.IsMapped == true && joined.NotificationAlert.ClientId == clientId )
                             .Select(joined => joined.NotificationAlert)
                             .OrderByDescending(n => n.CreateDate)
                             .ToListAsync();
@@ -307,6 +421,134 @@ namespace CommonDatabase.Services {
 
             return ApiResponse.Ok(watchInstruments, "Watch instruments retrieved successfully.");
         }
+        public async Task<ApiResponse> DeleteNotificationAsync(int clientId, int alertId)
+        {
+            var client = await _context.Client.FindAsync(clientId);
+            if (client == null)
+                return ApiResponse.Fail("Client not found.");
+
+            // Delete related devices first
+            var alert = await _context.NotificationAlerts
+                .Where(u => u.ClientId == client.Id && u.Id == alertId)
+                .FirstOrDefaultAsync();
+
+            if (alert == null)
+            {
+                return ApiResponse.Fail("Rate alert not found.");
+            }
+            else if (alert.IsPassed)
+            {
+                return ApiResponse.Fail("Unable to delete: the rate alert has already triggered and is no longer active.");
+            }
+            else
+            {
+                _context.NotificationAlerts.Remove(alert);
+
+                await _context.SaveChangesAsync(); // ✅ Single commit
+
+                var responseData = new { clientId = clientId };
+                return ApiResponse.Ok(responseData, "Alert deleted successfully.");
+            }
+        }
+        public async Task<IEnumerable<ClientUser>> GetSubClientAsync(int clientId)
+        {
+            var subClients = await GetSubClientListAsync(clientId);
+            return subClients;
+        }
+        public async Task<ApiResponse> ChangePasswordSubClientAsync(int clientId, int subClientId, string password)
+        {
+            var subClients = await GetSubClientListAsync(clientId);
+
+            var subClient = subClients.Where(x => x.Id == subClientId).FirstOrDefault();
+
+            if (subClient == null)
+                return ApiResponse.Fail("Sub Client not found.");
+
+            var res = await _context.Client
+                            .Where(b => b.Id == subClientId)
+                            .ExecuteUpdateAsync(setters => setters
+                            .SetProperty(b => b.Password, password)
+                            .SetProperty(b => b.UpdateDate, DateTime.Now));
+
+            return ApiResponse.Ok(null, "Password reset successfully.");
+        }
+        private async Task<IEnumerable<ClientUser>> GetSubClientListAsync(int clientId)
+        {
+            var clients = await _context.Client
+                        .FromSqlInterpolated($@" SELECT * FROM Client CROSS APPLY STRING_SPLIT(Puid, '~') WHERE value = {clientId}")
+                        .ToListAsync();
+            return clients;
+        }
+        private string GenerateRandomPassword(int length = 8)
+        {
+            //const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*";
+
+            const string validChars = "1234567890";
+            char[] result = new char[length];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                byte[] buffer = new byte[sizeof(uint)];
+                for (int i = 0; i < length; i++)
+                {
+                    rng.GetBytes(buffer);
+                    uint num = BitConverter.ToUInt32(buffer, 0);
+                    result[i] = validChars[(int)(num % validChars.Length)];
+                }
+            }
+            return new string(result);
+        }
+        public int GetNextUserNameNumber()
+        {
+            using (var command = _context.Database.GetDbConnection().CreateCommand())
+            {
+                command.CommandText = "SELECT NEXT VALUE FOR dbo.UserNameSequence";
+                _context.Database.OpenConnection();
+                var result = command.ExecuteScalar();
+                return Convert.ToInt32(result);
+            }
+        }
 
     }
-}              
+}
+public  class HierarchyBuilder
+{
+    public  List<ClientListDto> BuildHierarchy(List<ClientListDto> rows)
+    {
+        // Dictionary to quickly find nodes by Id
+        var nodeMap = new Dictionary<int, ClientListDto>();
+
+        // Ensure every record exists in the map
+        foreach (var row in rows)
+        {
+            if (!nodeMap.ContainsKey(row.Id))
+            {
+                nodeMap[row.Id] = row;
+                row.SubClient = new List<ClientListDto>(); // always initialize
+            }
+        }
+
+        // Attach children based on ParentPath
+        foreach (var row in rows)
+        {
+            if (string.IsNullOrEmpty(row.Puid) || row.Puid == "0")
+                continue; // root node
+
+            var ids = row.Puid.Split('~').Select(int.Parse).ToList();
+
+            // parent is always the last id in the path
+            var parentId = ids.Last();
+
+            if (nodeMap.ContainsKey(parentId))
+            {
+                var parent = nodeMap[parentId];
+                if (!parent.SubClient.Any(c => c.Id == row.Id))
+                {
+                    parent.SubClient.Add(row);
+                }
+            }
+        }
+
+        // return only root nodes (ParentPath empty or "0")
+        return rows.Where(r => string.IsNullOrEmpty(r.Puid) || r.Puid == "0").ToList();
+    }
+}

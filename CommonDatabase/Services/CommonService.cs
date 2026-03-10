@@ -58,7 +58,10 @@ namespace CommonDatabase.Services
                     RateExpiredDate = r.RateExpiredDate,
                     Username = r.Username,
                     Keywords = r.Keywords,
-                    Topics = r.Topics
+                    Topics = r.Topics,
+                    IsParent = r.IsParent,
+                    SubClientLimit = r.SubClientLimit,
+                    PendingSubClient = r.PendingSubClient
                 }).ToList();
 
                 var rawResults = await _context.DeviceAccessRawDto
@@ -77,6 +80,9 @@ namespace CommonDatabase.Services
                     RateExpireDate = x.RateExpiredDate,
                     Topics = x.Topics,
                     Keywords = x.Keywords,
+                    IsParent = x.IsParent,
+                    SubClientLimit = x.SubClientLimit,
+                    PendingSubClient = x.PendingSubClient,
                     DeviceAccess = rawResults
                     .Where(r => r.ClientId == x.Id)
                     .Select(

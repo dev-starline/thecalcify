@@ -99,6 +99,11 @@ namespace ClientExcelApi.Controllers
         [HttpPost("AlertNotification")]
         public async Task<IActionResult> SendNotification([FromBody] NotificationAlert input)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState); // returns validation errors
+            }
+
             var clientIdClaim = User.FindFirst("Id")?.Value;
             var deviceId = User.FindFirst("DeviceId")?.Value;
             var deviceType = User.FindFirst("DeviceType")?.Value;
@@ -154,7 +159,12 @@ namespace ClientExcelApi.Controllers
             }
             input.Type = input.Type?.Trim().ToLower() switch { "bid" => "0", "ask" => "1", "ltp" => "2", _ => input.Type };
             var result = await _clientService.MarkRateAlertPassedAsync(input.ClientId, input.Symbol, input.Id);
-           
+            var identifier = await _context.Instruments
+                                .Where(sr => sr.ClientId == input.ClientId && sr.Identifier == input.Symbol)
+                                .FirstOrDefaultAsync();
+            var alert = await _context.NotificationAlerts
+                                .Where(na => na.ClientId == input.ClientId && na.Identifier == input.Symbol && na.Id == input.Id)
+                                .FirstOrDefaultAsync();
             if (result.IsSuccess)
             {
                 var payload = new
@@ -168,12 +178,15 @@ namespace ClientExcelApi.Controllers
                         input.Type,
                         input.Condition,
                         input.Flag,
-                        input.Rate
+                        input.Rate,
+                        identifier.Contract,
+                        alert.AlertDate
                     }
                 };
                 var groupName = GroupNameResolver.Resolve(payload.Username);
                 var compressed = Compress(JsonSerializer.Serialize(payload));
-                await _hubContext.Clients.Group($"{groupName}_{ input.DeviceId}").SendAsync("rateAlertNotification", compressed);
+                //await _hubContext.Clients.Group($"{groupName}_{ input.DeviceId}").SendAsync("rateAlertNotification", compressed);
+                await _hubContext.Clients.Group($"{groupName}").SendAsync("rateAlertNotification", compressed);
             }
             return Ok(result);
         }
@@ -236,22 +249,57 @@ namespace ClientExcelApi.Controllers
                 return BadRequest(ApiResponse.Fail("UserId is required."));
             if (string.IsNullOrWhiteSpace(model.DeviceId))
                 return BadRequest(ApiResponse.Fail("DeviceId is required."));
-           
-            //var principal = ValidateJwtToken(model.Token);
-            //if (principal == null)
-            //    return Unauthorized(ApiResponse.Fail("Invalid or expired token."));
-
-            //await _jwtBlacklistService.AddToBlacklistAsync(model.Token);
+            
             var result = await _authService.ClientLogout(model);
             return Ok(result);
         }
+        [Authorize(Roles = "Client")]
+        [HttpDelete("DeleteNotification/{alertId:int:min(1)}")]
+        public async Task<IActionResult> DeleteNotification([FromRoute]int alertId)
+        {
+            var clientIdClaim = User.FindFirst("Id")?.Value;
+            var deviceId = User.FindFirst("DeviceId")?.Value;
+            var deviceType = User.FindFirst("DeviceType")?.Value;
+            if (string.IsNullOrEmpty(clientIdClaim) || !int.TryParse(clientIdClaim, out int clientId) || clientId <= 0)
+            {
+                return BadRequest(ApiResponse.Fail("Invalid or missing ClientId in token."));
+            }
 
+            var result = await _clientService.DeleteNotificationAsync(int.Parse(clientIdClaim), alertId);
+            return Ok(result);
+        }
 
-        //public class LogoutRequest
-        //{
-        //    public string Token { get; set; }
-        //}
+        [Authorize(Roles = "Client")]
+        [HttpGet("sub-client")]
+        public async Task<IActionResult> SubClient()
+        {
+            var clientIdClaim = User.FindFirst("Id")?.Value;
+            var deviceId = User.FindFirst("DeviceId")?.Value;
+            var deviceType = User.FindFirst("DeviceType")?.Value;
+            if (string.IsNullOrEmpty(clientIdClaim) || !int.TryParse(clientIdClaim, out int clientId) || clientId <= 0)
+            {
+                return BadRequest(ApiResponse.Fail("Invalid or missing ClientId in token."));
+            }
 
+            var result = await _clientService.GetSubClientAsync(int.Parse(clientIdClaim));
+            return Ok(ApiResponse.Ok(result, "Client list fetched."));
+        }
+
+        [Authorize(Roles = "Client")]
+        [HttpPost("reset-password-subclient")]
+        public async Task<IActionResult> ChangePasswordSubClient([FromBody] ChangePassword changePassword)
+        {
+            var clientIdClaim = User.FindFirst("Id")?.Value;
+            var deviceId = User.FindFirst("DeviceId")?.Value;
+            var deviceType = User.FindFirst("DeviceType")?.Value;
+            if (string.IsNullOrEmpty(clientIdClaim) || !int.TryParse(clientIdClaim, out int clientId) || clientId <= 0)
+            {
+                return BadRequest(ApiResponse.Fail("Invalid or missing ClientId in token."));
+            }
+
+            var result = await _clientService.ChangePasswordSubClientAsync(int.Parse(clientIdClaim), changePassword.ClientId, changePassword.Password);
+            return Ok(ApiResponse.Ok(null, result.Message));
+        }
 
         private ClaimsPrincipal? ValidateJwtToken(string token)
         {

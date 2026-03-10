@@ -73,9 +73,6 @@ namespace DashboardExcelApi
                             if (!string.IsNullOrEmpty(symbol))
                             {
                                 await _redisDb.StringSetAsync(symbol, root.ToString());
-                                //await _hubContext.Clients.Group(symbol).SendAsync("excelRate", Compress(root.ToString()));
-                                //int sep = message.IndexOf('|');
-                                //string group = sep > 0 ? message[..sep] : "UNKNOWN";
                                 _messageQueue.Writer.TryWrite((symbol, root.ToString()));
                             }
                         }

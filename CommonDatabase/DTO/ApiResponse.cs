@@ -6,14 +6,16 @@ namespace CommonDatabase.DTO
     {
         public bool IsSuccess { get; set; }
         public string Message { get; set; }
+        public string ExceptionMessage { get; set; }
         public object Data { get; set; }
 
-        public static ApiResponse Ok(object data = null, string message = "Success")
+        public static ApiResponse Ok(object data = null, string message = "Success", string message2 = "Success")
         {
             return new ApiResponse
             {
                 IsSuccess = true,
                 Message = message,
+                ExceptionMessage = message2,
                 Data = data ?? Array.Empty<object>()  // use empty array if null
             };
         }

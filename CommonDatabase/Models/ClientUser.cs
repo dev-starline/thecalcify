@@ -8,10 +8,10 @@ namespace CommonDatabase.Models
     {
         [Key]
         public int Id { get; set; }
-        [Required]
+        //[Required]
         [MaxLength(30)]
         public string Username { get; set; } = string.Empty;
-        [Required]
+        //[Required]
         public string Password { get; set; } = string.Empty;
         [Required]
         public string FirmName { get; set; } = string.Empty;
@@ -34,6 +34,8 @@ namespace CommonDatabase.Models
         public DateTime? UpdateDate { get; set; } = DateTime.UtcNow;
         public string Topics { get; set; } = "";
         public string Keywords { get; set; } = "";
+        public string Puid { get; set; } = "0";
+        public int SubClientLimit { get; set; }
     }
 
     public class ClientDetailsDto

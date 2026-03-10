@@ -25,6 +25,12 @@ namespace DashboardExcelApi.Controllers
             var clients = await _clientService.GetClientListAsync();
             return Ok(ApiResponse.Ok(clients, "Client list fetched."));
         }
+        [HttpGet("GetAllClientList")]
+        public async Task<IActionResult> GetAllClientList()
+        {
+            var clients = await _clientService.GetClientListDtoAsync();
+            return Ok(ApiResponse.Ok(clients, "Client list fetched."));
+        }
 
         [HttpPost("InsertClient")]
         public async Task<IActionResult> AddClient([FromBody] ClientUser client)

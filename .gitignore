@@ -366,6 +366,10 @@ FodyWeavers.xsd
 bin/
 obj/
 
+# wwwroot exclusions
+ExcelHostApp/wwwroot/sheets/
+ExcelHostApp/wwwroot/RateHistory/
+
 # Visual Studio
 .vs/
 *.user
