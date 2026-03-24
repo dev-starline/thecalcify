@@ -36,22 +36,39 @@ namespace DashboardExcelApi
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             _ = Task.Run(async () => await Publish(stoppingToken), stoppingToken);
-            _ = Task.Run(async () => await Connection(stoppingToken), stoppingToken);
+            //_ = Task.Run(async () => await Connection(stoppingToken), stoppingToken);
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }
         private async Task Publish(CancellationToken token)
         {
-            await foreach (var (group, message) in _messageQueue.Reader.ReadAllAsync(token))
+            _subscriber.Subscribe("excel", (channel, message) =>
             {
-                try
+                _ = Task.Run(async () =>
                 {
-                    await _hubContext.Clients.Group(group).SendAsync("excelRate", Compress(message), token);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"[Send Error] {ex.Message}");
-                }
-            }
+                    try
+                    {
+                        using var doc = JsonDocument.Parse((string)message!);
+                        var root = doc.RootElement;
+                        if (root.TryGetProperty("i", out JsonElement symbolElement))
+                        {
+                            var symbol = symbolElement.GetString();
+                            if (!string.IsNullOrEmpty(symbol))
+                            {
+                                //if (symbol == "SILVERFUTURE_I")
+                                //{
+                                //    Console.WriteLine(root.ToString());
+                                //}
+                                await _hubContext.Clients.Group(symbol).SendAsync("excelRate", Compress(root.ToString()), token);
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"[Send Error] {ex.Message}");
+                    }
+                });
+                //RegisterSignalREvents();
+            });
         }
 
 
