@@ -12,95 +12,43 @@ namespace DashboardExcelApi
 
         private readonly IHubContext<ExcelHub> _hubContext;
         private readonly ISubscriber _subscriber;
-        private readonly IConnectionMultiplexer _redis;
-        private readonly IDatabase _redisDb;
-        //private readonly Channel<(string group, string message)> _messageQueue = Channel.CreateUnbounded<(string, string)>(new UnboundedChannelOptions
-        //{
-        //    SingleWriter = false,
-        //    SingleReader = true
-        //});
-        private readonly Channel<(string group, string message)> _messageQueue = Channel.CreateBounded<(string, string)>(new BoundedChannelOptions(1)
-        {
-            SingleWriter = false,
-            SingleReader = true,
-            FullMode = BoundedChannelFullMode.DropOldest
-        });
-        private readonly string[] _instruments = { "GOLD_I", "GOLD_II" };
+
         public SubscribeRate(IHubContext<ExcelHub> hubContext, IConnectionMultiplexer redis)
         {
             _subscriber = redis.GetSubscriber();
             _hubContext = hubContext;
-            _redis = redis;
-            _redisDb = redis.GetDatabase();
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _ = Task.Run(async () => await Publish(stoppingToken), stoppingToken);
-            //_ = Task.Run(async () => await Connection(stoppingToken), stoppingToken);
+            await Publish(stoppingToken);
             await Task.Delay(Timeout.Infinite, stoppingToken);
         }
-        private async Task Publish(CancellationToken token)
+        private Task Publish(CancellationToken token)
         {
-            _subscriber.Subscribe("excel", (channel, message) =>
+            _subscriber.Subscribe("excel", async (channel, message) =>
             {
-                _ = Task.Run(async () =>
+                try
                 {
-                    try
+                    using var doc = JsonDocument.Parse((string)message!);
+                    var root = doc.RootElement;
+
+                    if (root.TryGetProperty("i", out JsonElement symbolElement))
                     {
-                        using var doc = JsonDocument.Parse((string)message!);
-                        var root = doc.RootElement;
-                        if (root.TryGetProperty("i", out JsonElement symbolElement))
+                        var symbol = symbolElement.GetString();
+
+                        if (!string.IsNullOrEmpty(symbol))
                         {
-                            var symbol = symbolElement.GetString();
-                            if (!string.IsNullOrEmpty(symbol))
-                            {
-                                //if (symbol == "SILVERFUTURE_I")
-                                //{
-                                //    Console.WriteLine(root.ToString());
-                                //}
-                                await _hubContext.Clients.Group(symbol).SendAsync("excelRate", Compress(root.ToString()), token);
-                            }
+                            _ = _hubContext.Clients.Group(symbol).SendAsync("excelRate", Compress(root.ToString()), token);
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"[Send Error] {ex.Message}");
-                    }
-                });
-                //RegisterSignalREvents();
-            });
-        }
-
-
-
-        private async Task Connection(CancellationToken token)
-        {
-            _subscriber.Subscribe("excel", (channel, message) =>
-            {
-                _ = Task.Run(async () =>
+                }
+                catch (Exception ex)
                 {
-                    try
-                    {
-
-                        using var doc = JsonDocument.Parse((string)message!);
-                        var root = doc.RootElement;
-                        if (root.TryGetProperty("i", out JsonElement symbolElement))
-                        {
-                            var symbol = symbolElement.GetString();
-                            if (!string.IsNullOrEmpty(symbol))
-                            {
-                                await _redisDb.StringSetAsync(symbol, root.ToString());
-                                _messageQueue.Writer.TryWrite((symbol, root.ToString()));
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine("excelRate: " + ex.Message);
-                    }
-                });
-                //RegisterSignalREvents();
+                    Console.WriteLine($"[Send Error] {ex.Message}");
+                }
             });
+
+            return Task.CompletedTask;
         }
 
         public byte[] Compress(string json)
