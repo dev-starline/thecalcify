@@ -53,7 +53,7 @@ namespace DashboardExcelApi
         // Redis key templates (centralised for easier change)
         private readonly string prefix = "";
         //private const string ClientDetailsKey = "clientDetails"; 
-        private const string UserInstrumentKeyPrefix = "userInstrument:"; 
+        private const string UserInstrumentKeyPrefix = "userInstrument:";
         private const string UserDetailsKey = "UserDetails";
         private readonly ConnectionStore _store;
         private readonly HubNotifier _hubNotifier;
@@ -78,7 +78,7 @@ namespace DashboardExcelApi
             using (var gzip = new GZipStream(output, CompressionMode.Compress))
             using (var writer = new StreamWriter(gzip)) writer.Write(json);
             return output.ToArray();
-        }       
+        }
 
         public override async Task OnDisconnectedAsync(Exception ex)
         {
@@ -317,10 +317,10 @@ namespace DashboardExcelApi
                 if (identifiers.Count == 0)
                     return ApiResponse.Fail("No instrument identifiers for this user");
 
-                
+
                 var keys = identifiers.Select(id => (RedisKey)id).ToArray();
                 var values = await _db.StringGetAsync(keys);
-              
+
                 var dbInstruments = await _context.Instruments.Where(i => i.ClientId == clientId && identifiers.Contains(i.Identifier) && i.IsMapped)
                     .Select(i => new SubscribeInstrumentView { Identifier = i.Identifier, Contract = i.Contract }).ToListAsync();
                 var dbInstrumentsMap = dbInstruments.DistinctBy(i => i.Identifier, StringComparer.OrdinalIgnoreCase).ToDictionary(i => i.Identifier, i => i, StringComparer.OrdinalIgnoreCase);
