@@ -65,10 +65,10 @@ namespace DashboardExcelApi
                        .SendAsync("excelRate", Compress(kv.Value), cancellationToken: stoppingToken)
                );
 
-                snapshot.Select(kv =>
+                var tasks3 = snapshot.Select(kv =>
                    _redisDb.StringSetAsync(kv.Key, kv.Value)
                 );
-                await Task.WhenAll(tasks.Concat(tasks2));
+                await Task.WhenAll(tasks.Concat(tasks2).Concat(tasks3));
                 
                 await Task.Delay(200, stoppingToken);
             }
