@@ -74,7 +74,7 @@ namespace CommonDatabase.Services
                     if (!subscribeExists)
                         continue;
 
-                    instrument.Mdate ??= DateTime.UtcNow;
+                    instrument.Mdate ??= DateTime.Now;
                     var existingInstrument = await _context.Instruments.FirstOrDefaultAsync(i => i.Identifier == instrument.Identifier && i.ClientId == instrument.ClientId);
                     if (existingInstrument != null)
                     {

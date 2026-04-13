@@ -4,6 +4,7 @@ using StackExchange.Redis;
 using System.Collections.Concurrent;
 using System.IO.Compression;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace DashboardExcelApi
 {
@@ -37,6 +38,7 @@ namespace DashboardExcelApi
                     if (!string.IsNullOrEmpty(symbol))
                     {
                         _latestTicks[symbol] = root.ToString();
+                        _redisDb.StringSet(symbol, root.ToString());
                     }
                 }
             }
@@ -63,13 +65,14 @@ namespace DashboardExcelApi
                 var tasks2 = snapshot.Select(kv =>
                    _hubContext.Clients.Group(kv.Key)
                        .SendAsync("excelRate", Compress(kv.Value), cancellationToken: stoppingToken)
-               );
-
-                var tasks3 = snapshot.Select(kv =>
-                   _redisDb.StringSetAsync(kv.Key, kv.Value)
                 );
-                await Task.WhenAll(tasks.Concat(tasks2).Concat(tasks3));
-                
+
+                await Task.WhenAll(tasks.Concat(tasks2));
+                //var tasks3 = snapshot.Select(kv =>
+                //   _redisDb.StringSetAsync(kv.Key, kv.Value)
+                //);
+                //await Task.WhenAll(tasks.Concat(tasks2).Concat(tasks3));
+
                 await Task.Delay(200, stoppingToken);
             }
         }

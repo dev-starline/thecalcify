@@ -13,11 +13,12 @@ namespace CommonDatabase.Services
     {
         private readonly AppDbContext _context;
         private readonly IConfiguration _configuration;
-
-        public SubscribeService(AppDbContext context, IConfiguration configuration)
+        private readonly ICommonService _commonService;
+        public SubscribeService(AppDbContext context, IConfiguration configuration, ICommonService commonService)
         {
             _context = context;
             _configuration = configuration;
+            _commonService = commonService;
         }
 
         public async Task<IEnumerable<Subscribe>> GetAllAsync()
@@ -74,7 +75,17 @@ namespace CommonDatabase.Services
                 return ApiResponse.Fail("Subscribe record not found.");
 
             _context.Set<Subscribe>().Remove(existing);
+
+            var relatedInstruments = await _context.Instruments.Where(i => i.Identifier == existing.Identifier).ToListAsync();
+            _context.Instruments.RemoveRange(relatedInstruments);
+
             await _context.SaveChangesAsync();
+
+            foreach (var subClientId in relatedInstruments.Select(i => i.ClientId))
+            {
+                string? subClientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == subClientId))?.Username;
+                Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(subClientId, subClientUsername)).Wait();
+            }
 
             return ApiResponse.Ok(id, "Subscribe deleted successfully.");
         }

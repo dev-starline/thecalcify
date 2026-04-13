@@ -255,6 +255,7 @@ namespace DashboardExcelApi
                     }
 
                     await _hubNotifier.SendToClientAsync(connId, HubMethodName.excelRate, Compress(symbolData));
+                    await _hubNotifier.SendToClientAsync(connId, HubMethodName.excelBase, symbolData);
                 }
             }
             catch (Exception ex)
