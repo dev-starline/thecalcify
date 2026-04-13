@@ -3,21 +3,33 @@ using CommonDatabase.Interfaces;
 using CommonDatabase.Services;
 using DashboardExcelApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Reuters.Repositories;
+using Reuters.Repositories;
+using Serilog;
 using StackExchange.Redis;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.FileProviders;
-using Reuters.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure Serilog
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+
+
 var allowedOrigins = builder.Configuration.GetSection("allowedOrigins").Get<string[]>();
 builder.Services.AddSingleton(allowedOrigins);
 
@@ -62,19 +74,31 @@ builder.Services.AddControllers()
 
 builder.Services.AddSingleton<IUserIdProvider, QueryStringUserIdProvider>();
 // Register a singleton Redis connection
-builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
-    ConnectionMultiplexer.Connect("127.0.0.1:6379"));
+//builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+//    ConnectionMultiplexer.Connect("127.0.0.1:6379"));
 
-// Use that connection for SignalR Redis backplane
-builder.Services.AddSignalR().AddStackExchangeRedis(options =>
+// Redis connection string with password
+// Format: host:port,password=yourpassword
+var redisConnectionString = builder.Configuration.GetSection("RedisConString").Value
+    ?? "127.0.0.1:6379";
+
+// Register Redis multiplexer as a singleton
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
 {
-    var multiplexer = builder.Services.BuildServiceProvider().GetRequiredService<IConnectionMultiplexer>();
-    options.ConnectionFactory = async writer =>
-    {
-        writer.WriteLine("Connecting to Redis...");
-        return multiplexer;
-    };
+    return ConnectionMultiplexer.Connect(redisConnectionString);
 });
+
+
+////// Use that connection for SignalR Redis backplane
+//builder.Services.AddSignalR().AddStackExchangeRedis(options =>
+//{
+//    var multiplexer = builder.Services.BuildServiceProvider().GetRequiredService<IConnectionMultiplexer>();
+//    options.ConnectionFactory = async writer =>
+//    {
+//        writer.WriteLine("Connecting to Redis...");
+//        return multiplexer;
+//    };
+//});
 
 //builder.Services.AddSignalR().AddStackExchangeRedis("127.0.0.1:6379");
 //builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("127.0.0.1:6379"));
@@ -163,7 +187,7 @@ app.UseSwaggerUI(c =>
 });
 
 app.UseCors("AllowOrigin");
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseSession();
 app.UseDefaultFiles();
@@ -175,7 +199,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-//app.MapHub<ExcelHub>("/excel");
+//app.MapHub<ExcelHub>("/excel", options =>
+//{
+
+//    options.Transports = HttpTransportType.WebSockets;
+
+//});
 //app.UseEndpoints(endpoints =>
 //{
 //    var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
@@ -196,22 +225,37 @@ app.UseEndpoints(endpoints =>
 
     switch (env)
     {
-        case "Development":
-            endpoints.MapHub<ExcelHub>("/dev-excel");
-            break;
+        //case "Development":
+        //    endpoints.MapHub<ExcelHub>("/dev-excel");
+        //    break;
 
-        case "QA":
-            endpoints.MapHub<ExcelHub>("/qa-excel");
-            break;
+        //case "QA":
+        //    endpoints.MapHub<ExcelHub>("/qa-excel");
+        //    break;
 
         case "Production":
             // Map both routes in Production
-            endpoints.MapHub<ExcelHub>("/prod-excel");
-            endpoints.MapHub<ExcelHub>("/excel");
+            endpoints.MapHub<ExcelHub>("/prod-excel", options =>
+            {
+
+                options.Transports = HttpTransportType.WebSockets;
+
+            });
+            endpoints.MapHub<ExcelHub>("/excel", options =>
+            {
+
+                options.Transports = HttpTransportType.WebSockets;
+
+            });
             break;
 
         default:
-            endpoints.MapHub<ExcelHub>("/excel");
+            endpoints.MapHub<ExcelHub>("/excel", options =>
+            {
+
+                options.Transports = HttpTransportType.WebSockets;
+
+            });
             break;
     }
 });

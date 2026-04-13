@@ -74,7 +74,7 @@ namespace CommonDatabase.Services
                     if (!subscribeExists)
                         continue;
 
-                    instrument.Mdate ??= DateTime.UtcNow;
+                    instrument.Mdate ??= DateTime.Now;
                     var existingInstrument = await _context.Instruments.FirstOrDefaultAsync(i => i.Identifier == instrument.Identifier && i.ClientId == instrument.ClientId);
                     if (existingInstrument != null)
                     {
@@ -83,8 +83,8 @@ namespace CommonDatabase.Services
                         existingInstrument.Mdate = instrument.Mdate;
                         _context.Instruments.Update(existingInstrument);
 
-                        if (!instrument.IsMapped)
-                        {
+                        //if (!instrument.IsMapped)
+                        //{
                             if (await _context.Instruments
                             .AnyAsync(b => subClient.Contains(b.ClientId) && b.Identifier == existingInstrument.Identifier))
                             {
@@ -105,26 +105,52 @@ namespace CommonDatabase.Services
                                     .SetProperty(b => b.Mdate, b => DateTime.Now)
                                 );
                             }
-                        }
-                        else
-                        {
-                            await _context.Instruments
-                                .Where(b => subClient.Contains(b.ClientId) && b.Identifier == existingInstrument.Identifier)
-                                .ExecuteUpdateAsync(setters => setters
-                                    // Conditional updates for flags
-                                    .SetProperty(
-                                        n => n.Contract,
-                                        n => existingInstrument.Contract
-                                    )
+                            else
+                            {
+                                foreach (var item in subClient)
+                                {
+                                    instrument.ClientId = item;
+                                    await _context.Instruments.AddAsync(instrument);
+                                    await _context.SaveChangesAsync();
+                                }
+                                
+                            }
+                        //}
+                        //else
+                        //{
+                        //    await _context.Instruments
+                        //        .Where(b => subClient.Contains(b.ClientId) && b.Identifier == existingInstrument.Identifier)
+                        //        .ExecuteUpdateAsync(setters => setters
+                        //            // Conditional updates for flags
+                        //            .SetProperty(
+                        //                n => n.Contract,
+                        //                n => existingInstrument.Contract
+                        //            )
 
-                                    // Always update timestamp
-                                    .SetProperty(b => b.Mdate, b => DateTime.Now)
-                                );
-                        }
+                        //            // Always update timestamp
+                        //            .SetProperty(b => b.Mdate, b => DateTime.Now)
+                        //        );
+                        //}
                     }
                     else
                     {
                         await _context.Instruments.AddAsync(instrument);
+                        await _context.SaveChangesAsync();
+                        foreach (var item in subClient)
+                        {
+                            var childInstrument = new Instruments
+                            {
+                                ClientId = item,
+                                Identifier = instrument.Identifier,
+                                Contract = instrument.Contract,
+                                IsMapped = instrument.IsMapped,
+                                Mdate = DateTime.Now
+                            };
+                            //childInstrument.ClientId = item;
+                            await _context.Instruments.AddAsync(childInstrument);
+                           
+                        }
+                        await _context.SaveChangesAsync();
                     }
                 }
 

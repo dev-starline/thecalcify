@@ -15,7 +15,8 @@ namespace CommonDatabase.Enum
         UserDisconnected,
         excelRate,
         Error,
-        ReceiveNewsNotification
+        ReceiveNewsNotification,
+        excelBase
         // add more as needed
     }
 
