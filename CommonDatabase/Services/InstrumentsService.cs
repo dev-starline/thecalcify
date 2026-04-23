@@ -211,6 +211,7 @@ namespace CommonDatabase.Services
 
             var getInstrument = await GetInstrumentListByClientAsync(clientId);
             await _constant.SetIdentifireRedisAsync();
+            await _constant.SetClientInstrumentListRedisAsync();
             return ApiResponse.Ok(
                getInstrument.Data, 
                NoMappedIdentifierInParent.Count > 0 ? $"{string.Join(", ", NoMappedIdentifierInParent.Select(x => x))} not mapped in {parentUsername}."

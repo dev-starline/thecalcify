@@ -73,7 +73,7 @@ namespace DashboardExcelApi
                 //);
                 //await Task.WhenAll(tasks.Concat(tasks2).Concat(tasks3));
 
-                await Task.Delay(200, stoppingToken);
+                await Task.Delay(350, stoppingToken);
             }
         }
         public override Task StopAsync(CancellationToken cancellationToken)

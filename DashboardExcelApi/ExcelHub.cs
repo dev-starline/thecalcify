@@ -55,6 +55,7 @@ namespace DashboardExcelApi
         //private const string ClientDetailsKey = "clientDetails"; 
         private const string UserInstrumentKeyPrefix = "userInstrument:";
         private const string UserDetailsKey = "UserDetails";
+        private const string ClientInstrumentListKey = "ClientInstrumentList";
         private readonly ConnectionStore _store;
         private readonly HubNotifier _hubNotifier;
         private readonly IDatabase _db;
@@ -85,8 +86,9 @@ namespace DashboardExcelApi
             var connectionId = Context?.ConnectionId;
             if (!string.IsNullOrEmpty(connectionId))
             {
+                _store.RemoveByConnection(Context.ConnectionId);
                 await _hubNotifier.RemoveAllGroupsAsync(ConnectionGroups, Groups, Context.ConnectionId);
-                await _hubNotifier.SendToAllAsync(HubMethodName.UserDisconnected, Context.ConnectionId);
+                //await _hubNotifier.SendToAllAsync(HubMethodName.UserDisconnected, Context.ConnectionId);
             }
 
             await base.OnDisconnectedAsync(ex);
@@ -95,7 +97,7 @@ namespace DashboardExcelApi
         public override async Task OnConnectedAsync()
         {
             _logger.LogInformation($"Connected: {Context.ConnectionId}");
-            _store.RemoveByConnection(Context.ConnectionId);
+            
 
             await _hubNotifier.SendToClientAsync(Context.ConnectionId, HubMethodName.UserConnected, Context.ConnectionId);
             await base.OnConnectedAsync();
@@ -108,9 +110,9 @@ namespace DashboardExcelApi
                 var groupName = GroupNameResolver.Resolve(room);
                 var connectionId = Context.ConnectionId;
 
-                await _hubNotifier.RemoveAllGroupsAsync(ConnectionGroups, Groups, connectionId);
+                //await _hubNotifier.RemoveAllGroupsAsync(ConnectionGroups, Groups, connectionId);
                 await _hubNotifier.AddConnectionToGroupAsync(Context, groupName);
-                await _hubNotifier.AddOrUpdateGroup(ConnectionGroups, connectionId, groupName);
+                //await _hubNotifier.AddOrUpdateGroup(ConnectionGroups, connectionId, groupName);
                 _store.Add(groupName, connectionId);
 
                 var userDetailsRaw = await _db.StringGetAsync($"{prefix}_{UserDetailsKey}");
@@ -126,22 +128,35 @@ namespace DashboardExcelApi
 
                 await _hubNotifier.SendToGroupAsync(groupName, HubMethodName.ReceiveMessage, clientDevices);
 
-                int clientId = await _context.Client
-                    .Where(x => x.Username == room)
-                    .Select(x => x.Id)
-                    .FirstOrDefaultAsync();
-
-                if (clientId == 0)
+                bool exists = _db.KeyExists($"{prefix}_{ClientInstrumentListKey}");
+                var rawUserResults = new List<ClientWiseInstrumentList>();
+                if (exists)
                 {
-                    await _hubNotifier.SendToCallerAsync(Context, HubMethodName.Error, "Client not found.");
-                    return;
+                    var getClientInstument = await _db.StringGetAsync($"{prefix}_{ClientInstrumentListKey}");
+                    rawUserResults = string.IsNullOrEmpty(getClientInstument)
+                        ? new List<ClientWiseInstrumentList>()
+                        : JsonConvert.DeserializeObject<List<ClientWiseInstrumentList>>(getClientInstument);
                 }
+                else
+                {
+                    //int clientId = await _context.Client
+                    //      .Where(x => x.Username == room)
+                    //      .Select(x => x.Id)
+                    //      .FirstOrDefaultAsync();
 
-                var rawUserResults = await _context.ClientWiseInstrumentList
+                    //if (clientId == 0)
+                    //{
+                    //    await _hubNotifier.SendToCallerAsync(Context, HubMethodName.Error, "Client not found.");
+                    //    return;
+                    //}
+                    int clientId = 0;
+                    rawUserResults = await _context.ClientWiseInstrumentList
                     .FromSqlInterpolated($"EXEC dbo.usp_ClientWiseInstumentList {clientId}")
                     .ToListAsync();
-
-                var identifiers = rawUserResults
+                    await _db.StringSetAsync($"{prefix}_{ClientInstrumentListKey}", System.Text.Json.JsonSerializer.Serialize(rawUserResults));
+                }
+                    
+                var identifiers = rawUserResults.Where(x => x.Username == room)
                     .OrderBy(x => x.RowId)
                     .Select(r => new { i = r.Identifier, n = r.Contract, sc = r.SubContract })
                     .ToList();

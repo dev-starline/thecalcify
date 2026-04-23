@@ -126,6 +126,7 @@ namespace CommonDatabase.Services {
 
             await _constant.PushClientDetails();
             await _commonService.GetDeviceAccessSummaryAsync(client.Id, client.Username);
+            await _constant.SetClientInstrumentListRedisAsync();
 
             var newData = await GetClientListDtoAsync();
             return client.Puid == "0"

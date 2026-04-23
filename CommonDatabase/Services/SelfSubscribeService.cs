@@ -87,6 +87,7 @@ namespace CommonDatabase.Services
             await _context.SaveChangesAsync();
             await _constant.RemoveSelfSubscriberFromRedis(existing);
             await _constant.SetIdentifireRedisAsync();
+            await _constant.SetClientInstrumentListRedisAsync();
             return ApiResponse.Ok(id, "Self deleted successfully.");
         }
 

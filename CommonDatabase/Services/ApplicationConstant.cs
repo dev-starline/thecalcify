@@ -174,7 +174,15 @@ namespace CommonDatabase.Services
 
 
         }
+        internal async Task SetClientInstrumentListRedisAsync()
+        {
+            int clientId = 0;
+            var rawUserResults = await _context.ClientWiseInstrumentList
+                    .FromSqlInterpolated($"EXEC dbo.usp_ClientWiseInstumentList {clientId}")
+                    .ToListAsync();
 
+            await SetValueInRedisAsync($"{prefix}_ClientInstrumentList", System.Text.Json.JsonSerializer.Serialize(rawUserResults));
+        }
         //internal async Task PushClientDetails()
         //{
         //    string? jsonString = null;
