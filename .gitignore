@@ -370,6 +370,10 @@ obj/
 ExcelHostApp/wwwroot/sheets/
 ExcelHostApp/wwwroot/RateHistory/
 
+# Properties exclusions
+ExcelHostApp/Properties
+ExcelHostApp/Properties/PublishProfiles/
+
 # Visual Studio
 .vs/
 *.user

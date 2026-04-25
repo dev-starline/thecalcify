@@ -300,6 +300,21 @@ namespace ClientExcelApi.Controllers
             var result = await _clientService.ChangePasswordSubClientAsync(int.Parse(clientIdClaim), changePassword.ClientId, changePassword.Password);
             return Ok(ApiResponse.Ok(null, result.Message));
         }
+        [Authorize(Roles = "Client")]
+        [HttpGet("get-client-detail")]
+        public async Task<IActionResult> GetClientDetail()
+        {
+            var clientIdClaim = User.FindFirst("Id")?.Value;
+            var deviceId = User.FindFirst("DeviceId")?.Value;
+            var deviceType = User.FindFirst("DeviceType")?.Value;
+            if (string.IsNullOrEmpty(clientIdClaim) || !int.TryParse(clientIdClaim, out int clientId) || clientId <= 0)
+            {
+                return BadRequest(ApiResponse.Fail("Invalid or missing ClientId in token."));
+            }
+
+            var result = await _clientService.GetClientDetailAsync(int.Parse(clientIdClaim));
+            return Ok(ApiResponse.Ok(result, "Client detail fetched successfully."));
+        }
 
         private ClaimsPrincipal? ValidateJwtToken(string token)
         {

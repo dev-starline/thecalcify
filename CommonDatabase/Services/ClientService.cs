@@ -509,6 +509,11 @@ namespace CommonDatabase.Services {
             }
         }
 
+        public async Task<ClientUser> GetClientDetailAsync(int clientId)
+        {
+            var client = await _context.Client.Where(x => x.Id == clientId).FirstOrDefaultAsync();
+            return client;
+        }
     }
 }
 public  class HierarchyBuilder
