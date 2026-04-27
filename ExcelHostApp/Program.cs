@@ -199,6 +199,15 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/signalr-stats", (ConnectionStore store) =>
+{
+    return new
+    {
+        connections = store.TotalConnections,
+        groups = store.TotalGroups,
+        membership = store.Snapshot()
+    };
+});
 //app.MapHub<ExcelHub>("/excel", options =>
 //{
 

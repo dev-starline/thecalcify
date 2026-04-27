@@ -86,9 +86,9 @@ namespace DashboardExcelApi
             var connectionId = Context?.ConnectionId;
             if (!string.IsNullOrEmpty(connectionId))
             {
-                _store.RemoveByConnection(Context.ConnectionId);
-                await _hubNotifier.RemoveAllGroupsAsync(ConnectionGroups, Groups, Context.ConnectionId);
-                //await _hubNotifier.SendToAllAsync(HubMethodName.UserDisconnected, Context.ConnectionId);
+                _store.RemoveConnection(connectionId);
+                await _hubNotifier.RemoveAllGroupsAsync(ConnectionGroups, Groups, connectionId);
+                //await _hubNotifier.SendToAllAsync(HubMethodName.UserDisconnected, connectionId);
             }
 
             await base.OnDisconnectedAsync(ex);
@@ -113,7 +113,7 @@ namespace DashboardExcelApi
                 //await _hubNotifier.RemoveAllGroupsAsync(ConnectionGroups, Groups, connectionId);
                 await _hubNotifier.AddConnectionToGroupAsync(Context, groupName);
                 //await _hubNotifier.AddOrUpdateGroup(ConnectionGroups, connectionId, groupName);
-                _store.Add(groupName, connectionId);
+                _store.AddToGroup(connectionId, groupName);
 
                 var userDetailsRaw = await _db.StringGetAsync($"{prefix}_{UserDetailsKey}");
                 var userList = string.IsNullOrEmpty(userDetailsRaw)
