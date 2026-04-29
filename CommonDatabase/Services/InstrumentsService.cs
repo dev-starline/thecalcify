@@ -83,9 +83,21 @@ namespace CommonDatabase.Services
                         existingInstrument.Mdate = instrument.Mdate;
                         _context.Instruments.Update(existingInstrument);
 
+                        var marketWatchList = await _context.MarketWatch.Where(m => m.ClientId == instrument.ClientId && m.ListOfSymbols.Contains(instrument.Identifier)).ToListAsync();
+                        foreach (var item in marketWatchList)
+                        {
+                            var symbols = item.ListOfSymbols.Split(',').ToList();
+                            var index = symbols.FindIndex(symbol => symbol == instrument.Identifier);
+                            if (index >= 0)
+                            {
+                                symbols.RemoveAt(index);
+                                item.ListOfSymbols = string.Join(",", symbols);
+                            }
+                            _context.MarketWatch.Update(item);
+                        }
                         //if (!instrument.IsMapped)
                         //{
-                            if (await _context.Instruments
+                        if (await _context.Instruments
                             .AnyAsync(b => subClient.Contains(b.ClientId) && b.Identifier == existingInstrument.Identifier))
                             {
                                 await _context.Instruments
@@ -104,7 +116,20 @@ namespace CommonDatabase.Services
                                     // Always update timestamp
                                     .SetProperty(b => b.Mdate, b => DateTime.Now)
                                 );
+
+                            var subClientMarketWatchList = await _context.MarketWatch.Where(m => subClient.Contains(m.ClientId) && m.ListOfSymbols.Contains(instrument.Identifier)).ToListAsync();
+                            foreach (var item in subClientMarketWatchList)
+                            {
+                                var symbols = item.ListOfSymbols.Split(',').ToList();
+                                var index = symbols.FindIndex(symbol => symbol == instrument.Identifier);
+                                if (index >= 0)
+                                {
+                                    symbols.RemoveAt(index);
+                                    item.ListOfSymbols = string.Join(",", symbols);
+                                }
+                                _context.MarketWatch.Update(item);
                             }
+                        }
                             else
                             {
                                 foreach (var item in subClient)

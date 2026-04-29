@@ -139,6 +139,7 @@ namespace DashboardExcelApi.Controllers
 
             var identifiers = rawUserResults.OrderBy(x => x.RowId).Select(r => new { i = r.Identifier, n = r.Contract, sc = r.SubContract }).ToList();
             await _hubNotifier.SendToGroupAsync(groupName, HubMethodName.UserListOfSymbol, identifiers);
+            await _hubNotifier.SendToGroupAsync(groupName, HubMethodName.MarketWatchUpdated, true);
             return Ok();
         }
         private byte[] Compress(string json)
