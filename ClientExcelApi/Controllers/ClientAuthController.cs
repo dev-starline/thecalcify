@@ -186,7 +186,7 @@ namespace ClientExcelApi.Controllers
                 var groupName = GroupNameResolver.Resolve(payload.Username);
                 var compressed = Compress(JsonSerializer.Serialize(payload));
                 //await _hubContext.Clients.Group($"{groupName}_{ input.DeviceId}").SendAsync("rateAlertNotification", compressed);
-                await _hubContext.Clients.Group($"{groupName}").SendAsync("rateAlertNotification", compressed);
+                await _hubContext.Clients.Group($"{groupName}").SendAsync("rateAlertNotification", payload);
             }
             return Ok(result);
         }
