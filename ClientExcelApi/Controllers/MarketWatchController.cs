@@ -138,8 +138,8 @@ namespace ClientExcelApi.Controllers
                     ClientDeviceId = clientDevicesID,
                     ListOfSymbols = marketWatch.ListOfSymbols,
                     MarketWatchName = marketWatch.MarketWatchName,
-                    CreatedDate = DateTime.UtcNow,
-                    ModifiedDate = DateTime.UtcNow
+                    CreatedDate = DateTime.Now,
+                    ModifiedDate = DateTime.Now
                 };
 
                 await _context.MarketWatch.AddAsync(market);
@@ -194,7 +194,7 @@ namespace ClientExcelApi.Controllers
                 marketWatchExisting.MarketWatchName = marketWatch.MarketWatchName;
                 marketWatchExisting.ListOfSymbols = marketWatch.ListOfSymbols;
                 marketWatchExisting.ClientDeviceId = clientDevicesID;
-                marketWatchExisting.ModifiedDate = DateTime.UtcNow;
+                marketWatchExisting.ModifiedDate = DateTime.Now;
 
                 _context.MarketWatch.Update(marketWatchExisting);
 

@@ -41,8 +41,8 @@ namespace DashboardExcelApi.Controllers
             }
 
             var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "Unknown";           
-            var rateExpiredDate = client.RateExpiredDate ?? DateTime.UtcNow; 
-            var newsExpiredDate = client.NewsExpiredDate ?? DateTime.UtcNow; 
+            var rateExpiredDate = client.RateExpiredDate ?? DateTime.Now; 
+            var newsExpiredDate = client.NewsExpiredDate ?? DateTime.Now; 
 
             var result = await _clientService.AddClientAsync(client, ip, rateExpiredDate, newsExpiredDate);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
@@ -52,8 +52,8 @@ namespace DashboardExcelApi.Controllers
         public async Task<IActionResult> UpdateClient([FromBody] ClientUser client)
         {
             var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
-            var rateExpiredDate = client.RateExpiredDate ?? DateTime.UtcNow;
-            var newsExpiredDate = client.NewsExpiredDate ?? DateTime.UtcNow;
+            var rateExpiredDate = client.RateExpiredDate ?? DateTime.Now;
+            var newsExpiredDate = client.NewsExpiredDate ?? DateTime.Now;
             var result = await _clientService.UpdateClientAsync(client, ip, rateExpiredDate, newsExpiredDate);
             return result.IsSuccess ? Ok(result) : NotFound(result);
         }

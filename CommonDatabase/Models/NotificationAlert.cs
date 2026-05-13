@@ -37,9 +37,9 @@ namespace CommonDatabase.Models
 
         public DateTime? AlertDate { get; set; }
 
-        public DateTime CreateDate { get; set; } = DateTime.UtcNow;
+        public DateTime CreateDate { get; set; } = DateTime.Now;
 
-        public DateTime MDate { get; set; } = DateTime.UtcNow; // Updated on modify
+        public DateTime MDate { get; set; } = DateTime.Now; // Updated on modify
         public int ClientDeviceId { get; set; }
     }
 

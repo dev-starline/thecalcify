@@ -24,7 +24,7 @@ namespace Reuters.Repositories
         {
             lock (_lock)
             {
-                if (_accessToken != null && DateTime.UtcNow < _tokenExpiry)
+                if (_accessToken != null && DateTime.Now < _tokenExpiry)
                 {
                     return;
                 }
@@ -55,7 +55,7 @@ namespace Reuters.Repositories
                     {
                         _accessToken = responseJson.GetProperty("access_token").GetString();
                         var expiresInSeconds = responseJson.GetProperty("expires_in").GetInt32();
-                        _tokenExpiry = DateTime.UtcNow.AddSeconds(expiresInSeconds - 60);
+                        _tokenExpiry = DateTime.Now.AddSeconds(expiresInSeconds - 60);
                     }
                 }
                 else

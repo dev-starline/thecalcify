@@ -53,7 +53,7 @@ namespace CommonDatabase.Services
                 existing.IsActive = item.IsActive;
                 existing.Digit = item.Digit ?? existing.Digit;
                 existing.Type = item.Type ?? existing.Type; 
-                existing.UpdateDate = DateTime.UtcNow;
+                existing.UpdateDate = DateTime.Now;
 
                 updatedList.Add(existing);
             }

@@ -35,7 +35,7 @@ namespace CommonDatabase.Services
             }
             if (existing == null)
             {
-                subscribe.Mdate = DateTime.UtcNow; 
+                subscribe.Mdate = DateTime.Now; 
                 await _context.SelfSubscriber.AddAsync(subscribe);
                 await _context.SaveChangesAsync();              
                 await _constant.SetSelfSubscriberToRedis(subscribe);  
@@ -44,7 +44,7 @@ namespace CommonDatabase.Services
             {
                 existing.Name = subscribe.Name; existing.Bid = subscribe.Bid;
                 existing.Ask = subscribe.Ask;existing.Ltp = subscribe.Ltp;existing.High = subscribe.High;existing.Low = subscribe.Low;existing.Open = subscribe.Open;
-                existing.Close = subscribe.Close;existing.Mdate = DateTime.UtcNow;
+                existing.Close = subscribe.Close;existing.Mdate = DateTime.Now;
                 await _context.SaveChangesAsync();              
                 await _constant.SetSelfSubscriberToRedis(existing);
             }
@@ -55,13 +55,13 @@ namespace CommonDatabase.Services
             {
                 var newSubscribe = new Subscribe
                 {
-                    Identifier = subscribe.Identifier, Contract = subscribe.Name, IsActive = true, Digit = 0, Type = "mcx", UpdateDate = DateTime.UtcNow
+                    Identifier = subscribe.Identifier, Contract = subscribe.Name, IsActive = true, Digit = 0, Type = "mcx", UpdateDate = DateTime.Now
                 };
                 await _context.Subscribe.AddAsync(newSubscribe);
             }
             else
             {
-                existingSubscribe.Contract = subscribe.Name;existingSubscribe.UpdateDate = DateTime.UtcNow;
+                existingSubscribe.Contract = subscribe.Name;existingSubscribe.UpdateDate = DateTime.Now;
             }
 
             await _context.SaveChangesAsync();

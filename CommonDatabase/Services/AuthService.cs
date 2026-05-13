@@ -52,7 +52,7 @@ namespace CommonDatabase.Services
                                 WHERE Username = {login.Username} COLLATE Latin1_General_CS_AS")
                             .FirstOrDefaultAsync();
 
-            var expiryCutoff = DateTime.UtcNow.AddDays(-365);
+            var expiryCutoff = DateTime.Now.AddDays(-365);
 
             if (user == null || user.Password != login.Password)
                 return ApiResponse.Fail("Invalid credentials");
@@ -171,7 +171,7 @@ namespace CommonDatabase.Services
                 issuer: issuer,
                 audience: audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddDays(expiresDays),
+                expires: DateTime.Now.AddDays(expiresDays),
                 signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);

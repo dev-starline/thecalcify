@@ -21,6 +21,6 @@ namespace CommonDatabase.Models
 
         public string Type { get; set; }
 
-        public DateTime? UpdateDate { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdateDate { get; set; } = DateTime.Now;
     }
 }

@@ -18,14 +18,14 @@ namespace CommonDatabase.Models
         public string City { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;
         public bool IsNews { get; set; } = false;
-        public DateTime? NewsExpiredDate { get; set; } = DateTime.UtcNow;
+        public DateTime? NewsExpiredDate { get; set; } = DateTime.Now;
         public int AccessNoOfNews { get; set; } = 0;
         public bool IsRate { get; set; } = false;
-        public DateTime? RateExpiredDate { get; set; } = DateTime.UtcNow;
+        public DateTime? RateExpiredDate { get; set; } = DateTime.Now;
         public int AccessNoOfRate { get; set; } = 0;
         public string? IPAddress { get; set; }
         public string? DeviceToken { get; set; }
-        public DateTime? UpdateDate { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdateDate { get; set; } = DateTime.Now;
         public string Topics { get; set; } = "";
         public string Keywords { get; set; } = "";
         public string Puid { get; set; } = "0";

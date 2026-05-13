@@ -302,7 +302,7 @@ namespace CommonDatabase.Services {
                 existing.Flag = input.Flag;
                 existing.Type = input.Type;
                 existing.Condition = input.Condition;
-                existing.MDate = DateTime.UtcNow;
+                existing.MDate = DateTime.Now;
                 existing.IsPassed = false;
                 existing.AlertDate = null;
 
@@ -380,7 +380,7 @@ namespace CommonDatabase.Services {
             if (alert == null) 
                 return ApiResponse.Fail("No matching pending alert found, or client does not exist.");
             alert.IsPassed = true;
-            alert.AlertDate = DateTime.UtcNow;
+            alert.AlertDate = DateTime.Now;
             try
             {
                 await _context.SaveChangesAsync();
@@ -399,7 +399,7 @@ namespace CommonDatabase.Services {
                 return ApiResponse.Fail("Invalid instrument data.");
             
             watchInstrument.ClientId = clientId;
-            watchInstrument.Mdate = DateTime.UtcNow;
+            watchInstrument.Mdate = DateTime.Now;
             var existing = await _context.WatchInstrument.FirstOrDefaultAsync(w => w.ClientId == clientId && w.Identifier == watchInstrument.Identifier);
 
             if (existing != null)
