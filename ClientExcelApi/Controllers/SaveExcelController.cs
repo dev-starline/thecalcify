@@ -141,6 +141,7 @@ namespace ClientExcelApi.Controllers
                 return Ok(new ApiResponse{
                     IsSuccess = true, 
                     Message = "HTML file created successfully", 
+                    Data = new { SheetId = sheetId, FilePath = $"{sbdir.ToString()}/{htmlFileName}" }
                 });
             }
             catch (FormatException)
