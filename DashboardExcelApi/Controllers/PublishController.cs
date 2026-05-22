@@ -123,6 +123,7 @@ namespace DashboardExcelApi.Controllers
         public async Task<IActionResult> PublishSubscriber(string symbol, string symboljson)
         {
             await _hubNotifier.SendToGroupAsync(symbol, HubMethodName.excelRate, Compress(symboljson.ToString()));
+            await _hubNotifier.SendToGroupAsync(symbol, HubMethodName.excelBase, symboljson.ToString());
             return Ok();
         }
 
