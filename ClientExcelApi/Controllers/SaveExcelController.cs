@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System.IO;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -134,7 +135,7 @@ namespace ClientExcelApi.Controllers
                 foreach (var clientUsername in clientUsernames)
                 {
                     var clientGroupName = GroupNameResolver.Resolve(clientUsername);
-                    await _hubContext.Clients.Group(clientGroupName).SendAsync("SheetUpdated", true);
+                    await _hubContext.Clients.Group(clientGroupName).SendAsync("SheetUpdated", true, System.Text.Json.JsonSerializer.Serialize(new { sheetName = fileName.Trim(), sheetType = "html" }));
                 }
                 //await _hubContext.Clients.Group(groupName).SendAsync("SheetUpdated", true);
 
@@ -319,7 +320,10 @@ namespace ClientExcelApi.Controllers
                 foreach (var clientUsername in clientUsernames)
                 {
                     var clientGroupName = GroupNameResolver.Resolve(clientUsername);
-                    await _hubContext.Clients.Group(clientGroupName).SendAsync("SheetUpdated", true);
+                    await _hubContext.Clients.Group(clientGroupName)
+                        .SendAsync("SheetUpdated"
+                            , true
+                            , System.Text.Json.JsonSerializer.Serialize(new { sheetName = editableCells.SheetName , sheetType = data.Type }));
                 }
 
                 return Ok(new ApiResponse

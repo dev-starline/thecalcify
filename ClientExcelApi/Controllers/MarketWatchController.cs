@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -145,7 +146,9 @@ namespace ClientExcelApi.Controllers
                 await _context.MarketWatch.AddAsync(market);
                 await _context.SaveChangesAsync();
                 var groupName = GroupNameResolver.Resolve(username);
-                await _hubContext.Clients.Group(groupName).SendAsync("MarketWatchUpdated", true);
+                await _hubContext.Clients.Group(groupName).SendAsync("MarketWatchUpdated"
+                    , true
+                    , System.Text.Json.JsonSerializer.Serialize(new { marketWatchName = marketWatch.MarketWatchName }));
 
                 return Ok(new ApiResponse
                 {
@@ -200,7 +203,10 @@ namespace ClientExcelApi.Controllers
 
                 await _context.SaveChangesAsync();
                 var groupName = GroupNameResolver.Resolve(username);
-                await _hubContext.Clients.Group(groupName).SendAsync("MarketWatchUpdated", true);
+                await _hubContext.Clients.Group(groupName)
+                    .SendAsync("MarketWatchUpdated"
+                        , true
+                        , System.Text.Json.JsonSerializer.Serialize(new { marketWatchName = marketWatchExisting.MarketWatchName}));
 
                 return Ok(new ApiResponse
                 {
@@ -223,12 +229,12 @@ namespace ClientExcelApi.Controllers
                 var clientId = User.FindFirst("Id")?.Value;
                 var username = User.FindFirst("userName")?.Value;
 
-                int marketWatchExisting = await _context.MarketWatch
+                var marketWatchExisting = await _context.MarketWatch
                                         .Where(x => x.ClientId == int.Parse(clientId) && x.Id == id)
-                                        .Select(o => o.Id)
+                                        //.Select(o => o.Id)
                                         .FirstOrDefaultAsync();
 
-                if (marketWatchExisting == 0)
+                if (marketWatchExisting.Id == 0)
                 {
                     return NotFound(new ApiResponse
                     {
@@ -239,7 +245,9 @@ namespace ClientExcelApi.Controllers
 
                 await _context.MarketWatch.Where(m => m.Id == id).ExecuteDeleteAsync();
                 var groupName = GroupNameResolver.Resolve(username);
-                await _hubContext.Clients.Group(groupName).SendAsync("MarketWatchUpdated", true);
+                await _hubContext.Clients.Group(groupName).SendAsync("MarketWatchUpdated"
+                    , true
+                    , System.Text.Json.JsonSerializer.Serialize(new { marketWatchName = marketWatchExisting.MarketWatchName }));
 
                 return Ok(new ApiResponse
                 {
