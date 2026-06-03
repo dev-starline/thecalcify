@@ -182,12 +182,12 @@ namespace CommonDatabase.Services
                 foreach (var subClientId in subClient)
                 {
                     string? subClientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == subClientId))?.Username;
-                    Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(subClientId, subClientUsername)).Wait();
+                    await _commonService.GetUserListOfSymbolAsync(subClientId, subClientUsername);
                 }
 
                 await _context.SaveChangesAsync();
                 string? clientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == clientId))?.Username;
-                Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(clientId, clientUsername)).Wait();
+                await _commonService.GetUserListOfSymbolAsync(clientId, clientUsername);
             }
             else
             {
@@ -231,7 +231,7 @@ namespace CommonDatabase.Services
                 }
                 //string? clientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == clientId))?.Username;
                 string? clientUsername = childClient?.Username;
-                Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(clientId, clientUsername)).Wait();
+                await _commonService.GetUserListOfSymbolAsync(clientId, clientUsername);
             }
 
             var getInstrument = await GetInstrumentListByClientAsync(clientId);

@@ -214,7 +214,7 @@ namespace CommonDatabase.Services {
             }
 
             await _constant.PushClientDetails();
-            Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(existing.Id, existing.Username)).Wait();
+            await _commonService.GetDeviceAccessSummaryAsync(existing.Id, existing.Username);
             var newData = await GetClientListDtoAsync();
             if (client.Puid == "0")
             {

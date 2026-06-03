@@ -115,7 +115,7 @@ namespace CommonDatabase.Services
                 await _context.SaveChangesAsync();
             }
             
-            Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(user.Id, user.Username)).Wait();
+            await _commonService.GetDeviceAccessSummaryAsync(user.Id, user.Username);
 
             var token = GenerateJwtToken(user.Id, user.Username, UserRole.Client, login.DeviceId, login.DeviceType, user.IsNews,user.IsRate, login.DeviceToken, user.RateExpiredDate,user.NewsExpiredDate);
             return ApiResponse.Ok(new
@@ -189,7 +189,7 @@ namespace CommonDatabase.Services
                           .ExecuteUpdateAsync(setters => setters
                                .SetProperty(n => n.IsLogout, true)
                                .SetProperty(b => b.UpdatedDate, b => DateTime.Now));
-            Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(request.UserId, client.Username)).Wait();
+            await _commonService.GetDeviceAccessSummaryAsync(request.UserId, client.Username);
             return ApiResponse.Ok( "Logout successful.");
         }
 
@@ -206,7 +206,7 @@ namespace CommonDatabase.Services
             _context.Attach(device);
             _context.Entry(device).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(status.UserId, client.Username)).Wait();
+            await _commonService.GetDeviceAccessSummaryAsync(status.UserId, client.Username);
             return ApiResponse.Ok("DND updated successful.");
         }
 
@@ -231,7 +231,7 @@ namespace CommonDatabase.Services
             _context.Attach(device);
             _context.Entry(device).State = EntityState.Modified;
             await _context.SaveChangesAsync();
-            Task.Run(async () => await _commonService.GetDeviceAccessSummaryAsync(status.UserId, client.Username)).Wait();
+            await _commonService.GetDeviceAccessSummaryAsync(status.UserId, client.Username);
             if (status.IsTopic)
             {
                 return ApiResponse.Ok("Topics updated successful.");

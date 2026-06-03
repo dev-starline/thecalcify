@@ -84,7 +84,7 @@ namespace CommonDatabase.Services
             foreach (var subClientId in relatedInstruments.Select(i => i.ClientId))
             {
                 string? subClientUsername = (await _context.Client.FirstOrDefaultAsync(c => c.Id == subClientId))?.Username;
-                Task.Run(async () => await _commonService.GetUserListOfSymbolAsync(subClientId, subClientUsername)).Wait();
+                await _commonService.GetUserListOfSymbolAsync(subClientId, subClientUsername);
             }
 
             return ApiResponse.Ok(id, "Subscribe deleted successfully.");
