@@ -201,11 +201,22 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapGet("/signalr-stats", (ConnectionStore store) =>
 {
+    var snapshot = store.Snapshot(); // Dictionary<string, HashSet<string>> (connectionId → groups)
+
+    // Reverse mapping: group → connections
+    var groupsToConnections = snapshot
+        .SelectMany(kvp => kvp.Value.Select(group => new { group, connectionId = kvp.Key }))
+        .GroupBy(x => x.group)
+        .ToDictionary(
+            g => g.Key,                       // group name
+            g => g.Select(x => x.connectionId).ToList() // all connectionIds in that group
+        );
+
     return new
     {
         connections = store.TotalConnections,
         groups = store.TotalGroups,
-        membership = store.Snapshot()
+        connectionsPerGroup = groupsToConnections
     };
 });
 //app.MapHub<ExcelHub>("/excel", options =>

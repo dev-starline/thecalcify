@@ -287,6 +287,7 @@ namespace DashboardExcelApi
             foreach (var symbol in symbols.Where(s => !string.IsNullOrWhiteSpace(s)))
             {
                 await _hubNotifier.AddConnectionToGroupAsync(Context, symbol.Trim());
+                _store.AddToGroup(Context.ConnectionId, symbol.Trim());
             }
         }
 
@@ -294,6 +295,7 @@ namespace DashboardExcelApi
         {
             if (string.IsNullOrWhiteSpace(user)) return;
             await _hubNotifier.AddConnectionToGroupAsync(Context, user.Trim());
+            _store.AddToGroup(Context.ConnectionId, user.Trim());
         }
 
         /// <summary>

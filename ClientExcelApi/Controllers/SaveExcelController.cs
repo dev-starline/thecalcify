@@ -132,11 +132,16 @@ namespace ClientExcelApi.Controllers
                     clientUsernames.Add(parentClient.Username);
                     clientUsernames.AddRange(_context.Client.Where(x => x.Puid == parentClient.Id.ToString()).Select(x => x.Username).ToList());
                 }
-                foreach (var clientUsername in clientUsernames)
-                {
-                    var clientGroupName = GroupNameResolver.Resolve(clientUsername);
-                    await _hubContext.Clients.Group(clientGroupName).SendAsync("SheetUpdated", true, System.Text.Json.JsonSerializer.Serialize(new { sheetName = fileName.Trim(), sheetType = "html" }));
-                }
+                await _hubContext.Clients
+                 .Groups(clientUsernames.Select(GroupNameResolver.Resolve))
+                 .SendAsync(
+                     "SheetUpdated",
+                     true,
+                     System.Text.Json.JsonSerializer.Serialize(
+                         new { sheetName = fileName.Trim(), sheetType = "html" }
+                     )
+                 );
+
                 //await _hubContext.Clients.Group(groupName).SendAsync("SheetUpdated", true);
 
                 return Ok(new ApiResponse{
@@ -317,14 +322,16 @@ namespace ClientExcelApi.Controllers
                     clientUsernames.Add(parentClient.Username);
                     clientUsernames.AddRange(_context.Client.Where(x => x.Puid == parentClient.Id.ToString()).Select(x => x.Username).ToList());
                 }
-                foreach (var clientUsername in clientUsernames)
-                {
-                    var clientGroupName = GroupNameResolver.Resolve(clientUsername);
-                    await _hubContext.Clients.Group(clientGroupName)
-                        .SendAsync("SheetUpdated"
-                            , true
-                            , System.Text.Json.JsonSerializer.Serialize(new { sheetName = editableCells.SheetName , sheetType = data.Type }));
-                }
+                await _hubContext.Clients
+                    .Groups(clientUsernames.Select(GroupNameResolver.Resolve))
+                    .SendAsync(
+                        "SheetUpdated",
+                        true,
+                        System.Text.Json.JsonSerializer.Serialize(
+                            new { sheetName = editableCells.SheetName, sheetType = data.Type }
+                        )
+                    );
+
 
                 return Ok(new ApiResponse
                 {
@@ -400,11 +407,14 @@ namespace ClientExcelApi.Controllers
                             clientUsernames.Add(parentClient.Username);
                             clientUsernames.AddRange(_context.Client.Where(x => x.Puid == parentClient.Id.ToString()).Select(x => x.Username).ToList());
                         }
-                        foreach (var clientUsername in clientUsernames)
-                        {
-                            var clientGroupName = GroupNameResolver.Resolve(clientUsername);
-                            await _hubContext.Clients.Group(clientGroupName).SendAsync("SheetUpdated", true);
-                        }
+                        _ = Task.WhenAll(
+                                clientUsernames
+                                    .Where(u => !string.IsNullOrWhiteSpace(u))
+                                    .Select(u => _hubContext.Clients
+                                        .Group(GroupNameResolver.Resolve(u.Trim()))
+                                        .SendAsync("SheetUpdated", true))
+                            );
+
                         return Ok(new ApiResponse
                         {
                             IsSuccess = true,
