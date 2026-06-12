@@ -102,6 +102,7 @@ namespace DashboardExcelApi.Controllers
                                         H = parts[3],
                                         L = parts[4],
                                         LTP = parts.Count() > 6 ? parts[6] : null,
+                                        VT = parts.Length > 7 ? parts[7] : "",
                                         T = DateTime.Parse(parts[5]).AddHours(5).AddMinutes(30).ToString("yyyy-MM-dd HH:mm:ss.fff")
                                     };
                                 }).ToList();
@@ -237,6 +238,7 @@ namespace DashboardExcelApi.Controllers
                                     H = isDate0 ? parts[4] : parts[3],
                                     L = isDate0 ? parts[5] : parts[4],
                                     LTP = parts[6],
+                                    VT = parts.Length > 7 ? parts[7] : "",
                                     T = istTime.ToString("yyyy-MM-dd HH:mm:ss.fff")
                                 };
                             })
@@ -335,9 +337,10 @@ namespace DashboardExcelApi.Controllers
                                     N = parts[1],
                                     B = parts[2],
                                     A = parts[3],
-                                    L = parts[4],
-                                    H = parts[5],
-                                    LTP = parts[6]
+                                    H = parts[4],
+                                    L = parts[5],
+                                    LTP = parts[6],
+                                    VT = parts.Length > 7 ? parts[7] : ""
                                 };
                             })
                             .ToList();
@@ -369,6 +372,7 @@ namespace DashboardExcelApi.Controllers
                                     H = parts.H,
                                     L = parts.L,
                                     LTP = parts.LTP,
+                                    VT = parts.VT,
                                     T = istTime.ToString("yyyy-MM-dd HH:mm")
                                 };
                             })

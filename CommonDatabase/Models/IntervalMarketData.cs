@@ -26,6 +26,9 @@ namespace CommonDatabase.Models
 
         [JsonPropertyName("t")]
         public string T { get; set; }
+
+        [JsonPropertyName("vt")]
+        public string VT { get; set; }
     }
     public class MarketData
     {
@@ -49,6 +52,7 @@ namespace CommonDatabase.Models
 
         [JsonPropertyName("t")]
         public string T { get; set; }
-
+        [JsonPropertyName("vt")]
+        public string VT { get; set; }
     }
 }
