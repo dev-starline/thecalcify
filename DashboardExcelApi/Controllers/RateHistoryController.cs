@@ -321,7 +321,33 @@ namespace DashboardExcelApi.Controllers
                     using (var reader = new StreamReader(stream))
                     {
                         string content = reader.ReadToEnd();
-                        values = JsonSerializer.Deserialize<List<MarketData>>(content);
+                        DateTime jsonDate = new DateTime(2026, 6, 10);
+                        if (parsedDate.Date > jsonDate)
+                        {
+                            values = content.Split(Environment.NewLine).Where(x => x != "")
+                            .Select(line =>
+                            {
+                                var parts = line.Split("|");
+
+                                return new MarketData
+                                {
+                                    T = parts[0],
+                                    N = parts[1],
+                                    B = parts[2],
+                                    A = parts[3],
+                                    L = parts[4],
+                                    H = parts[5],
+                                    LTP = parts[6]
+                                };
+                            })
+                            .ToList();
+
+                        }
+                        else
+                        {
+                            values = JsonSerializer.Deserialize<List<MarketData>>(content);
+                        }
+                       
                     }
                 }
                 
