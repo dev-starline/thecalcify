@@ -27,6 +27,7 @@ namespace DashboardExcelApi.Controllers
         private readonly AppDbContext _context;
         private readonly string _rateHistoryDir = "";
         private readonly int _maxHistoryRowLimit = 0;
+        private readonly string _chartHistoryDir = "";
         public RateHistoryController(AppDbContext context, IConnectionMultiplexer redis, IConfiguration configuration)
         {
             _context = context;
@@ -35,6 +36,7 @@ namespace DashboardExcelApi.Controllers
             _redisDb = redis.GetDatabase();
             _rateHistoryDir = _configuration.GetValue<string>("RateHistoryDir") ?? Directory.GetCurrentDirectory();
             _maxHistoryRowLimit = _configuration.GetValue<int>("MaxHistoryRowLimit");
+            _chartHistoryDir = _configuration.GetValue<string>("ChartHistoryDir") ?? Directory.GetCurrentDirectory();
         }
         
         [Authorize]
@@ -401,6 +403,264 @@ namespace DashboardExcelApi.Controllers
             {
                 return BadRequest(new ApiResponse { IsSuccess = false, Message = "Something went wrong", ExceptionMessage = ex.StackTrace.ToString() });
             }
+        }
+
+        [Authorize]
+        [HttpPost("chart-market-history")]
+        public async Task<IActionResult> ReadChartInvtervalMarketData(ChartParamRequest request)
+        {
+            try
+            {
+                if (!DateTime.TryParseExact(request.FromDateTime, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var fromDateTime))
+                    return Ok(new ApiResponse { IsSuccess = false, Message = "FromDateTime must be in format yyyy-MM-dd HH:mm." });
+
+                if (!DateTime.TryParseExact(request.ToDateTime, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var toDateTime))
+                    return Ok(new ApiResponse { IsSuccess = false, Message = "ToDateTime must be in format yyyy-MM-dd HH:mm." });
+
+                if (fromDateTime >= toDateTime)
+                    return Ok(new ApiResponse { IsSuccess = false, Message = "fromDateTime must be earlier than toDateTime" });
+
+                var clientId = User.FindFirst("Id")?.Value;
+                var userInstrument = _context.Instruments
+                                    .Where(ui => ui.ClientId == int.Parse(clientId) && ui.Identifier == request.Identifier)
+                                    .Select(i => new { i.IsMapped, i.Contract })
+                                    .FirstOrDefault();
+
+                if (userInstrument == null)
+                    return Ok(new ApiResponse { IsSuccess = false, Message = "Invalid identifier." });
+
+                if (!userInstrument.IsMapped)
+                    return Ok(new ApiResponse { IsSuccess = false, Message = $"You are not authorized to access {request.Identifier} identifier data." });
+
+                var subscribe = _context.Subscribe
+                                .Where(s => s.Identifier == request.Identifier)
+                                .Select(i => new { i.Contract })
+                                .FirstOrDefault();
+                // Difference
+                TimeSpan diff = toDateTime - fromDateTime;
+                Console.WriteLine($"Total days: {diff.TotalDays}"); // 3.58 days
+                int totalDays = (int)Math.Ceiling(diff.TotalDays);
+                var listMarketData = new List<MarketData>();
+                var values = new List<MarketData>();
+                for (int i = 0; i < totalDays; i++)
+                {
+                    var day = fromDateTime.AddDays(i);
+                                   
+                    string datFile = $"{day.Date.ToString("dd-MM-yyyy")}_{request.Interval}.dat";
+                    var path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                
+                    path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                    if (System.IO.File.Exists(path))
+                    {
+                        using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // <-- critical
+                        using (var reader = new StreamReader(stream))
+                        {
+                            string content = reader.ReadToEnd();
+                            DateTime jsonDate = new DateTime(2026, 6, 10);
+                            if (day.Date > jsonDate)
+                            {
+                                values.AddRange(content.Split(Environment.NewLine).Where(x => x != "")
+                                .Select(line =>
+                                {
+                                    var parts = line.Split("|");
+
+                                    return new MarketData
+                                    {
+                                        T = parts[0],
+                                        N = parts[1],
+                                        B = parts[2],
+                                        A = parts[3],
+                                        H = parts[4],
+                                        L = parts[5],
+                                        LTP = parts[6],
+                                        VT = parts.Length > 7 ? parts[7] : ""
+                                    };
+                                })
+                                .ToList());
+
+                            }
+                            else
+                            {
+                                values.AddRange(JsonSerializer.Deserialize<List<MarketData>>(content));
+                            }
+                        }
+                    }
+                }
+
+                listMarketData = values
+                            .Where(parts =>
+                                DateTime.TryParse(parts.T, out var dt) &&
+                                TimeZoneInfo.ConvertTimeFromUtc(dt, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")) >= fromDateTime &&
+                                TimeZoneInfo.ConvertTimeFromUtc(dt, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time")) <= toDateTime)
+                            .Select(parts =>
+                            {
+                                DateTime.TryParse(parts.T, out var dt);
+                                var istTime = TimeZoneInfo.ConvertTimeFromUtc(dt, TimeZoneInfo.FindSystemTimeZoneById("India Standard Time"));
+                                return new MarketData
+                                {
+                                    N = userInstrument.Contract,
+                                    B = parts.B,
+                                    A = parts.A,
+                                    H = parts.H,
+                                    L = parts.L,
+                                    LTP = parts.LTP,
+                                    VT = parts.VT,
+                                    T = istTime.ToString("yyyy-MM-dd HH:mm")
+                                };
+                            })
+                            .Take(_maxHistoryRowLimit)
+                            .ToList();
+
+                if (listMarketData.Count > 0)
+                {
+                    DateTime lastFetchedRow = DateTime.Parse(listMarketData.Last().T);
+                    int RowLimit = 0;
+                    RowLimit = listMarketData.Count < _maxHistoryRowLimit ? listMarketData.Count : _maxHistoryRowLimit;
+                    return Ok(
+                        new ApiResponse
+                        {
+                            IsSuccess = true,
+                            Message = listMarketData.Count < _maxHistoryRowLimit
+                                    ? "Success"
+                                    : $"Maximum {RowLimit:N0} rows can be fetched up to {lastFetchedRow.ToString("HH:mm")}. To request additional data, please adjust the time range starting from {lastFetchedRow.AddMinutes(1).ToString("HH:mm")}.",
+                            Data = listMarketData
+                        }
+                    );
+                }
+                return Ok(new ApiResponse { IsSuccess = false, Message = "Not Found" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { IsSuccess = false, Message = "Something went wrong", ExceptionMessage = ex.StackTrace.ToString() });
+            }
+        }
+
+
+
+
+        [HttpPost("GetIntervalData")]
+        public IActionResult GetIntervalData([FromBody] MarketRequest request)
+        {
+            try
+            {
+                // 1. Basic validation
+                if (string.IsNullOrWhiteSpace(request.Symbol))
+                    return BadRequest("Symbol is required.");
+
+                if (request.FromDate <= 0 || request.ToDate <= 0)
+                    return BadRequest("Invalid timestamps. Must be positive Unix time in milliseconds.");
+
+                if (request.FromDate > request.ToDate)
+                    return BadRequest("fromDate cannot be greater than toDate.");
+
+                var clientId = User.FindFirst("Id")?.Value;
+                var userInstrument = _context.Instruments
+                                    .Where(ui => ui.ClientId == int.Parse(clientId) && ui.Identifier == request.Symbol)
+                                    .Select(i => new { i.IsMapped, i.Contract })
+                                    .FirstOrDefault();
+
+                if (userInstrument == null)
+                    return Ok(new ApiResponse { IsSuccess = false, Message = "Invalid identifier." });
+
+                if (!userInstrument.IsMapped)
+                    return Ok(new ApiResponse { IsSuccess = false, Message = $"You are not authorized to access {request.Symbol} identifier data." });
+
+                var subscribe = _context.Subscribe
+                                .Where(s => s.Identifier == request.Symbol)
+                                .Select(i => new { i.Contract })
+                                .FirstOrDefault();
+                // 2. Convert to DateTime
+                DateTime fromDate = DateTimeOffset.FromUnixTimeSeconds(request.FromDate).UtcDateTime.AddHours(5).AddMinutes(30);
+                DateTime toDate = DateTimeOffset.FromUnixTimeSeconds(request.ToDate).UtcDateTime.AddHours(5).AddMinutes(30);
+
+                // Optional sanity check (e.g., max 1 year range)
+                if ((toDate - fromDate).TotalDays > 365)
+                    return BadRequest("Date range too large. Maximum allowed is 1 year.");
+
+                var response = new List<MarketIntervalData>();
+                var response2 = new List<ChartIntervalData>();
+                // 3. Loop through month-year files
+                DateTime current = new DateTime(fromDate.Year, fromDate.Month, 1);
+                DateTime end = new DateTime(toDate.Year, toDate.Month, 1);
+
+                while (current <= end)
+                {
+                    //string datFile = $"{day.Date.ToString("dd-MM-yyyy")}_{request.Interval}.dat";
+                    //var path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                    string monthYear = current.ToString("MM-yyyy");
+                    string filePath = Path.Combine(_chartHistoryDir, subscribe.Contract, $"{monthYear}.dat");
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        //var lines = System.IO.File.ReadAllLines(filePath);
+                        var lines = new List<string>();
+                        using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        using (var reader = new StreamReader(fs))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                if (line != null)
+                                {
+                                    lines.Add(line);
+                                }
+                            }
+                        }
+
+                        foreach (var line in lines)
+                        {
+                            var parts = line.Replace("\"", "").Split(',');
+                            if (parts.Length < 7) continue;
+
+                            var tick = new MarketIntervalData
+                            {
+                                N = request.Symbol,
+                                T = parts[1],
+                                O = parts[2],
+                                H = parts[3],
+                                L = parts[4],
+                                C = parts[5],
+                                VT = parts[6],
+                            };
+
+                            string[] formats = { "dd-MM-yyyy HH:mm", "MM/dd/yyyy HH:mm" };
+
+                            if (DateTime.TryParseExact(tick.T, formats,
+                                CultureInfo.InvariantCulture,
+                                DateTimeStyles.AssumeUniversal,
+                                out DateTime tickTime))
+                            {
+                                if (tickTime.AddHours(-5).AddMinutes(-30) >= fromDate && tickTime.AddHours(-5).AddMinutes(-30) <= toDate)
+                                {
+                                    response2.Add(new ChartIntervalData
+                                    {
+                                        Name = request.Symbol,
+                                        Time = new DateTimeOffset(tickTime.AddHours(-5).AddMinutes(-30)).ToUnixTimeSeconds(),
+                                        Open = parts[2],
+                                        High = parts[3],
+                                        Low = parts[4],
+                                        Close = parts[5],
+                                        Volume = parts[6],
+                                    });
+                                }
+                               
+                            }
+                        }
+                    }
+
+                    current = current.AddMonths(1);
+                }
+                if (response2.Count>0)
+                {
+                    return Ok(new ApiResponse { IsSuccess = true, Message = "Success", Data = response2 });
+                }
+                return Ok(new ApiResponse { IsSuccess = false, Message = "Not Found" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { IsSuccess = false, Message = "Something went wrong", ExceptionMessage = ex.StackTrace });
+            }
+            
         }
 
         [Authorize]
