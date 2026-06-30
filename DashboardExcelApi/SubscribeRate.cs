@@ -23,6 +23,9 @@ namespace DashboardExcelApi
             _logger = logger;
         }
 
+        //private readonly ConcurrentDictionary<string, string> _latestTicks = new();
+        private readonly ConcurrentDictionary<string, SemaphoreSlim> _locks = new();
+
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             await _subscriber.SubscribeAsync("excel", async (channel, message) =>
@@ -40,6 +43,30 @@ namespace DashboardExcelApi
 
                         // persist latest tick (fire-and-forget if you want speed)
                         _ = _redisDb.StringSetAsync(symbol, json);
+
+                        // ensure per-symbol sequential sending
+                        var gate = _locks.GetOrAdd(symbol, _ => new SemaphoreSlim(1, 1));
+
+                        _ = Task.Run(async () =>
+                        {
+                            await gate.WaitAsync(stoppingToken);
+                            try
+                            {
+                                // snapshot latest tick at send time
+                                if (_latestTicks.TryGetValue(symbol, out var latestJson))
+                                {
+                                    await _hubContext.Clients.Group(symbol)
+                                        .SendAsync("excelBase", latestJson, stoppingToken);
+
+                                    await _hubContext.Clients.Group(symbol)
+                                        .SendAsync("excelRate", Compress(latestJson), stoppingToken);
+                                }
+                            }
+                            finally
+                            {
+                                gate.Release();
+                            }
+                        }, stoppingToken);
                     }
                 }
                 catch (Exception ex)
@@ -47,24 +74,8 @@ namespace DashboardExcelApi
                     _logger.LogError(ex, "Error processing tick");
                 }
             });
-            // Background loop flushes only latest ticks
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                foreach (var kvp in _latestTicks)
-                {
-                    var symbol = kvp.Key;
-                    var json = kvp.Value;
-
-                    _ = _hubContext.Clients.Group(symbol)
-                        .SendAsync("excelBase", json, cancellationToken: stoppingToken);
-
-                    _ = _hubContext.Clients.Group(symbol)
-                        .SendAsync("excelRate", Compress(json), cancellationToken: stoppingToken);
-                }
-
-                await Task.Delay(200, stoppingToken); // adjust cadence
-            }
         }
+
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
