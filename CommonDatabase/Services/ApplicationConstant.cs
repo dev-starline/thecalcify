@@ -25,6 +25,7 @@ namespace CommonDatabase.Services
         private readonly IDatabase _redisDb;
         private readonly HttpClient _httpClient;
         private readonly string _adminNodeUrl;
+        private readonly string _mcxNodeUrl;
         private readonly string _rateAlertNodeUrl;
         private const string UserInstrumentKeyPrefix = "userInstrument:";
         private readonly string prefix = "";
@@ -38,6 +39,7 @@ namespace CommonDatabase.Services
             _redisDb = _redis.GetDatabase();
             _httpClient = factory.CreateClient("MyApi");
             prefix = _configuration["Redis:Prefix"];
+            _mcxNodeUrl = _configuration["mcxNodeUrl"] ?? throw new ArgumentNullException("mcxNodeUrl config is missing");
         }
 
         /// <summary>
@@ -248,7 +250,7 @@ namespace CommonDatabase.Services
                     using (var command = new SqlCommand("usp_tbl_getSubscribeData", connection))
                     {
                         command.CommandType = CommandType.StoredProcedure;
-                        command.CommandTimeout = 5;
+                        command.CommandTimeout = 120;
 
                         using (var adapter = new SqlDataAdapter(command))
                         {
@@ -263,13 +265,35 @@ namespace CommonDatabase.Services
                                   {
                                      { "data" , strSubscribe },
                                   };
-
-                                using (var client = new HttpClient())
+                                try
                                 {
-                                    var content = new FormUrlEncodedContent(values);
-                                    var response = await client.PostAsync(_adminNodeUrl + "/Subscribe", content);
-                                    response.EnsureSuccessStatusCode();
+                                    using (var client = new HttpClient())
+                                    {
+                                        var content = new FormUrlEncodedContent(values);
+                                        var response = await client.PostAsync(_adminNodeUrl + "/Subscribe", content);
+                                        response.EnsureSuccessStatusCode();
+                                    }
                                 }
+                                catch (Exception ex)
+                                {
+
+                                    Console.WriteLine($"Redis Push Failed: {ex.Message}");
+                                }
+                                try
+                                {
+                                    using (var client = new HttpClient())
+                                    {
+                                        var content = new FormUrlEncodedContent(values);
+                                        var response = await client.PostAsync(_mcxNodeUrl + "/Subscribe", content);
+                                        response.EnsureSuccessStatusCode();
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+
+                                    Console.WriteLine($"Redis Push Failed: {ex.Message}");
+                                }
+                               
                             }
                         }
                     }
