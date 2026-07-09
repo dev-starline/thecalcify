@@ -10,5 +10,6 @@ namespace CommonDatabase.Interfaces
     {
         Task GetDeviceAccessSummaryAsync(int ClientId, string Username);
         Task GetUserListOfSymbolAsync(int ClientId, string Username);
+        Task GetUpdatedContractAsync(string updatedContractId);
     }
 }

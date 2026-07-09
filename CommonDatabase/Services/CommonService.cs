@@ -121,5 +121,26 @@ namespace CommonDatabase.Services
                 //throw ex;
             }
         }
+
+        public async Task GetUpdatedContractAsync(string updatedContractId)
+        {
+            try
+            {
+                //await _httpClient.GetAsync($"api/Publish/GetUpdatedContractAsync?updatedContractId={updatedContractId}");
+                var payload = new { updatedContractId = updatedContractId };
+                var content = new StringContent(
+                    System.Text.Json.JsonSerializer.Serialize(payload),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
+                var response = await _httpClient.PostAsync("api/Publish/GetUpdatedContractAsync", content);
+            }
+            catch (Exception ex)
+            {
+                //Log.Error(ex, "Failed to fetch device access summary for ClientId {ClientId}", ClientId);
+                //throw ex;
+            }
+        }
     }
 }

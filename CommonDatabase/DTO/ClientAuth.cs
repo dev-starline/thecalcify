@@ -129,6 +129,7 @@ namespace CommonDatabase.DTO
         public string Contract { get; set; }
         public string SubContract { get; set; }
         public long RowId { get; set; }
+        public string? ContractExpiryDate { get; set; }
     }
     public enum DeviceType
     {

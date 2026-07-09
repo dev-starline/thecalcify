@@ -4,6 +4,7 @@ using CommonDatabase.Models;
 using CommonDatabase.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using StackExchange.Redis;
 
 namespace DashboardExcelApi.Controllers
 {
@@ -43,6 +44,7 @@ namespace DashboardExcelApi.Controllers
             // Auto-trim instead of rejecting
             subscribe.Identifier = subscribe.Identifier?.Trim();
             subscribe.Contract = subscribe.Contract?.Trim();
+            subscribe.ContractExpiryDate = subscribe.ContractExpiryDate?.Trim();
 
             var result = await _subscribeService.AddAsync(subscribe);
             await _constant.SetSubscriberToRedis();
@@ -60,6 +62,7 @@ namespace DashboardExcelApi.Controllers
             {
                 item.Identifier = item.Identifier?.Trim();
                 item.Contract = item.Contract?.Trim();
+                item.ContractExpiryDate = item.ContractExpiryDate?.Trim();
             }
 
             var result = await _subscribeService.UpdateListAsync(subscribeList);

@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using CommonDatabase.Utility;
+using System.Text.Json;
 
 namespace CommonDatabase.Services
 {
@@ -54,7 +55,7 @@ namespace CommonDatabase.Services
                 existing.Digit = item.Digit ?? existing.Digit;
                 existing.Type = item.Type ?? existing.Type; 
                 existing.UpdateDate = DateTime.Now;
-
+                existing.ContractExpiryDate = item.ContractExpiryDate;
                 updatedList.Add(existing);
             }
 
@@ -63,7 +64,14 @@ namespace CommonDatabase.Services
 
             _context.Subscribe.UpdateRange(updatedList);
             await _context.SaveChangesAsync();
-
+            //var updatedContract = JsonSerializer.Serialize( subscribeList.Select(x=> new
+            //{
+            //    Identifier = x.Identifier,
+            //    ContractExpiryDate = x.ContractExpiryDate
+            //}).ToList());
+            var updatedContractId = string.Join(",", subscribeList.Select(x => x.Id));
+            await _commonService.GetUpdatedContractAsync(updatedContractId); // Replace 0 and "" with appropriate values
+            await _commonService.GetUserListOfSymbolAsync(0,"");
             return ApiResponse.Ok(updatedList, $"{updatedList.Count} records updated successfully.");
         }
 

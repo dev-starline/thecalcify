@@ -22,5 +22,6 @@ namespace CommonDatabase.Models
         public string Type { get; set; }
 
         public DateTime? UpdateDate { get; set; } = DateTime.Now;
+        public string? ContractExpiryDate { get; set; } = "";
     }
 }

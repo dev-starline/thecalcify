@@ -17,7 +17,8 @@ namespace CommonDatabase.Enum
         Error,
         ReceiveNewsNotification,
         excelBase,
-        MarketWatchUpdated
+        MarketWatchUpdated,
+        UpdatedContract,
         // add more as needed
     }
 

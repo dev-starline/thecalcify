@@ -97,8 +97,8 @@ namespace DashboardExcelApi
         public override async Task OnConnectedAsync()
         {
             _logger.LogInformation($"Connected: {Context.ConnectionId}");
-            
 
+            await _hubNotifier.AddConnectionToGroupAsync(Context, HubMethodName.UpdatedContract.ToString());
             await _hubNotifier.SendToClientAsync(Context.ConnectionId, HubMethodName.UserConnected, Context.ConnectionId);
             await base.OnConnectedAsync();
         }
@@ -158,7 +158,7 @@ namespace DashboardExcelApi
                     
                 var identifiers = rawUserResults.Where(x => x.Username == room)
                     .OrderBy(x => x.RowId)
-                    .Select(r => new { i = r.Identifier, n = r.Contract, sc = r.SubContract })
+                    .Select(r => new { i = r.Identifier, n = r.Contract, sc = r.SubContract, ce = r.ContractExpiryDate })
                     .ToList();
 
                 await _hubNotifier.SendToGroupAsync(groupName, HubMethodName.UserListOfSymbol, identifiers);

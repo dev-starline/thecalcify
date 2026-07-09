@@ -28,6 +28,7 @@ namespace DashboardExcelApi.Controllers
         private readonly string prefix = "";
         private readonly AppDbContext _context;
         private readonly HubNotifier _hubNotifier;
+        private const string ClientInstrumentListKey = "ClientInstrumentList";
         public PublishController(IHubContext<ExcelHub> hubContext, ICommonService commonService, IConnectionMultiplexer redis, ConnectionStore connectionStore, IConfiguration configuration, AppDbContext context, HubNotifier hubNotifier)
         {
             _hubContext = hubContext;
@@ -132,16 +133,45 @@ namespace DashboardExcelApi.Controllers
         public async Task<IActionResult> PublishUserListOfSymbol([FromRoute] string? username)
         {
             var groupName = GroupNameResolver.Resolve(username);
-            int ClientId = await _context.Client.Where(x => x.Username == username).Select(x => x.Id).FirstOrDefaultAsync();
+            //int ClientId = await _context.Client.Where(x => x.Username == username).Select(x => x.Id).FirstOrDefaultAsync();
 
             var rawUserResults = await _context.ClientWiseInstrumentList
-                .FromSqlInterpolated($"EXEC dbo.usp_ClientWiseInstumentList {ClientId}")
+                .FromSqlInterpolated($"EXEC dbo.usp_ClientWiseInstumentList {0}")
                 .ToListAsync();
-
-            var identifiers = rawUserResults.OrderBy(x => x.RowId).Select(r => new { i = r.Identifier, n = r.Contract, sc = r.SubContract }).ToList();
-            await _hubNotifier.SendToGroupAsync(groupName, HubMethodName.UserListOfSymbol, identifiers);
-            await _hubNotifier.SendToGroupAsync(groupName, HubMethodName.MarketWatchUpdated, true);
+            await _redisDb.StringSetAsync($"{prefix}_{ClientInstrumentListKey}", System.Text.Json.JsonSerializer.Serialize(rawUserResults));
+            if (!string.IsNullOrEmpty(username))
+            {
+                var identifiers = rawUserResults.Where(x => x.Username == username).OrderBy(x => x.RowId).Select(r => new { i = r.Identifier, n = r.Contract, sc = r.SubContract, ce = r.ContractExpiryDate }).ToList();
+                await _hubNotifier.SendToGroupAsync(groupName, HubMethodName.UserListOfSymbol, identifiers);
+                await _hubNotifier.SendToGroupAsync(groupName, HubMethodName.MarketWatchUpdated, true);
+            }
+          
             return Ok();
+        }
+
+        //[AllowAnonymous]
+        //[HttpGet("GetUpdatedContractAsync")]
+        //public async Task<IActionResult> GetUpdatedContractAsync([FromQuery] string? updatedContractId)
+        //{
+        //    var updatedContractIdList = string.Join(",", updatedContractId?.Split(',').Select(x => int.Parse(x.Trim())) ?? Array.Empty<int>());
+        //    var ListOfUpdatedContracts = await _context.Subscribe.Where(x => updatedContractIdList.Contains(x.Id.ToString())).Select(x => new { x.Identifier, x.ContractExpiryDate }).ToListAsync();
+        //    var strListOfUpdatedContracts = System.Text.Json.JsonSerializer.Serialize(ListOfUpdatedContracts);
+        //    await _hubNotifier.SendToGroupAsync("UpdatedContract", HubMethodName.UpdatedContract, strListOfUpdatedContracts);
+        //    return Ok();
+        //}
+        [HttpPost("GetUpdatedContractAsync")]
+        public async Task<IActionResult> GetUpdatedContractAsync([FromBody] UpdatedContractRequest request)
+        {
+            var updatedContractIdList = string.Join(",", request.UpdatedContractId?.Split(',').Select(x => int.Parse(x.Trim())) ?? Array.Empty<int>());
+            var ListOfUpdatedContracts = await _context.Subscribe.Where(x => updatedContractIdList.Contains(x.Id.ToString())).Select(x => new { x.Identifier, x.ContractExpiryDate }).ToListAsync();
+            var strListOfUpdatedContracts = System.Text.Json.JsonSerializer.Serialize(ListOfUpdatedContracts);
+            await _hubNotifier.SendToGroupAsync("UpdatedContract", HubMethodName.UpdatedContract, strListOfUpdatedContracts);
+            return Ok();
+        }
+
+        public class UpdatedContractRequest
+        {
+            public string UpdatedContractId { get; set; }
         }
         private byte[] Compress(string json)
         {
