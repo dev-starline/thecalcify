@@ -616,11 +616,19 @@ namespace DashboardExcelApi.Controllers
                             {
                                 N = request.Symbol,
                                 T = parts[1],
-                                O = parts[2],
-                                H = parts[3],
-                                L = parts[4],
-                                C = parts[5],
+                                AO = parts[2],
+                                AH = parts[3],
+                                AL = parts[4],
+                                AC = parts[5],
                                 VT = parts[6],
+                                BO = parts[7],
+                                BH = parts[8],
+                                BL = parts[9],
+                                BC = parts[10],
+                                LTPO = parts[11],
+                                LTPH = parts[12],
+                                LTPL = parts[13],
+                                LTPC = parts[14],
                             };
 
                             string[] formats = { "dd-MM-yyyy HH:mm", "MM/dd/yyyy HH:mm" };
@@ -636,11 +644,19 @@ namespace DashboardExcelApi.Controllers
                                     {
                                         Name = request.Symbol,
                                         Time = new DateTimeOffset(tickTime.AddHours(-5).AddMinutes(-30)).ToUnixTimeSeconds(),
-                                        Open = parts[2],
-                                        High = parts[3],
-                                        Low = parts[4],
-                                        Close = parts[5],
+                                        AskOpen = parts[2],
+                                        AskHigh = parts[3],
+                                        AskLow = parts[4],
+                                        AskClose = parts[5],
                                         Volume = parts[6],
+                                        BidOpen = parts[7],
+                                        BidHigh = parts[8],
+                                        BidLow = parts[9],
+                                        BidClose = parts[10],
+                                        LtpOpen = parts[11],
+                                        LtpHigh = parts[12],
+                                        LtpLow = parts[13],
+                                        LtpClose = parts[14],
                                     });
                                 }
                                
