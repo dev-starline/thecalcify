@@ -4,6 +4,7 @@ using CommonDatabase.Services;
 using DashboardExcelApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -16,6 +17,7 @@ using Reuters.Repositories;
 using Reuters.Repositories;
 using Serilog;
 using StackExchange.Redis;
+using System.IO.Compression;
 using System.Text;
 using System.Text.Json;
 
@@ -178,6 +180,23 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("ClientOnly", policy => policy.RequireRole("Client"));
 });
+builder.Services.AddResponseCompression(options =>
+{
+
+    options.EnableForHttps = true;
+
+    options.Providers.Add<BrotliCompressionProvider>();
+
+    options.Providers.Add<GzipCompressionProvider>();
+
+});
+
+builder.Services.Configure<BrotliCompressionProviderOptions>(o =>
+{
+
+    o.Level = CompressionLevel.SmallestSize;
+
+});
 var app = builder.Build();
 app.UseSwagger();
 app.UseSwaggerUI(c =>
@@ -197,7 +216,7 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseResponseCompression();
 app.MapControllers();
 app.MapGet("/signalr-stats", (ConnectionStore store) =>
 {
