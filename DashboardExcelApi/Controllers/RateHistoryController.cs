@@ -784,5 +784,123 @@ namespace DashboardExcelApi.Controllers
             return archive.Entries.Any(entry =>
                 string.Equals(Path.GetFileName(entry.FullName), fileName, StringComparison.OrdinalIgnoreCase));
         }
+
+
+        [HttpPost("FetchIntervalValues")]
+        public IActionResult FetchIntervalValues([FromBody] MarketRequest request)
+        {
+            try
+            {
+                // 1. Basic validation
+                if (string.IsNullOrWhiteSpace(request.Symbol))
+                    return BadRequest("Symbol is required.");
+
+                if (request.FromDate <= 0 || request.ToDate <= 0)
+                    return BadRequest("Invalid timestamps. Must be positive Unix time in milliseconds.");
+
+                if (request.FromDate > request.ToDate)
+                    return BadRequest("fromDate cannot be greater than toDate.");
+
+                var clientId = User.FindFirst("Id")?.Value;
+                var userInstrument = _context.Instruments
+                                    .Where(ui => ui.ClientId == int.Parse(clientId) && ui.Identifier == request.Symbol)
+                                    .Select(i => new { i.IsMapped, i.Contract })
+                                    .FirstOrDefault();
+
+                if (userInstrument == null)
+                    return Ok(new ApiResponse { IsSuccess = false, Message = "Invalid identifier." });
+
+                if (!userInstrument.IsMapped)
+                    return Ok(new ApiResponse { IsSuccess = false, Message = $"You are not authorized to access {request.Symbol} identifier data." });
+
+                var subscribe = _context.Subscribe
+                                .Where(s => s.Identifier == request.Symbol)
+                                .Select(i => new { i.Contract })
+                                .FirstOrDefault();
+                // 2. Convert to DateTime
+                DateTime fromDate = DateTimeOffset.FromUnixTimeSeconds(request.FromDate).UtcDateTime.AddHours(5).AddMinutes(30);
+                DateTime toDate = DateTimeOffset.FromUnixTimeSeconds(request.ToDate).UtcDateTime.AddHours(5).AddMinutes(30);
+
+                // Optional sanity check (e.g., max 1 year range)
+                if ((toDate - fromDate).TotalDays > 365)
+                    return BadRequest("Date range too large. Maximum allowed is 1 year.");
+
+                var response = new List<MarketIntervalData>();
+                var response2 = new List<ChartIntervalData>();
+                // 3. Loop through month-year files
+                DateTime current = new DateTime(fromDate.Year, fromDate.Month, 1);
+                DateTime end = new DateTime(toDate.Year, toDate.Month, 1);
+                var lines = new List<string>();
+                while (current <= end)
+                {
+                    string monthYear = current.ToString("MM-yyyy");
+                    string filePath = Path.Combine(_chartHistoryDir, subscribe.Contract, $"{monthYear}.dat");
+
+                    if (System.IO.File.Exists(filePath))
+                    {
+                        using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                        using (var reader = new StreamReader(fs))
+                        {
+                            while (!reader.EndOfStream)
+                            {
+                                var line = reader.ReadLine();
+                                var parts = line.Replace("\"", "");
+                                var splitData = parts.Split(',');
+                                string[] formats = { "dd-MM-yyyy HH:mm", "MM/dd/yyyy HH:mm" };
+
+                                if (DateTime.TryParseExact(splitData[1], formats,
+                                    CultureInfo.InvariantCulture,
+                                    DateTimeStyles.AssumeUniversal,
+                                    out DateTime tickTime))
+                                {
+                                    if (tickTime.AddHours(-5).AddMinutes(-30) >= fromDate && tickTime.AddHours(-5).AddMinutes(-30) <= toDate)
+                                    {
+                                        // Convert the second element (index 1) to Unix timestamp
+                                        string unixTimestamp = DateTimeOffset.ParseExact(
+                                            splitData[1],
+                                            "dd-MM-yyyy HH:mm",
+                                            System.Globalization.CultureInfo.InvariantCulture
+                                        ).ToUnixTimeSeconds().ToString();
+                                        splitData[0] = request.Symbol;
+                                        // Replace the original date with the timestamp
+                                        splitData[1] = unixTimestamp;
+                                        //GOLD_I,BIDOpen,BidClose,BidHigh,BidLow,AskOpen,AskClose,AskHigh,AskLow,LtpOpen,LtpClose,LtpHigh,LtpLow,Volume,Time
+                                        // Concatenate everything back
+                                        string result = string.Join(",", 
+                                                            splitData[0],   // SymbolName
+                                                            splitData[7],   // BIDOpen
+                                                            splitData[8],   // BidClose
+                                                            splitData[9],   // BidHigh
+                                                            splitData[10],  // BidLow
+                                                            splitData[2],   // AskOpen
+                                                            splitData[3],   // AskClose 
+                                                            splitData[4],   // AskHigh
+                                                            splitData[5],   // AskLow
+                                                            splitData[11],  // LtpOpen
+                                                            splitData[12],  // LtpClose
+                                                            splitData[13],  // LtpHigh
+                                                            splitData[14],  // LtpLow
+                                                            splitData[6],   // Volume
+                                                            splitData[1]    // Time
+                                                        );
+                                        lines.Add(result);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    current = current.AddMonths(1);
+                }
+                if (lines.Count > 0)
+                {
+                    return Ok(new ApiResponse { IsSuccess = true, Message = "Success", Data = lines });
+                }
+                return Ok(new ApiResponse { IsSuccess = false, Message = "Not Found" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { IsSuccess = false, Message = "Something went wrong", ExceptionMessage = ex.StackTrace });
+            }
+        }
     }
 }
