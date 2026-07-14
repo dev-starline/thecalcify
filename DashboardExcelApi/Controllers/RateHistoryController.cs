@@ -4,6 +4,7 @@ using CommonDatabase.DTO;
 using CommonDatabase.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using StackExchange.Redis;
 using System;
 using System.Globalization;
@@ -869,19 +870,32 @@ namespace DashboardExcelApi.Controllers
                                         string result = string.Join(",", 
                                                             splitData[0],   // SymbolName
                                                             splitData[7],   // BIDOpen
-                                                            splitData[8],   // BidClose
-                                                            splitData[9],   // BidHigh
-                                                            splitData[10],  // BidLow
+                                                            splitData[10],   // BidClose
+                                                            splitData[8],   // BidHigh
+                                                            splitData[9],  // BidLow
                                                             splitData[2],   // AskOpen
-                                                            splitData[3],   // AskClose 
-                                                            splitData[4],   // AskHigh
-                                                            splitData[5],   // AskLow
+                                                            splitData[5],   // AskClose 
+                                                            splitData[3],   // AskHigh
+                                                            splitData[4],   // AskLow
                                                             splitData[11],  // LtpOpen
-                                                            splitData[12],  // LtpClose
-                                                            splitData[13],  // LtpHigh
-                                                            splitData[14],  // LtpLow
+                                                            splitData[14],  // LtpClose
+                                                            splitData[12],  // LtpHigh
+                                                            splitData[13],  // LtpLow
                                                             splitData[6],   // Volume
                                                             splitData[1]    // Time
+                                                                //AskOpen = parts[2],
+                                                                //AskHigh = parts[3],
+                                                                //AskLow = parts[4],
+                                                                //AskClose = parts[5],
+                                                                //Volume = parts[6],
+                                                                //BidOpen = parts[7],
+                                                                //BidHigh = parts[8],
+                                                                //BidLow = parts[9],
+                                                                //BidClose = parts[10],
+                                                                //LtpOpen = parts[11],
+                                                                //LtpHigh = parts[12],
+                                                                //LtpLow = parts[13],
+                                                                //LtpClose = parts[14],
                                                         );
                                         lines.Add(result);
                                     }
