@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Reuters.Repositories;
+using System.Diagnostics.Contracts;
 using System.IdentityModel.Tokens.Jwt;
 using System.IO.Compression;
 using System.Net.Http.Json;
@@ -127,7 +128,8 @@ namespace ClientExcelApi.Controllers
             if (typeValue == "0") input.Type = "Bid";
             else if (typeValue == "1") input.Type = "Ask";
             else if (typeValue == "2") input.Type = "Ltp";
-            else return BadRequest(ApiResponse.Fail("Type must be 0, 1, or 2."));
+            else if (typeValue == "3") input.Type = "CustomFormula";
+            else return BadRequest(ApiResponse.Fail("Type must be 0, 1, 2, or 3."));
             input.ClientId = clientId;
             var result = await _clientService.CreateAndSendAlert(input);
             return Ok(result);
@@ -157,7 +159,7 @@ namespace ClientExcelApi.Controllers
             {
                 return BadRequest(ApiResponse.Fail("Invalid input."));
             }
-            input.Type = input.Type?.Trim().ToLower() switch { "bid" => "0", "ask" => "1", "ltp" => "2", _ => input.Type };
+            input.Type = input.Type?.Trim().ToLower() switch { "bid" => "0", "ask" => "1", "ltp" => "2", "customformula" => "3", _ => input.Type };
             var result = await _clientService.MarkRateAlertPassedAsync(input.ClientId, input.Symbol, input.Id);
             var identifier = await _context.Instruments
                                 .Where(sr => sr.ClientId == input.ClientId && sr.Identifier == input.Symbol)
@@ -165,6 +167,7 @@ namespace ClientExcelApi.Controllers
             var alert = await _context.NotificationAlerts
                                 .Where(na => na.ClientId == input.ClientId && na.Identifier == input.Symbol && na.Id == input.Id)
                                 .FirstOrDefaultAsync();
+            string contract = (identifier == null) ? input.Symbol : identifier.Contract;
             if (result.IsSuccess)
             {
                 var payload = new
@@ -179,7 +182,7 @@ namespace ClientExcelApi.Controllers
                         input.Condition,
                         input.Flag,
                         input.Rate,
-                        identifier.Contract,
+                        contract,
                         alert.AlertDate
                     }
                 };

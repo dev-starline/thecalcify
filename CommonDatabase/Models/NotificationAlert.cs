@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CommonDatabase.Models
 {
-    public class NotificationAlert
+    public class NotificationAlert : IValidatableObject
     {
         [Key]
         public int Id { get; set; }
@@ -21,7 +21,7 @@ namespace CommonDatabase.Models
         
         [Required]
         [Precision(18, 6)]
-        [Range(typeof(decimal), "0", "999999999999.999999", ErrorMessage = "{0} is out of range. Allowed range: {1} to {2}.")]
+        //[Range(typeof(decimal), "0", "999999999999.999999", ErrorMessage = "{0} is out of range. Allowed range: {1} to {2}.")]
         public decimal Rate { get; set; }
 
         [Required]
@@ -41,6 +41,18 @@ namespace CommonDatabase.Models
 
         public DateTime MDate { get; set; } = DateTime.Now; // Updated on modify
         public int ClientDeviceId { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            // Allow negative values only when Type == "3"
+            if (Type != "3" && (Rate < 0 || Rate > 999999999999.999999m))
+            {
+                yield return new ValidationResult(
+                    $"Rate is out of range. Allowed range: 0 to 999999999999.999999 (negative values allowed only when Type = 3).",
+                    new[] { nameof(Rate) }
+                );
+            }
+        }
     }
 
 

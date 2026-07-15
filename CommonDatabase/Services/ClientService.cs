@@ -279,17 +279,30 @@ namespace CommonDatabase.Services {
             if (string.IsNullOrWhiteSpace(input.Flag))
                 return ApiResponse.Fail("Flag is required.");
 
-            if (input.Rate <= 0)
-                return ApiResponse.Fail("Rate must be greater than 0.");
+            //if (input.Rate <= 0)
+            //    return ApiResponse.Fail("Rate must be greater than 0.");
 
             if (string.IsNullOrWhiteSpace(input.Type))
                 return ApiResponse.Fail("Type is required.");
 
             var instrumentExists = await _context.Instruments.AnyAsync(i =>i.Identifier == input.Identifier && i.ClientId == input.ClientId && i.IsMapped == true);
+            // Check if MarketWatch contains the identifier (using EF.Functions.Like for better SQL translation)
+            var marketwatchSymbolExist = await _context.MarketWatch
+                .AnyAsync(i => i.ClientId == input.ClientId
+                            && EF.Functions.Like(i.MarketWatchName, $"%{input.Identifier}%"));
 
-            if (!instrumentExists)
-                return ApiResponse.Fail("Invalid Symbol identifier.");
+            if (input.Type == "CustomFormula")
+            {
+               
+            }
+            else
+            {
+                if (!instrumentExists)
+                    return ApiResponse.Fail("Invalid Symbol identifier.");
+            }
+          
 
+           
             if (input.Id > 0)
             {
                 var existing = await _context.NotificationAlerts
@@ -316,7 +329,9 @@ namespace CommonDatabase.Services {
                     a.ClientId == input.ClientId && a.ClientDeviceId == input.ClientDeviceId &&
                     a.Flag == input.Flag &&
                     a.Type == input.Type &&
-                    a.Condition == input.Condition);
+                    a.Condition == input.Condition &&
+                    a.IsPassed == false
+                    );
 
                 if (exists)
                     return ApiResponse.Fail("A similar alert already exists.");
@@ -365,6 +380,7 @@ namespace CommonDatabase.Services {
                     "bid" => "0",
                     "ask" => "1",
                     "ltp" => "2",
+                    "customformula" => "3",
                     _ => a.Type
                 },
                 a.IsPassed, a.AlertDate, a.CreateDate, a.MDate
