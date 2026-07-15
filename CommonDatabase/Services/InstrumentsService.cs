@@ -82,18 +82,20 @@ namespace CommonDatabase.Services
                         existingInstrument.IsMapped = instrument.IsMapped;
                         existingInstrument.Mdate = instrument.Mdate;
                         _context.Instruments.Update(existingInstrument);
-
-                        var marketWatchList = await _context.MarketWatch.Where(m => m.ClientId == instrument.ClientId && m.ListOfSymbols.Contains(instrument.Identifier)).ToListAsync();
-                        foreach (var item in marketWatchList)
+                        if (!instrument.IsMapped)
                         {
-                            var symbols = item.ListOfSymbols.Split(',').ToList();
-                            var index = symbols.FindIndex(symbol => symbol == instrument.Identifier);
-                            if (index >= 0)
+                            var marketWatchList = await _context.MarketWatch.Where(m => m.ClientId == instrument.ClientId && m.ListOfSymbols.Contains(instrument.Identifier)).ToListAsync();
+                            foreach (var item in marketWatchList)
                             {
-                                symbols.RemoveAt(index);
-                                item.ListOfSymbols = string.Join(",", symbols);
+                                var symbols = item.ListOfSymbols.Split(',').ToList();
+                                var index = symbols.FindIndex(symbol => symbol == instrument.Identifier);
+                                if (index >= 0)
+                                {
+                                    symbols.RemoveAt(index);
+                                    item.ListOfSymbols = string.Join(",", symbols);
+                                }
+                                _context.MarketWatch.Update(item);
                             }
-                            _context.MarketWatch.Update(item);
                         }
                         //if (!instrument.IsMapped)
                         //{

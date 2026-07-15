@@ -363,14 +363,9 @@ namespace CommonDatabase.Services {
         public async Task<ApiResponse> GetNotificationsAsync(int clientId, string deviceId, string deviceType)
         {
             var alerts = await _context.NotificationAlerts
-                            .Join(_context.Instruments,
-                                n => new { n.ClientId, n.Identifier },
-                                i => new { i.ClientId, i.Identifier },
-                                (n, i) => new { NotificationAlert = n, Instrument = i })
-                            .Where(joined => joined.Instrument.IsMapped == true && joined.NotificationAlert.ClientId == clientId )
-                            .Select(joined => joined.NotificationAlert)
-                            .OrderByDescending(n => n.CreateDate)
-                            .ToListAsync();
+                  .Where(x => x.ClientId == clientId)
+                  .OrderByDescending(n => n.CreateDate)
+                  .ToListAsync();
 
             var responseData = alerts.Select(a => new
             {
