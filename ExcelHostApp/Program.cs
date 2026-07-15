@@ -194,7 +194,7 @@ builder.Services.AddResponseCompression(options =>
 builder.Services.Configure<BrotliCompressionProviderOptions>(o =>
 {
 
-    o.Level = CompressionLevel.SmallestSize;
+    o.Level = CompressionLevel.Fastest;
 
 });
 var app = builder.Build();
