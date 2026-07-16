@@ -100,4 +100,52 @@ namespace CommonDatabase.Models
         [JsonPropertyName("ltpClose")]
         public string LtpClose { get; set; }
     }
+
+    public class OldMarketIntervalData
+    {
+        [JsonPropertyName("n")]
+        public string N { get; set; }
+
+        [JsonPropertyName("h")]
+        public string H { get; set; }
+
+        [JsonPropertyName("l")]
+        public string L { get; set; }
+
+        [JsonPropertyName("t")]
+        public string T { get; set; }
+
+        [JsonPropertyName("o")]
+        public string O { get; set; }
+
+        [JsonPropertyName("c")]
+        public string C { get; set; }
+
+        [JsonPropertyName("vt")]
+        public string VT { get; set; }
+    }
+
+    public class OldChartIntervalData
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [JsonPropertyName("high")]
+        public string High { get; set; }
+
+        [JsonPropertyName("low")]
+        public string Low { get; set; }
+
+        [JsonPropertyName("time")]
+        public long Time { get; set; }
+
+        [JsonPropertyName("open")]
+        public string Open { get; set; }
+
+        [JsonPropertyName("close")]
+        public string Close { get; set; }
+
+        [JsonPropertyName("volume")]
+        public string Volume { get; set; }
+    }
 }

@@ -578,8 +578,8 @@ namespace DashboardExcelApi.Controllers
                 if ((toDate - fromDate).TotalDays > 365)
                     return BadRequest("Date range too large. Maximum allowed is 1 year.");
 
-                var response = new List<MarketIntervalData>();
-                var response2 = new List<ChartIntervalData>();
+                var response = new List<OldMarketIntervalData>();
+                var response2 = new List<OldChartIntervalData>();
                 // 3. Loop through month-year files
                 DateTime current = new DateTime(fromDate.Year, fromDate.Month, 1);
                 DateTime end = new DateTime(toDate.Year, toDate.Month, 1);
@@ -613,23 +613,15 @@ namespace DashboardExcelApi.Controllers
                             var parts = line.Replace("\"", "").Split(',');
                             if (parts.Length < 7) continue;
 
-                            var tick = new MarketIntervalData
+                            var tick = new OldMarketIntervalData
                             {
                                 N = request.Symbol,
                                 T = parts[1],
-                                AO = parts[2],
-                                AH = parts[3],
-                                AL = parts[4],
-                                AC = parts[5],
+                                O = parts[2],
+                                H = parts[3],
+                                L = parts[4],
+                                C = parts[5],
                                 VT = parts[6],
-                                BO = parts[7],
-                                BH = parts[8],
-                                BL = parts[9],
-                                BC = parts[10],
-                                LTPO = parts[11],
-                                LTPH = parts[12],
-                                LTPL = parts[13],
-                                LTPC = parts[14],
                             };
 
                             string[] formats = { "dd-MM-yyyy HH:mm", "MM/dd/yyyy HH:mm" };
@@ -641,23 +633,15 @@ namespace DashboardExcelApi.Controllers
                             {
                                 if (tickTime.AddHours(-5).AddMinutes(-30) >= fromDate && tickTime.AddHours(-5).AddMinutes(-30) <= toDate)
                                 {
-                                    response2.Add(new ChartIntervalData
+                                    response2.Add(new OldChartIntervalData
                                     {
                                         Name = request.Symbol,
                                         Time = new DateTimeOffset(tickTime.AddHours(-5).AddMinutes(-30)).ToUnixTimeSeconds(),
-                                        AskOpen = parts[2],
-                                        AskHigh = parts[3],
-                                        AskLow = parts[4],
-                                        AskClose = parts[5],
+                                        Open = parts[2],
+                                        High = parts[3],
+                                        Low = parts[4],
+                                        Close = parts[5],
                                         Volume = parts[6],
-                                        BidOpen = parts[7],
-                                        BidHigh = parts[8],
-                                        BidLow = parts[9],
-                                        BidClose = parts[10],
-                                        LtpOpen = parts[11],
-                                        LtpHigh = parts[12],
-                                        LtpLow = parts[13],
-                                        LtpClose = parts[14],
                                     });
                                 }
                                
@@ -682,7 +666,7 @@ namespace DashboardExcelApi.Controllers
 
         [Authorize]
         [HttpGet("stream-market-data")]
-        public async IAsyncEnumerable<string> GetData(string identifier, string date, string fromTime, string toTime, int maxRows = 1000)
+        public async IAsyncEnumerable<List<string>> GetData(string identifier, string date, string fromTime, string toTime, int maxRows = 1000)
         {
             DateTime.TryParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate);
             TimeSpan fromTs = TimeSpan.Parse(fromTime);
@@ -715,7 +699,8 @@ namespace DashboardExcelApi.Controllers
 
                     using var entryStream = entry.Open();
                     using var reader = new StreamReader(entryStream);
-
+                    int batchSize = 1000;
+                    var batch = new List<string>(batchSize);
                     while (!reader.EndOfStream && count < maxRows)
                     {
                         var line = await reader.ReadLineAsync();
@@ -727,15 +712,21 @@ namespace DashboardExcelApi.Controllers
                         // Parse timestamp (first column)
                         if (DateTime.TryParse(parts[0], out var timestamp))
                         {
-                            if (timestamp >= fromDateTime && timestamp <= toDateTime)
+                            if (timestamp.AddHours(5).AddMinutes(30) >= fromDateTime && timestamp.AddHours(5).AddMinutes(30) <= toDateTime)
                             {
-                                yield return line;
+                                batch.Add(line);
+                                if (batch.Count >= batchSize)
+                                {
+                                    yield return batch;
+                                    batch = new List<string>(batchSize);
+                                }
                                 count++;
 
                             }
                         }
                     }
-
+                    if (batch.Count > 0)
+                        yield return batch;
                 }
             }
             else
@@ -743,6 +734,8 @@ namespace DashboardExcelApi.Controllers
                 string datFile = $"{date}.dat";
                 path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
                 using var reader = new StreamReader(path);
+                int batchSize = 1000;
+                var batch = new List<string>(batchSize);
                 while (!reader.EndOfStream && count < maxRows)
                 {
                     var line = await reader.ReadLineAsync();
@@ -755,12 +748,19 @@ namespace DashboardExcelApi.Controllers
                     // Parse timestamp
                     if (DateTime.TryParse(parts[0], out var timestamp))
                     {
-                        if (timestamp >= fromDateTime && timestamp <= toDateTime)
+                        if (timestamp.AddHours(5).AddMinutes(30) >= fromDateTime && timestamp.AddHours(5).AddMinutes(30) <= toDateTime)
                         {
-                            yield return line;
+                            batch.Add(line);
+                            if (batch.Count >= batchSize)
+                            {
+                                yield return batch;
+                                batch = new List<string>(batchSize);
+                            }
                         }
                     }
                 }
+                if (batch.Count > 0)
+                    yield return batch;
             }
         }
         public static string[] ReadFileFromZip(string zipPath, string fileName)
