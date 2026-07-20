@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using StackExchange.Redis;
 using System;
+using System.Formats.Tar;
 using System.Globalization;
 using System.IO.Compression;
 using System.Text;
@@ -829,81 +830,194 @@ namespace DashboardExcelApi.Controllers
                 var response = new List<MarketIntervalData>();
                 var response2 = new List<ChartIntervalData>();
                 // 3. Loop through month-year files
-                DateTime current = new DateTime(fromDate.Year, fromDate.Month, 1);
-                DateTime end = new DateTime(toDate.Year, toDate.Month, 1);
+                DateTime current = new DateTime(fromDate.Year, fromDate.Month, fromDate.Day);
+                DateTime end = new DateTime(toDate.Year, toDate.Month, toDate.Day);
                 var lines = new List<string>();
-                while (current <= end)
+                if (request.Interval < 24)
                 {
-                    string monthYear = current.ToString("MM-yyyy");
-                    string filePath = Path.Combine(_chartHistoryDir, subscribe.Contract, $"{monthYear}.dat");
-
-                    if (System.IO.File.Exists(filePath))
+                    while (current <= end)
                     {
-                        using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                        using (var reader = new StreamReader(fs))
-                        {
-                            while (!reader.EndOfStream)
-                            {
-                                var line = reader.ReadLine();
-                                var parts = line.Replace("\"", "");
-                                var splitData = parts.Split(',');
-                                string[] formats = { "dd-MM-yyyy HH:mm", "MM/dd/yyyy HH:mm" };
+                        string monthYear = current.ToString("MM-yyyy");
+                        string filePath = Path.Combine(_chartHistoryDir, subscribe.Contract, $"{monthYear}.dat");
 
-                                if (DateTime.TryParseExact(splitData[1], formats,
-                                    CultureInfo.InvariantCulture,
-                                    DateTimeStyles.AssumeUniversal,
-                                    out DateTime tickTime))
+                        if (System.IO.File.Exists(filePath))
+                        {
+                            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                            using (var reader = new StreamReader(fs))
+                            {
+                                while (!reader.EndOfStream)
                                 {
-                                    if (tickTime.AddHours(-5).AddMinutes(-30) >= fromDate && tickTime.AddHours(-5).AddMinutes(-30) <= toDate)
+                                    var line = reader.ReadLine();
+                                    var parts = line.Replace("\"", "");
+                                    var splitData = parts.Split(',');
+                                    string[] formats = { "dd-MM-yyyy HH:mm", "MM/dd/yyyy HH:mm" };
+
+                                    if (DateTime.TryParseExact(splitData[1], formats,
+                                        CultureInfo.InvariantCulture,
+                                        DateTimeStyles.AssumeUniversal,
+                                        out DateTime tickTime))
                                     {
-                                        // Convert the second element (index 1) to Unix timestamp
-                                        string unixTimestamp = DateTimeOffset.ParseExact(
-                                            splitData[1],
-                                            "dd-MM-yyyy HH:mm",
-                                            System.Globalization.CultureInfo.InvariantCulture
-                                        ).ToUnixTimeSeconds().ToString();
-                                        splitData[0] = request.Symbol;
-                                        // Replace the original date with the timestamp
-                                        splitData[1] = unixTimestamp;
-                                        //GOLD_I,BIDOpen,BidClose,BidHigh,BidLow,AskOpen,AskClose,AskHigh,AskLow,LtpOpen,LtpClose,LtpHigh,LtpLow,Volume,Time
-                                        // Concatenate everything back
-                                        string result = string.Join(",", 
-                                                            splitData[0],   // SymbolName
-                                                            splitData[7],   // BIDOpen
-                                                            splitData[10],   // BidClose
-                                                            splitData[8],   // BidHigh
-                                                            splitData[9],  // BidLow
-                                                            splitData[2],   // AskOpen
-                                                            splitData[5],   // AskClose 
-                                                            splitData[3],   // AskHigh
-                                                            splitData[4],   // AskLow
-                                                            splitData[11],  // LtpOpen
-                                                            splitData[14],  // LtpClose
-                                                            splitData[12],  // LtpHigh
-                                                            splitData[13],  // LtpLow
-                                                            splitData[6],   // Volume
-                                                            splitData[1]    // Time
-                                                                //AskOpen = parts[2],
-                                                                //AskHigh = parts[3],
-                                                                //AskLow = parts[4],
-                                                                //AskClose = parts[5],
-                                                                //Volume = parts[6],
-                                                                //BidOpen = parts[7],
-                                                                //BidHigh = parts[8],
-                                                                //BidLow = parts[9],
-                                                                //BidClose = parts[10],
-                                                                //LtpOpen = parts[11],
-                                                                //LtpHigh = parts[12],
-                                                                //LtpLow = parts[13],
-                                                                //LtpClose = parts[14],
-                                                        );
-                                        lines.Add(result);
+                                        if (tickTime.AddHours(-5).AddMinutes(-30) >= fromDate && tickTime.AddHours(-5).AddMinutes(-30) <= toDate)
+                                        {
+                                            // Convert the second element (index 1) to Unix timestamp
+                                            string unixTimestamp = DateTimeOffset.ParseExact(
+                                                splitData[1],
+                                                "dd-MM-yyyy HH:mm",
+                                                System.Globalization.CultureInfo.InvariantCulture
+                                            ).ToUnixTimeSeconds().ToString();
+                                            splitData[0] = request.Symbol;
+                                            // Replace the original date with the timestamp
+                                            splitData[1] = unixTimestamp;
+                                            //GOLD_I,BIDOpen,BidClose,BidHigh,BidLow,AskOpen,AskClose,AskHigh,AskLow,LtpOpen,LtpClose,LtpHigh,LtpLow,Volume,Time
+                                            // Concatenate everything back
+                                            string result = string.Join(",",
+                                                                request.Symbol,   // SymbolName
+                                                                splitData[7],   // BIDOpen
+                                                                splitData[10],   // BidClose
+                                                                splitData[8],   // BidHigh
+                                                                splitData[9],  // BidLow
+                                                                splitData[2],   // AskOpen
+                                                                splitData[5],   // AskClose 
+                                                                splitData[3],   // AskHigh
+                                                                splitData[4],   // AskLow
+                                                                splitData[11],  // LtpOpen
+                                                                splitData[14],  // LtpClose
+                                                                splitData[12],  // LtpHigh
+                                                                splitData[13],  // LtpLow
+                                                                splitData[6],   // Volume
+                                                                splitData[1]    // Time
+                                                                                //AskOpen = parts[2],
+                                                                                //AskHigh = parts[3],
+                                                                                //AskLow = parts[4],
+                                                                                //AskClose = parts[5],
+                                                                                //Volume = parts[6],
+                                                                                //BidOpen = parts[7],
+                                                                                //BidHigh = parts[8],
+                                                                                //BidLow = parts[9],
+                                                                                //BidClose = parts[10],
+                                                                                //LtpOpen = parts[11],
+                                                                                //LtpHigh = parts[12],
+                                                                                //LtpLow = parts[13],
+                                                                                //LtpClose = parts[14],
+                                                            );
+                                            lines.Add(result);
+                                        }
                                     }
                                 }
                             }
                         }
+                        current = current.AddMonths(1);
                     }
-                    current = current.AddMonths(1);
+                }
+                else
+                {
+                    while (current <= end)
+                    {
+                        string datFile = $"{current.ToString("dd-MM-yyyy")}.dat";
+                        var path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                        if (System.IO.File.Exists(path))
+                        {
+                            using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+                            fs.Seek(-1, SeekOrigin.End);
+                            while (fs.Position > 0)
+                            {
+                                fs.Seek(-1, SeekOrigin.Current);
+                                if (fs.ReadByte() == '\n')
+                                    break;
+                                fs.Seek(-1, SeekOrigin.Current);
+                            }
+
+                            using var sr = new StreamReader(fs);
+                            string content = sr.ReadLine() ?? string.Empty;
+                            string[] splitData = content.Split('|');
+                            var symbol = request.Symbol;
+                            var bid = SafeGet(splitData, 2);
+                            var ask = SafeGet(splitData, 3);
+                            var high = SafeGet(splitData, 4);
+                            var low = SafeGet(splitData, 5);
+                            var ltp = SafeGet(splitData, 6);
+                            var open = SafeGet(splitData, 8);
+                            var close = SafeGet(splitData, 9);
+                            var volume = SafeGet(splitData, 7);
+
+                            var candleTime = DateTime.Parse(SafeGet(splitData, 0))
+                                                      .AddHours(5)
+                                                      .AddMinutes(30);
+                            // Convert the second element (index 1) to Unix timestamp
+                            string unixTimestamp = DateTimeOffset.ParseExact(
+                                candleTime.ToString("dd-MM-yyyy HH:mm"),
+                                "dd-MM-yyyy HH:mm",
+                                System.Globalization.CultureInfo.InvariantCulture
+                            ).ToUnixTimeSeconds().ToString();
+                            string result = string.Join(",",
+                                                symbol,   // SymbolName
+                                                0,   // BIDOpen
+                                                0,   // BidClose
+                                                0,   // BidHigh
+                                                0,  // BidLow
+                                                0,   // AskOpen
+                                                0,   // AskClose 
+                                                0,   // AskHigh
+                                                0,   // AskLow
+                                                open,  // LtpOpen
+                                                close,  // LtpClose
+                                                high,  // LtpHigh
+                                                low,  // LtpLow
+                                                volume,   // Volume
+                                                unixTimestamp   // Time
+                                            );
+                            lines.Add(result);
+                        }
+                        else
+                        {
+                            datFile = $"{current.ToString("dd-MM-yyyy")}.dat";
+                            string zipFileName = $"{current.ToString("dd-MM-yyyy")}.zip";
+                            var zipPath = Path.Combine(_rateHistoryDir, subscribe.Contract, zipFileName);
+                            string lastLine = ReadLastLineFromZip(zipPath, datFile);
+                            if (!string.IsNullOrEmpty(lastLine))
+                            {
+                                string[] splitData = lastLine.Split('|');
+                                var symbol = request.Symbol;
+                                var bid = SafeGet(splitData, 2);
+                                var ask = SafeGet(splitData, 3);
+                                var high = SafeGet(splitData, 4);
+                                var low = SafeGet(splitData, 5);
+                                var ltp = SafeGet(splitData, 6);
+                                var open = SafeGet(splitData, 8);
+                                var close = SafeGet(splitData, 9);
+                                var volume = SafeGet(splitData, 7);
+
+                                var candleTime = DateTime.Parse(SafeGet(splitData, 0))
+                                                          .AddHours(5)
+                                                          .AddMinutes(30);
+                                string unixTimestamp = DateTimeOffset.ParseExact(
+                               candleTime.ToString("dd-MM-yyyy HH:mm"),
+                               "dd-MM-yyyy HH:mm",
+                               System.Globalization.CultureInfo.InvariantCulture
+                           ).ToUnixTimeSeconds().ToString();
+                                string result = string.Join(",",
+                                                    symbol,   // SymbolName
+                                                    0,   // BIDOpen
+                                                    0,   // BidClose
+                                                    0,   // BidHigh
+                                                    0,  // BidLow
+                                                    0,   // AskOpen
+                                                    0,   // AskClose 
+                                                    0,   // AskHigh
+                                                    0,   // AskLow
+                                                    open,  // LtpOpen
+                                                    close,  // LtpClose
+                                                    high,  // LtpHigh
+                                                    low,  // LtpLow
+                                                    volume,   // Volume
+                                                    unixTimestamp   // Time
+                                                );
+                                lines.Add(result);
+                            }
+                        }
+                        current = current.AddDays(1);
+                    }
                 }
                 if (lines.Count > 0)
                 {
@@ -915,6 +1029,34 @@ namespace DashboardExcelApi.Controllers
             {
                 return BadRequest(new ApiResponse { IsSuccess = false, Message = "Something went wrong", ExceptionMessage = ex.StackTrace });
             }
+        }
+        private static string SafeGet(string[] arr, int index, string defaultValue = "0")
+        {
+            return index < arr.Length ? arr[index] : defaultValue;
+        }
+        private string ReadLastLineFromZip(string zipPath, string entryName)
+        {
+            if (string.IsNullOrEmpty(zipPath) || !System.IO.File.Exists(zipPath))
+            {
+                // Skip gracefully if ZIP not found
+                return string.Empty;
+            }
+            // Read from ZIP
+            using var zip = ZipFile.OpenRead(zipPath);
+            var entry = zip.GetEntry(entryName ?? Path.GetFileName(zipPath));
+
+            if (entry == null)
+                return string.Empty; // skip if entry not found
+
+            using var stream = entry.Open();
+            using var reader = new StreamReader(stream);
+
+            string? lastLine = null;
+            while (!reader.EndOfStream)
+            {
+                lastLine = reader.ReadLine();
+            }
+            return lastLine ?? string.Empty;
         }
     }
 }
