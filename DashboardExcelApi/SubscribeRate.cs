@@ -1,9 +1,12 @@
-﻿using CommonDatabase.Services;
+﻿using DashboardExcelApi;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using System.Collections.Concurrent;
 using System.IO.Compression;
 using System.Text.Json;
+using System.Threading.Channels;
 
 namespace DashboardExcelApi
 {
@@ -13,18 +16,19 @@ namespace DashboardExcelApi
         private readonly IDatabase _redisDb;
         private readonly IHubContext<ExcelHub> _hubContext;
         private readonly ILogger<SubscribeRate> _logger;
-        private readonly ConcurrentDictionary<string, string> _latestTicks = new();
 
-        public SubscribeRate(IHubContext<ExcelHub> hubContext, IConnectionMultiplexer redis, ILogger<SubscribeRate> logger)
+        private readonly ConcurrentDictionary<string, string> _latestTicks = new();
+        private readonly ConcurrentDictionary<string, SemaphoreSlim> _locks = new();
+
+        public SubscribeRate(IHubContext<ExcelHub> hubContext,
+                             IConnectionMultiplexer redis,
+                             ILogger<SubscribeRate> logger)
         {
             _subscriber = redis.GetSubscriber();
             _redisDb = redis.GetDatabase();
             _hubContext = hubContext;
             _logger = logger;
         }
-
-        //private readonly ConcurrentDictionary<string, string> _latestTicks = new();
-        private readonly ConcurrentDictionary<string, SemaphoreSlim> _locks = new();
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -35,39 +39,19 @@ namespace DashboardExcelApi
                     using var doc = JsonDocument.Parse((string)message!);
                     var root = doc.RootElement;
                     var symbol = root.GetProperty("i").GetString();
+                    if (string.IsNullOrEmpty(symbol)) return;
 
-                    if (!string.IsNullOrEmpty(symbol))
-                    {
-                        string json = root.ToString();
-                        _latestTicks[symbol] = json;
+                    string json = root.ToString();
+                    _latestTicks[symbol] = json;
 
-                        // persist latest tick (fire-and-forget if you want speed)
-                        _ = _redisDb.StringSetAsync(symbol, json);
+                    // Fire-and-forget persistence
+                    _ = _redisDb.StringSetAsync(symbol, json);
 
-                        // ensure per-symbol sequential sending
-                        var gate = _locks.GetOrAdd(symbol, _ => new SemaphoreSlim(1, 1));
+                    // Ensure semaphore exists
+                    var sem = _locks.GetOrAdd(symbol, _ => new SemaphoreSlim(1, 1));
 
-                        _ = Task.Run(async () =>
-                        {
-                            await gate.WaitAsync(stoppingToken);
-                            try
-                            {
-                                // snapshot latest tick at send time
-                                if (_latestTicks.TryGetValue(symbol, out var latestJson))
-                                {
-                                    await _hubContext.Clients.Group(symbol)
-                                        .SendAsync("excelBase", latestJson, stoppingToken);
-
-                                    await _hubContext.Clients.Group(symbol)
-                                        .SendAsync("excelRate", Compress(latestJson), stoppingToken);
-                                }
-                            }
-                            finally
-                            {
-                                gate.Release();
-                            }
-                        }, stoppingToken);
-                    }
+                    // Kick off send attempt
+                    _ = Task.Run(() => SendLatest(symbol, sem, stoppingToken), stoppingToken);
                 }
                 catch (Exception ex)
                 {
@@ -76,6 +60,44 @@ namespace DashboardExcelApi
             });
         }
 
+        private async Task SendLatest(string symbol, SemaphoreSlim sem, CancellationToken ct)
+        {
+            // Only one sender per symbol at a time
+            if (!await sem.WaitAsync(0, ct)) return; // someone else is sending
+
+            try
+            {
+                while (_latestTicks.TryGetValue(symbol, out var latest))
+                {
+                    try
+                    {
+                        var compressed = Compress(latest);
+
+                        // Fire-and-forget to avoid blocking ingestion
+                        _ = _hubContext.Clients.Group(symbol)
+                            .SendAsync("excelBase", latest, ct);
+
+                        _ = _hubContext.Clients.Group(symbol)
+                            .SendAsync("excelRate", compressed, ct);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error sending tick for {Symbol}", symbol);
+                    }
+
+                    // If a newer tick arrived during send, loop again
+                    string current = latest;
+                    if (_latestTicks.TryGetValue(symbol, out var newer) && newer != current)
+                        continue;
+
+                    break;
+                }
+            }
+            finally
+            {
+                sem.Release();
+            }
+        }
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
