@@ -30,6 +30,7 @@ namespace DashboardExcelApi.Controllers
         private readonly string _rateHistoryDir = "";
         private readonly int _maxHistoryRowLimit = 0;
         private readonly string _chartHistoryDir = "";
+        private readonly string _oneDayHistoryDir = "";
         public RateHistoryController(AppDbContext context, IConnectionMultiplexer redis, IConfiguration configuration)
         {
             _context = context;
@@ -39,6 +40,7 @@ namespace DashboardExcelApi.Controllers
             _rateHistoryDir = _configuration.GetValue<string>("RateHistoryDir") ?? Directory.GetCurrentDirectory();
             _maxHistoryRowLimit = _configuration.GetValue<int>("MaxHistoryRowLimit");
             _chartHistoryDir = _configuration.GetValue<string>("ChartHistoryDir") ?? Directory.GetCurrentDirectory();
+            _oneDayHistoryDir = _configuration.GetValue<string>("OneDayHistoryDir") ?? Directory.GetCurrentDirectory();
         }
         
         [Authorize]
@@ -833,6 +835,7 @@ namespace DashboardExcelApi.Controllers
                 DateTime current = new DateTime(fromDate.Year, fromDate.Month, fromDate.Day);
                 DateTime end = new DateTime(toDate.Year, toDate.Month, toDate.Day);
                 var lines = new List<string>();
+                string[] values = [];
                 if (request.Interval < 24)
                 {
                     while (current <= end)
@@ -911,73 +914,79 @@ namespace DashboardExcelApi.Controllers
                 }
                 else
                 {
-                    while (current <= end)
+                    while (current.Year <= end.Year)
                     {
-                        string datFile = $"{current.ToString("dd-MM-yyyy")}.dat";
-                        var path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                        string datFile = $"{current.Year.ToString()}.dat";
+                        var path = Path.Combine(_oneDayHistoryDir, subscribe.Contract, datFile);
                         if (System.IO.File.Exists(path))
                         {
-                            using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
-
-                            fs.Seek(-1, SeekOrigin.End);
-                            while (fs.Position > 0)
+                            using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // <-- critical
+                            using (var reader = new StreamReader(stream))
                             {
-                                fs.Seek(-1, SeekOrigin.Current);
-                                if (fs.ReadByte() == '\n')
-                                    break;
-                                fs.Seek(-1, SeekOrigin.Current);
+                                string fileContent = reader.ReadToEnd();
+                                values = fileContent.Split("\r\n").ToArray();
                             }
 
-                            using var sr = new StreamReader(fs);
-                            string content = sr.ReadLine() ?? string.Empty;
-                            string[] splitData = content.Split('|');
-                            var symbol = request.Symbol;
-                            var bid = SafeGet(splitData, 2);
-                            var ask = SafeGet(splitData, 3);
-                            var high = SafeGet(splitData, 4);
-                            var low = SafeGet(splitData, 5);
-                            var ltp = SafeGet(splitData, 6);
-                            var open = SafeGet(splitData, 8);
-                            var close = SafeGet(splitData, 9);
-                            var volume = SafeGet(splitData, 7);
-
-                            var candleTime = DateTime.Parse(SafeGet(splitData, 0))
-                                                      .AddHours(5)
-                                                      .AddMinutes(30);
-                            // Convert the second element (index 1) to Unix timestamp
-                            string unixTimestamp = DateTimeOffset.ParseExact(
-                                candleTime.ToString("dd-MM-yyyy HH:mm"),
-                                "dd-MM-yyyy HH:mm",
-                                System.Globalization.CultureInfo.InvariantCulture
-                            ).ToUnixTimeSeconds().ToString();
-                            string result = string.Join(",",
-                                                symbol,   // SymbolName
-                                                0,   // BIDOpen
-                                                0,   // BidClose
-                                                0,   // BidHigh
-                                                0,  // BidLow
-                                                0,   // AskOpen
-                                                0,   // AskClose 
-                                                0,   // AskHigh
-                                                0,   // AskLow
-                                                open,  // LtpOpen
-                                                close,  // LtpClose
-                                                high,  // LtpHigh
-                                                low,  // LtpLow
-                                                volume,   // Volume
-                                                unixTimestamp   // Time
-                                            );
-                            lines.Add(result);
-                        }
-                        else
-                        {
-                            datFile = $"{current.ToString("dd-MM-yyyy")}.dat";
-                            string zipFileName = $"{current.ToString("dd-MM-yyyy")}.zip";
-                            var zipPath = Path.Combine(_rateHistoryDir, subscribe.Contract, zipFileName);
-                            string lastLine = ReadLastLineFromZip(zipPath, datFile);
-                            if (!string.IsNullOrEmpty(lastLine))
+                            foreach (var content in values)
                             {
-                                string[] splitData = lastLine.Split('|');
+                                string[] splitData = content.Split(',');
+                                var symbol = request.Symbol;
+                                var bid = SafeGet(splitData, 2);
+                                var ask = SafeGet(splitData, 3);
+                                var high = SafeGet(splitData, 4);
+                                var low = SafeGet(splitData, 5);
+                                var ltp = SafeGet(splitData, 6);
+                                var open = SafeGet(splitData, 8);
+                                var close = SafeGet(splitData, 9);
+                                var volume = SafeGet(splitData, 7);
+
+                                var candleTime = DateTime.Parse(SafeGet(splitData, 0));
+                                if (candleTime >= fromDate && candleTime <= toDate)
+                                {
+                                    // Convert the second element (index 1) to Unix timestamp
+                                    string unixTimestamp = DateTimeOffset.ParseExact(
+                                    candleTime.ToString("dd-MM-yyyy HH:mm"),
+                                    "dd-MM-yyyy HH:mm",
+                                    System.Globalization.CultureInfo.InvariantCulture
+                                ).ToUnixTimeSeconds().ToString();
+                                    string result = string.Join(",",
+                                                        symbol,   // SymbolName
+                                                        0,   // BIDOpen
+                                                        0,   // BidClose
+                                                        0,   // BidHigh
+                                                        0,  // BidLow
+                                                        0,   // AskOpen
+                                                        0,   // AskClose 
+                                                        0,   // AskHigh
+                                                        0,   // AskLow
+                                                        open,  // LtpOpen
+                                                        close,  // LtpClose
+                                                        high,  // LtpHigh
+                                                        low,  // LtpLow
+                                                        volume,   // Volume
+                                                        unixTimestamp   // Time
+                                                    );
+                                    lines.Add(result);
+                                }
+                            }
+                            if (toDate.ToString("dd-MM-yyyy") == DateTime.Now.ToString("dd-MM-yyyy"))
+                            {
+                                datFile = $"{toDate.ToString("dd-MM-yyyy")}.dat";
+                                path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                                using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+
+                                fs.Seek(-1, SeekOrigin.End);
+                                while (fs.Position > 0)
+                                {
+                                    fs.Seek(-1, SeekOrigin.Current);
+                                    if (fs.ReadByte() == '\n')
+                                        break;
+                                    fs.Seek(-1, SeekOrigin.Current);
+                                }
+
+                                using var sr = new StreamReader(fs);
+                                string content = sr.ReadLine() ?? string.Empty;
+                                string[] splitData = content.Split('|');
                                 var symbol = request.Symbol;
                                 var bid = SafeGet(splitData, 2);
                                 var ask = SafeGet(splitData, 3);
@@ -991,32 +1000,34 @@ namespace DashboardExcelApi.Controllers
                                 var candleTime = DateTime.Parse(SafeGet(splitData, 0))
                                                           .AddHours(5)
                                                           .AddMinutes(30);
-                                string unixTimestamp = DateTimeOffset.ParseExact(
-                               candleTime.ToString("dd-MM-yyyy HH:mm"),
-                               "dd-MM-yyyy HH:mm",
-                               System.Globalization.CultureInfo.InvariantCulture
-                           ).ToUnixTimeSeconds().ToString();
-                                string result = string.Join(",",
-                                                    symbol,   // SymbolName
-                                                    0,   // BIDOpen
-                                                    0,   // BidClose
-                                                    0,   // BidHigh
-                                                    0,  // BidLow
-                                                    0,   // AskOpen
-                                                    0,   // AskClose 
-                                                    0,   // AskHigh
-                                                    0,   // AskLow
-                                                    open,  // LtpOpen
-                                                    close,  // LtpClose
-                                                    high,  // LtpHigh
-                                                    low,  // LtpLow
-                                                    volume,   // Volume
-                                                    unixTimestamp   // Time
-                                                );
-                                lines.Add(result);
-                            }
+                               
+                                    // Convert the second element (index 1) to Unix timestamp
+                                    string unixTimestamp = DateTimeOffset.ParseExact(
+                                        candleTime.ToString("dd-MM-yyyy HH:mm"),
+                                        "dd-MM-yyyy HH:mm",
+                                        System.Globalization.CultureInfo.InvariantCulture
+                                    ).ToUnixTimeSeconds().ToString();
+                                    string result = string.Join(",",
+                                                        symbol,   // SymbolName
+                                                        0,   // BIDOpen
+                                                        0,   // BidClose
+                                                        0,   // BidHigh
+                                                        0,  // BidLow
+                                                        0,   // AskOpen
+                                                        0,   // AskClose 
+                                                        0,   // AskHigh
+                                                        0,   // AskLow
+                                                        open,  // LtpOpen
+                                                        close,  // LtpClose
+                                                        high,  // LtpHigh
+                                                        low,  // LtpLow
+                                                        volume,   // Volume
+                                                        unixTimestamp   // Time
+                                                    );
+                                    lines.Add(result);
+                                }
                         }
-                        current = current.AddDays(1);
+                        current = current.AddYears(1);
                     }
                 }
                 if (lines.Count > 0)
