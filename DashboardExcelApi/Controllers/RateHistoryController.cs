@@ -5,6 +5,7 @@ using CommonDatabase.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Hosting;
 using StackExchange.Redis;
 using System;
 using System.Formats.Tar;
@@ -832,8 +833,17 @@ namespace DashboardExcelApi.Controllers
                 var response = new List<MarketIntervalData>();
                 var response2 = new List<ChartIntervalData>();
                 // 3. Loop through month-year files
-                DateTime current = new DateTime(fromDate.Year, fromDate.Month, fromDate.Day);
-                DateTime end = new DateTime(toDate.Year, toDate.Month, toDate.Day);
+                //DateTime current = new DateTime(fromDate.Year, fromDate.Month, fromDate.Day);
+                //DateTime end = new DateTime(toDate.Year, toDate.Month, toDate.Day);
+                // Convert to DateTime
+                DateTime parseFromDate = DateTime.ParseExact(fromDate.ToString("MM-yyyy"), "MM-yyyy", null);
+                DateTime parseToDate = DateTime.ParseExact(toDate.ToString("MM-yyyy"), "MM-yyyy", null);
+                // Construct start as first day of month
+                DateTime current = new DateTime(fromDate.Year, fromDate.Month, 1);
+
+                // Construct end as last day of month
+                DateTime end = new DateTime(toDate.Year, toDate.Month,
+                    DateTime.DaysInMonth(toDate.Year, toDate.Month));
                 var lines = new List<string>();
                 string[] values = [];
                 if (request.Interval < 24)
@@ -936,9 +946,9 @@ namespace DashboardExcelApi.Controllers
                                 var high = SafeGet(splitData, 4);
                                 var low = SafeGet(splitData, 5);
                                 var ltp = SafeGet(splitData, 6);
-                                var open = SafeGet(splitData, 8);
-                                var close = SafeGet(splitData, 9);
-                                var volume = SafeGet(splitData, 7);
+                                var open = SafeGet(splitData, 7);
+                                var close = SafeGet(splitData, 8);
+                                var volume = SafeGet(splitData, 9);
 
                                 var candleTime = DateTime.Parse(SafeGet(splitData, 0));
                                 if (candleTime >= fromDate && candleTime <= toDate)
