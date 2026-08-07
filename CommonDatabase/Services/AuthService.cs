@@ -82,10 +82,10 @@ namespace CommonDatabase.Services
                                 x.DeviceId == login.DeviceId
                              );
                 var clientDevices = new ClientDevices();
-                var deviceHistory = await _context.ClientDevices.Where(a => (a.ClientId != user.Id && a.DeviceId == login.DeviceId) || (a.ClientId == user.Id && a.DeviceId != login.DeviceId)).ToListAsync();
+                var deviceHistory = await _context.ClientDevices.Where(a => (a.ClientId != user.Id && a.DeviceId == login.DeviceId && a.IsLogout == false) || (a.ClientId == user.Id && a.DeviceId != login.DeviceId && a.IsLogout == false)).ToListAsync();
                 if (deviceHistory != null)
                 {
-                    await _context.ClientDevices.Where(a => (a.ClientId != user.Id && a.DeviceId == login.DeviceId) || (a.ClientId == user.Id && a.DeviceId != login.DeviceId))
+                    await _context.ClientDevices.Where(a => (a.ClientId != user.Id && a.DeviceId == login.DeviceId && a.IsLogout == false) || (a.ClientId == user.Id && a.DeviceId != login.DeviceId && a.IsLogout == false))
                              .ExecuteUpdateAsync(setters => setters
                                   .SetProperty(n => n.IsLogout, true)
                                   .SetProperty(b => b.UpdatedDate, b => DateTime.Now));
