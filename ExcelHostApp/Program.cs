@@ -240,7 +240,7 @@ app.MapGet("/signalr-stats", (ConnectionStore store) =>
 });
 
 // POST endpoint
-app.MapPost("/GetVersion", (string deviceType) =>
+app.MapGet("/GetVersion", (string deviceType) =>
 {
     var version = deviceType switch
     {
