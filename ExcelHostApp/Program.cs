@@ -238,6 +238,18 @@ app.MapGet("/signalr-stats", (ConnectionStore store) =>
         connectionsPerGroup = groupsToConnections
     };
 });
+
+// POST endpoint
+app.MapPost("/GetVersion", (string deviceType) =>
+{
+    var version = deviceType switch
+    {
+        "ios" => builder.Configuration["DeviceVersion:Ios"],
+        "android" => builder.Configuration["DeviceVersion:Android"],
+        _ => "1.0"
+    };
+    return Results.Ok(new { version });
+});
 //app.MapHub<ExcelHub>("/excel", options =>
 //{
 
