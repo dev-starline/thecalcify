@@ -103,6 +103,7 @@ namespace CommonDatabase.Services {
                 client.RateExpiredDate = parentClient.RateExpiredDate;
                 client.NewsExpiredDate = parentClient.NewsExpiredDate;
                 client.FirmName = parentClient.FirmName;
+                client.IsAlertPermission = false;
             }
             // Get next value from sequence
             int nextUserNameNumber = GetNextUserNameNumber();
@@ -305,11 +306,19 @@ namespace CommonDatabase.Services {
            
             if (input.Id > 0)
             {
+                var results = await _context
+                .AlertsClient // or any DbSet, just to anchor the query
+                .FromSqlRaw("SELECT * FROM dbo.func_GetClientIdsForAlert({0})", input.ClientId)
+                .ToListAsync();
+
                 var existing = await _context.NotificationAlerts
-                    .FirstOrDefaultAsync(a => a.Id == input.Id && a.ClientId == input.ClientId);
+                    .FirstOrDefaultAsync(a => a.Id == input.Id && results.Select(r => r.Id).Contains(a.ClientId));
 
                 if (existing == null)
+                {
                     return ApiResponse.Fail("Alert not found for update.");
+                }
+                    
 
                 existing.Rate = input.Rate;
                 existing.Flag = input.Flag;
@@ -318,7 +327,7 @@ namespace CommonDatabase.Services {
                 existing.MDate = DateTime.Now;
                 existing.IsPassed = false;
                 existing.AlertDate = null;
-
+                existing.UpdatedByClientId = input.UpdatedByClientId;
                 await _context.SaveChangesAsync();
             }
             else
@@ -362,8 +371,17 @@ namespace CommonDatabase.Services {
 
         public async Task<ApiResponse> GetNotificationsAsync(int clientId, string deviceId, string deviceType)
         {
+            //var subClient = await _context.Client
+            //        .Where(c => c.Id == clientId)
+            //        .FirstOrDefaultAsync();
+
+            var results = await _context
+                .AlertsClient // or any DbSet, just to anchor the query
+                .FromSqlRaw("SELECT * FROM dbo.func_GetClientIdsForAlert({0})", clientId)
+                .ToListAsync();
+
             var alerts = await _context.NotificationAlerts
-                  .Where(x => x.ClientId == clientId)
+                  .Where(x => results.Select(r => r.Id).Contains(x.ClientId))
                   .OrderByDescending(n => n.CreateDate)
                   .ToListAsync();
 
@@ -387,7 +405,7 @@ namespace CommonDatabase.Services {
         public async Task<ApiResponse> MarkRateAlertPassedAsync(int clientId, string symbol, int id)
         {
             var alert = await (from a in _context.NotificationAlerts join c in _context.Client on a.ClientId equals c.Id
-                where a.Id == id && a.ClientId == clientId && a.Identifier.Equals(symbol) && !a.IsPassed && a.AlertDate == null select a ).FirstOrDefaultAsync();
+                where a.Id == id select a ).FirstOrDefaultAsync();
             if (alert == null) 
                 return ApiResponse.Fail("No matching pending alert found, or client does not exist.");
             alert.IsPassed = true;
@@ -438,10 +456,13 @@ namespace CommonDatabase.Services {
             var client = await _context.Client.FindAsync(clientId);
             if (client == null)
                 return ApiResponse.Fail("Client not found.");
+            var subClient = await _context.Client
+                    .Where(c => c.Id == clientId)
+                    .FirstOrDefaultAsync();
 
             // Delete related devices first
             var alert = await _context.NotificationAlerts
-                .Where(u => u.ClientId == client.Id && u.Id == alertId)
+                .Where(u => (u.ClientId == client.Id || u.ClientId == int.Parse(subClient.Puid)) && u.Id == alertId)
                 .FirstOrDefaultAsync();
 
             if (alert == null)
@@ -524,6 +545,24 @@ namespace CommonDatabase.Services {
         {
             var client = await _context.Client.Where(x => x.Id == clientId).FirstOrDefaultAsync();
             return client;
+        }
+
+        public async Task<ApiResponse> UpdateAlertPermissionAsync(int clientId, int subClientId, bool isAlertPermission)
+        {
+            var subClients = await GetSubClientListAsync(clientId);
+
+            var subClient = subClients.Where(x => x.Id == subClientId).FirstOrDefault();
+
+            if (subClient == null)
+                return ApiResponse.Fail("Sub Client not found.");
+
+            var res = await _context.Client
+                            .Where(b => b.Id == subClientId)
+                            .ExecuteUpdateAsync(setters => setters
+                            .SetProperty(b => b.IsAlertPermission, isAlertPermission)
+                            .SetProperty(b => b.UpdateDate, DateTime.Now));
+
+            return ApiResponse.Ok(null, "Alert permission updated successfully.");
         }
     }
 }

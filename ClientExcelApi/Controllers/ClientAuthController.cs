@@ -131,6 +131,7 @@ namespace ClientExcelApi.Controllers
             else if (typeValue == "3") input.Type = "CustomFormula";
             else return BadRequest(ApiResponse.Fail("Type must be 0, 1, 2, or 3."));
             input.ClientId = clientId;
+            input.UpdatedByClientId = clientId;
             var result = await _clientService.CreateAndSendAlert(input);
             return Ok(result);
         }
@@ -165,7 +166,7 @@ namespace ClientExcelApi.Controllers
                                 .Where(sr => sr.ClientId == input.ClientId && sr.Identifier == input.Symbol)
                                 .FirstOrDefaultAsync();
             var alert = await _context.NotificationAlerts
-                                .Where(na => na.ClientId == input.ClientId && na.Identifier == input.Symbol && na.Id == input.Id)
+                                .Where(na => na.Id == input.Id)
                                 .FirstOrDefaultAsync();
             string contract = (identifier == null) ? input.Symbol : identifier.Contract;
             if (result.IsSuccess)
@@ -318,7 +319,21 @@ namespace ClientExcelApi.Controllers
             var result = await _clientService.GetClientDetailAsync(int.Parse(clientIdClaim));
             return Ok(ApiResponse.Ok(result, "Client detail fetched successfully."));
         }
+        [Authorize(Roles = "Client")]
+        [HttpPost("udpate-alert-permission")]
+        public async Task<IActionResult> UpdateAlertPermission([FromBody] AlertPermission alertPermission)
+        {
+            var clientIdClaim = User.FindFirst("Id")?.Value;
+            var deviceId = User.FindFirst("DeviceId")?.Value;
+            var deviceType = User.FindFirst("DeviceType")?.Value;
+            if (string.IsNullOrEmpty(clientIdClaim) || !int.TryParse(clientIdClaim, out int clientId) || clientId <= 0)
+            {
+                return BadRequest(ApiResponse.Fail("Invalid or missing ClientId in token."));
+            }
 
+            var result = await _clientService.UpdateAlertPermissionAsync(int.Parse(clientIdClaim), alertPermission.ClientId, alertPermission.IsAlertPermission);
+            return Ok(ApiResponse.Ok(null, result.Message));
+        }
         private ClaimsPrincipal? ValidateJwtToken(string token)
         {
             try

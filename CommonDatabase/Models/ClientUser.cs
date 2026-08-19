@@ -36,6 +36,7 @@ namespace CommonDatabase.Models
         public string Keywords { get; set; } = "";
         public string Puid { get; set; } = "0";
         public int SubClientLimit { get; set; }
+        public bool IsAlertPermission { get; set; } = true;
     }
 
     public class ClientDetailsDto

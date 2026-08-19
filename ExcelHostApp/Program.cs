@@ -1,5 +1,6 @@
 ﻿using CommonDatabase;
 using CommonDatabase.Interfaces;
+using CommonDatabase.Models;
 using CommonDatabase.Services;
 using DashboardExcelApi;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -116,6 +117,7 @@ builder.Services.AddSingleton<IJwtBlacklistService, JwtBlacklistService>();
 builder.Services.AddScoped<ICommonService, CommonService>();
 builder.Services.AddSingleton<ConnectionStore>();
 builder.Services.AddScoped<HubNotifier>();
+builder.Services.AddScoped<IWatchListsService, WatchlistsService>();
 builder.Services.AddOpenApi();
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);

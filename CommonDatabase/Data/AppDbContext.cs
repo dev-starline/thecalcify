@@ -29,6 +29,8 @@ namespace CommonDatabase
         public DbSet<ExcelFilePath> ExcelFilePath { get; set; }
         public DbSet<MarketWatch> MarketWatch { get; set; }
         public DbSet<ClientWiseInstrumentList> ClientWiseInstrumentList { get; set; }
+        public DbSet<AlertsClient> AlertsClient { get; set; }
+        public DbSet<WatchLists> WatchLists { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

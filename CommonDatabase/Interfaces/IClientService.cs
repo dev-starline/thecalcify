@@ -22,5 +22,6 @@ namespace CommonDatabase.Interfaces
         Task<IEnumerable<ClientUser>> GetSubClientAsync(int clientId);
         Task<ApiResponse> ChangePasswordSubClientAsync(int clientId, int subClientId, string password);
         Task<ClientUser> GetClientDetailAsync(int clientId);
+        Task<ApiResponse> UpdateAlertPermissionAsync(int clientId, int subClientId, bool isAlertPermission);
     }
 }
