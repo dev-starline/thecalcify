@@ -1,5 +1,6 @@
 ﻿using CommonDatabase.DTO;
 using CommonDatabase.Interfaces;
+using CommonDatabase.Models;
 using FirebaseAdmin.Messaging;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CommonDatabase.Models
+namespace CommonDatabase.Services
 {
     public class WatchlistsService : IWatchListsService
     {
@@ -32,14 +33,13 @@ namespace CommonDatabase.Models
                 if (existing != null)
                 {
                     // Update existing record
-                    existing.ClientId = watchList.ClientId;
                     existing.WId = watchList.WId;
                     existing.Title = watchList.Title;
                     existing.Layout = watchList.Layout;
                     existing.Charts = watchList.Charts;
                     existing.Sizes = watchList.Sizes;
                     existing.UpdatedDate = DateTime.Now;
-
+                    existing.UpdatedByClientId = watchList.ClientId;
                     _context.WatchLists.Update(existing);
                 }
                 else
@@ -54,7 +54,8 @@ namespace CommonDatabase.Models
                         Charts = watchList.Charts,
                         Sizes = watchList.Sizes,
                         CreatedDate = DateTime.Now,
-                        UpdatedDate = DateTime.Now
+                        UpdatedDate = DateTime.Now,
+                        UpdatedByClientId = watchList.ClientId
                     };
 
                     await _context.WatchLists.AddAsync(newWatchList);
@@ -72,7 +73,24 @@ namespace CommonDatabase.Models
 
         public async Task<ApiResponse> DeleteWatchListAsync(int clientId, string watchListId)
         {
-            _context.WatchLists.RemoveRange(_context.WatchLists.Where(w => w.ClientId == clientId && w.WId == watchListId));
+            var results = await GetClientIdForChart(clientId);
+
+            var watchLists = await _context.WatchLists
+                .Where(w =>
+                    results.Select(r => r.Id).Contains(w.ClientId) &&
+                    w.WId == watchListId
+                ).ToListAsync();
+
+            if (watchLists.Count <= 0)
+            {
+                return new ApiResponse
+                {
+                    IsSuccess = false,
+                    Message = "Not Found",
+                };
+            }
+            _context.WatchLists.RemoveRange(watchLists);
+
             await _context.SaveChangesAsync();
             return new ApiResponse
             {
@@ -83,8 +101,10 @@ namespace CommonDatabase.Models
 
         public async Task<ApiResponse> GetWatchListByIdAsync(int clientId, string watchListId)
         {
+            var results = await GetClientIdForChart(clientId);
+
             var watchList = _context.WatchLists
-                .Where(w => w.ClientId == clientId && w.WId == watchListId)
+                .Where(w => results.Select(r => r.Id).Contains(w.ClientId) && w.WId == watchListId)
                 .Select(x => new
                 {
                     x.WId,
@@ -111,8 +131,10 @@ namespace CommonDatabase.Models
 
         public async Task<ApiResponse> GetWatchListsByClientIdAsync(int clientId)
         {
+            var results = await GetClientIdForChart(clientId);
+
             var watchLists = _context.WatchLists
-                .Where(w => w.ClientId == clientId)
+                .Where(w => results.Select(r => r.Id).Contains(w.ClientId))
                 .Select(x => new {
                     x.WId,
                     x.Title,
@@ -136,5 +158,17 @@ namespace CommonDatabase.Models
                 Data = watchLists
             };
         }
+
+        #region privatefunction
+
+        public async Task<List<AlertsClient>> GetClientIdForChart(int ClientId)
+        {
+            var results = await _context
+                .AlertsClient // or any DbSet, just to anchor the query
+                .FromSqlRaw("SELECT * FROM dbo.func_GetClientIdsForChart({0})", ClientId)
+                .ToListAsync();
+            return results;
+        }
+        #endregion
     }
 }

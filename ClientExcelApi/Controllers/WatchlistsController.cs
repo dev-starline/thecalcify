@@ -24,7 +24,7 @@ namespace ClientExcelApi.Controllers
             {
                 var clientIdClaim = User.FindFirst("Id")?.Value;
                 var response = await _watchListsService.GetWatchListsByClientIdAsync(int.Parse(clientIdClaim)); // Replace 1 with the actual clientId
-                return Ok(new { message = "Watchlists retrieved successfully.", data = response });
+                return Ok(new { message = "Success.", data = response });
             }
             catch (Exception ex)
             {
@@ -42,7 +42,7 @@ namespace ClientExcelApi.Controllers
                     req.ClientId = int.Parse(clientIdClaim);
                 }
                 var response = await _watchListsService.UpsertWatchListsAsync(watchlist);
-                return Ok(new { message = "Watchlist upserted successfully.", data = response });
+                return Ok(new { message = "Success.", data = response });
             }
             catch (Exception)
             {
@@ -57,7 +57,7 @@ namespace ClientExcelApi.Controllers
             {
                 var clientIdClaim = User.FindFirst("Id")?.Value;
                 var response = await _watchListsService.DeleteWatchListAsync(int.Parse(clientIdClaim), wId);
-                return Ok(new { message = "Watchlist deleted successfully.", data = response });
+                return Ok(new { message = "Success.", data = response });
             }
             catch (Exception)
             {
@@ -73,7 +73,7 @@ namespace ClientExcelApi.Controllers
             {
                 var clientIdClaim = User.FindFirst("Id")?.Value;
                 var response = await _watchListsService.GetWatchListByIdAsync(int.Parse(clientIdClaim), watchlistId);
-                return Ok(new { message = "Watchlist retrieved successfully.", data = response });
+                return Ok(new { message = "Success.", data = response });
             }
             catch (Exception ex)
             {
