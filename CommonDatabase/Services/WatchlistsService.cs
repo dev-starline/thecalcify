@@ -24,6 +24,10 @@ namespace CommonDatabase.Services
             if (watchLists == null || !watchLists.Any())
                 return null;
 
+            int claimClientId = watchLists.Select(x => x.ClientId).FirstOrDefault();
+            var client = await _context.Client.Where(x => x.Id == claimClientId).FirstOrDefaultAsync();
+            int clientId = (client.Puid == "0" ? client.Id : int.Parse(client.Puid));
+
             foreach (var watchList in watchLists)
             {
                 // Check if record exists (by Id or unique key like ClientId + WId)
@@ -47,7 +51,7 @@ namespace CommonDatabase.Services
                     // Insert new record
                     var newWatchList = new WatchLists
                     {
-                        ClientId = watchList.ClientId,
+                        ClientId = clientId,
                         WId = watchList.WId,
                         Title = watchList.Title,
                         Layout = watchList.Layout,
@@ -71,13 +75,12 @@ namespace CommonDatabase.Services
         }
 
 
-        public async Task<ApiResponse> DeleteWatchListAsync(int clientId, string watchListId)
+        public async Task<ApiResponse> DeleteWatchListAsync(int claimClientId, string watchListId)
         {
-            var results = await GetClientIdForChart(clientId);
-
+            var client = await _context.Client.Where(x => x.Id == claimClientId).FirstOrDefaultAsync();
+            int clientId = (client.Puid == "0" ? client.Id : int.Parse(client.Puid));
             var watchLists = await _context.WatchLists
-                .Where(w =>
-                    results.Select(r => r.Id).Contains(w.ClientId) &&
+                .Where(w => w.ClientId == clientId &&
                     w.WId == watchListId
                 ).ToListAsync();
 
@@ -99,12 +102,12 @@ namespace CommonDatabase.Services
             };
         }
 
-        public async Task<ApiResponse> GetWatchListByIdAsync(int clientId, string watchListId)
+        public async Task<ApiResponse> GetWatchListByIdAsync(int claimClientId, string watchListId)
         {
-            var results = await GetClientIdForChart(clientId);
-
+            var client = await _context.Client.Where(x => x.Id == claimClientId).FirstOrDefaultAsync();
+            int clientId = (client.Puid == "0" ? client.Id : int.Parse(client.Puid));
             var watchList = _context.WatchLists
-                .Where(w => results.Select(r => r.Id).Contains(w.ClientId) && w.WId == watchListId)
+                .Where(w => w.ClientId == clientId && w.WId == watchListId)
                 .Select(x => new
                 {
                     x.WId,
@@ -129,12 +132,12 @@ namespace CommonDatabase.Services
             };
         }
 
-        public async Task<ApiResponse> GetWatchListsByClientIdAsync(int clientId)
+        public async Task<ApiResponse> GetWatchListsByClientIdAsync(int claimClientId)
         {
-            var results = await GetClientIdForChart(clientId);
-
+            var client = await _context.Client.Where(x => x.Id == claimClientId).FirstOrDefaultAsync();
+            int clientId = (client.Puid == "0" ? client.Id : int.Parse(client.Puid));
             var watchLists = _context.WatchLists
-                .Where(w => results.Select(r => r.Id).Contains(w.ClientId))
+                .Where(w => w.ClientId == clientId)
                 .Select(x => new {
                     x.WId,
                     x.Title,
