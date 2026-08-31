@@ -68,10 +68,10 @@ namespace DashboardExcelApi.Controllers
                 if (!userInstrument.IsMapped) 
                     return Ok(new ApiResponse { IsSuccess = false, Message = $"You are not authorized to access {request.Identifier} identifier data." });
                 
-                var subscribe = _context.Subscribe
-                                    .Where(s => s.Identifier == request.Identifier)
-                                    .Select(i => new { i.Contract })
-                                    .FirstOrDefault();
+                //var subscribe = _context.Subscribe
+                //                    .Where(s => s.Identifier == request.Identifier)
+                //                    .Select(i => new { i.Contract })
+                //                    .FirstOrDefault();
 
                 StringBuilder sbdir = new StringBuilder();
                 sbdir.Append(_rateHistoryDir);
@@ -90,14 +90,14 @@ namespace DashboardExcelApi.Controllers
                 {
                     sbdir = new StringBuilder();
                     sbdir.Append($"{_rateHistoryDir}/{request.Date}");
-                    datFile = $"{subscribe.Contract}.dat";
+                    datFile = $"{request.Identifier}.dat";
                     path = Path.Combine(_rateHistoryDir, sbdir.ToString(), datFile);
                     var values1 = System.IO.File.ReadAllLines(path);
                     values = values1.Reverse().ToArray();
                      
                 }
 
-                listMarketData = values.Where(x => x.Split('|')[0] == subscribe.Contract)
+                listMarketData = values.Where(x => x.Split('|')[0] == request.Identifier)
                                 .Select(val =>
                                 {
                                     var parts = ((string)val).Split('|');
@@ -172,13 +172,13 @@ namespace DashboardExcelApi.Controllers
                 if (!userInstrument.IsMapped)
                     return Ok(new ApiResponse { IsSuccess = false, Message = $"You are not authorized to access {request.Identifier} identifier data." });
 
-                var subscribe = _context.Subscribe
-                                .Where(s => s.Identifier == request.Identifier)
-                                .Select(i => new { i.Contract })
-                                .FirstOrDefault();
+                //var subscribe = _context.Subscribe
+                //                .Where(s => s.Identifier == request.Identifier)
+                //                .Select(i => new { i.Contract })
+                //                .FirstOrDefault();
 
                 string zipFile = $"{request.Date}.zip";
-                var path = Path.Combine(_rateHistoryDir, subscribe.Contract, zipFile);
+                var path = Path.Combine(_rateHistoryDir, request.Identifier, zipFile);
                 var listMarketData = new List<MarketData>();
                 string[] values = [];
 
@@ -194,7 +194,7 @@ namespace DashboardExcelApi.Controllers
                 else 
                 {
                     string datFile = $"{request.Date}.dat";
-                    path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                    path = Path.Combine(_rateHistoryDir, request.Identifier, datFile);
                     if (System.IO.File.Exists(path))
                     {
                         //var values1 = System.IO.File.ReadAllLines(path);
@@ -309,19 +309,19 @@ namespace DashboardExcelApi.Controllers
                 if (!userInstrument.IsMapped)
                     return Ok(new ApiResponse { IsSuccess = false, Message = $"You are not authorized to access {request.Identifier} identifier data." });
 
-                var subscribe = _context.Subscribe
-                                .Where(s => s.Identifier == request.Identifier)
-                                .Select(i => new { i.Contract })
-                                .FirstOrDefault();
+                //var subscribe = _context.Subscribe
+                //                .Where(s => s.Identifier == request.Identifier)
+                //                .Select(i => new { i.Contract })
+                //                .FirstOrDefault();
 
                 string datFile = $"{request.Date}_{request.Interval}.dat";
-                var path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                var path = Path.Combine(_rateHistoryDir, request.Identifier, datFile);
                 var listMarketData = new List<MarketData>();
                 var values = new List<MarketData>();
 
 
                 //datFile = $"{request.Date}.dat";
-                path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                path = Path.Combine(_rateHistoryDir, request.Identifier, datFile);
                 if (System.IO.File.Exists(path))
                 {
                     //var values1 = System.IO.File.ReadAllLines(path);
@@ -437,10 +437,10 @@ namespace DashboardExcelApi.Controllers
                 if (!userInstrument.IsMapped)
                     return Ok(new ApiResponse { IsSuccess = false, Message = $"You are not authorized to access {request.Identifier} identifier data." });
 
-                var subscribe = _context.Subscribe
-                                .Where(s => s.Identifier == request.Identifier)
-                                .Select(i => new { i.Contract })
-                                .FirstOrDefault();
+                //var subscribe = _context.Subscribe
+                //                .Where(s => s.Identifier == request.Identifier)
+                //                .Select(i => new { i.Contract })
+                //                .FirstOrDefault();
                 // Difference
                 TimeSpan diff = toDateTime - fromDateTime;
                 Console.WriteLine($"Total days: {diff.TotalDays}"); // 3.58 days
@@ -452,9 +452,9 @@ namespace DashboardExcelApi.Controllers
                     var day = fromDateTime.AddDays(i);
                                    
                     string datFile = $"{day.Date.ToString("dd-MM-yyyy")}_{request.Interval}.dat";
-                    var path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                    var path = Path.Combine(_rateHistoryDir, request.Identifier, datFile);
                 
-                    path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                    path = Path.Combine(_rateHistoryDir, request.Identifier, datFile);
                     if (System.IO.File.Exists(path))
                     {
                         using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // <-- critical
@@ -570,10 +570,10 @@ namespace DashboardExcelApi.Controllers
                 if (!userInstrument.IsMapped)
                     return Ok(new ApiResponse { IsSuccess = false, Message = $"You are not authorized to access {request.Symbol} identifier data." });
 
-                var subscribe = _context.Subscribe
-                                .Where(s => s.Identifier == request.Symbol)
-                                .Select(i => new { i.Contract })
-                                .FirstOrDefault();
+                //var subscribe = _context.Subscribe
+                //                .Where(s => s.Identifier == request.Symbol)
+                //                .Select(i => new { i.Contract })
+                //                .FirstOrDefault();
                 // 2. Convert to DateTime
                 DateTime fromDate = DateTimeOffset.FromUnixTimeSeconds(request.FromDate).UtcDateTime.AddHours(5).AddMinutes(30);
                 DateTime toDate = DateTimeOffset.FromUnixTimeSeconds(request.ToDate).UtcDateTime.AddHours(5).AddMinutes(30);
@@ -593,7 +593,7 @@ namespace DashboardExcelApi.Controllers
                     //string datFile = $"{day.Date.ToString("dd-MM-yyyy")}_{request.Interval}.dat";
                     //var path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
                     string monthYear = current.ToString("MM-yyyy");
-                    string filePath = Path.Combine(_chartHistoryDir, subscribe.Contract, $"{monthYear}.dat");
+                    string filePath = Path.Combine(_chartHistoryDir, request.Symbol, $"{monthYear}.dat");
 
                     if (System.IO.File.Exists(filePath))
                     {
@@ -619,7 +619,7 @@ namespace DashboardExcelApi.Controllers
 
                             var tick = new OldMarketIntervalData
                             {
-                                N = request.Symbol,
+                                N = userInstrument.Contract,
                                 T = parts[1],
                                 O = parts[2],
                                 H = parts[3],
@@ -639,7 +639,7 @@ namespace DashboardExcelApi.Controllers
                                 {
                                     response2.Add(new OldChartIntervalData
                                     {
-                                        Name = request.Symbol,
+                                        Name = userInstrument.Contract,
                                         Time = new DateTimeOffset(tickTime.AddHours(-5).AddMinutes(-30)).ToUnixTimeSeconds(),
                                         Open = parts[2],
                                         High = parts[3],
@@ -679,12 +679,12 @@ namespace DashboardExcelApi.Controllers
             // Combine with today's date
             DateTime fromDateTime = parsedDate.Add(fromTs);
             DateTime toDateTime = parsedDate.Add(toTs);
-            var subscribe = _context.Subscribe
-                               .Where(s => s.Identifier == identifier)
-                               .Select(i => new { i.Contract })
-                               .FirstOrDefault();
+            //var subscribe = _context.Subscribe
+            //                   .Where(s => s.Identifier == identifier)
+            //                   .Select(i => new { i.Contract })
+            //                   .FirstOrDefault();
             string zipFile = $"{date}.zip";
-            var path = Path.Combine(_rateHistoryDir, subscribe.Contract, zipFile);
+            var path = Path.Combine(_rateHistoryDir, identifier, zipFile);
             var listMarketData = new List<MarketData>();
             //string[] values = [];
             int count = 0;
@@ -736,7 +736,7 @@ namespace DashboardExcelApi.Controllers
             else
             {
                 string datFile = $"{date}.dat";
-                path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                path = Path.Combine(_rateHistoryDir, identifier, datFile);
                 using var reader = new StreamReader(path);
                 int batchSize = 1000;
                 var batch = new List<string>(batchSize);
@@ -818,10 +818,10 @@ namespace DashboardExcelApi.Controllers
                 if (!userInstrument.IsMapped)
                     return Ok(new ApiResponse { IsSuccess = false, Message = $"You are not authorized to access {request.Symbol} identifier data." });
 
-                var subscribe = _context.Subscribe
-                                .Where(s => s.Identifier == request.Symbol)
-                                .Select(i => new { i.Contract })
-                                .FirstOrDefault();
+                //var subscribe = _context.Subscribe
+                //                .Where(s => s.Identifier == request.Symbol)
+                //                .Select(i => new { i.Contract })
+                //                .FirstOrDefault();
                 // 2. Convert to DateTime
                 DateTime fromDate = DateTimeOffset.FromUnixTimeSeconds(request.FromDate).UtcDateTime.AddHours(5).AddMinutes(30);
                 DateTime toDate = DateTimeOffset.FromUnixTimeSeconds(request.ToDate).UtcDateTime.AddHours(5).AddMinutes(30);
@@ -851,7 +851,7 @@ namespace DashboardExcelApi.Controllers
                     while (current <= end)
                     {
                         string monthYear = current.ToString("MM-yyyy");
-                        string filePath = Path.Combine(_chartHistoryDir, subscribe.Contract, $"{monthYear}.dat");
+                        string filePath = Path.Combine(_chartHistoryDir, request.Symbol, $"{monthYear}.dat");
 
                         if (System.IO.File.Exists(filePath))
                         {
@@ -884,7 +884,7 @@ namespace DashboardExcelApi.Controllers
                                             //GOLD_I,BIDOpen,BidClose,BidHigh,BidLow,AskOpen,AskClose,AskHigh,AskLow,LtpOpen,LtpClose,LtpHigh,LtpLow,Volume,Time
                                             // Concatenate everything back
                                             string result = string.Join(",",
-                                                                request.Symbol,   // SymbolName
+                                                                userInstrument.Contract,   // SymbolName
                                                                 splitData[7],   // BIDOpen
                                                                 splitData[10],   // BidClose
                                                                 splitData[8],   // BidHigh
@@ -927,7 +927,7 @@ namespace DashboardExcelApi.Controllers
                     while (current.Year <= end.Year)
                     {
                         string datFile = $"{current.Year.ToString()}.dat";
-                        var path = Path.Combine(_oneDayHistoryDir, subscribe.Contract, datFile);
+                        var path = Path.Combine(_oneDayHistoryDir, request.Symbol, datFile);
                         if (System.IO.File.Exists(path))
                         {
                             using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite)) // <-- critical
@@ -940,7 +940,7 @@ namespace DashboardExcelApi.Controllers
                             foreach (var content in values)
                             {
                                 string[] splitData = content.Split(',');
-                                var symbol = request.Symbol;
+                                var symbol = userInstrument.Contract;
                                 var bid = SafeGet(splitData, 2);
                                 var ask = SafeGet(splitData, 3);
                                 var high = SafeGet(splitData, 4);
@@ -982,7 +982,7 @@ namespace DashboardExcelApi.Controllers
                             if (toDate.ToString("dd-MM-yyyy") == DateTime.Now.ToString("dd-MM-yyyy"))
                             {
                                 datFile = $"{toDate.ToString("dd-MM-yyyy")}.dat";
-                                path = Path.Combine(_rateHistoryDir, subscribe.Contract, datFile);
+                                path = Path.Combine(_rateHistoryDir, request.Symbol, datFile);
                                 using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 
                                 fs.Seek(-1, SeekOrigin.End);
@@ -997,7 +997,7 @@ namespace DashboardExcelApi.Controllers
                                 using var sr = new StreamReader(fs);
                                 string content = sr.ReadLine() ?? string.Empty;
                                 string[] splitData = content.Split('|');
-                                var symbol = request.Symbol;
+                                var symbol = userInstrument.Contract;
                                 var bid = SafeGet(splitData, 2);
                                 var ask = SafeGet(splitData, 3);
                                 var high = SafeGet(splitData, 4);
