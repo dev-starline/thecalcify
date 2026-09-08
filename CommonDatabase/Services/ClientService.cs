@@ -328,6 +328,7 @@ namespace CommonDatabase.Services {
                 existing.IsPassed = false;
                 existing.AlertDate = null;
                 existing.UpdatedByClientId = input.UpdatedByClientId;
+                existing.AlertName = input.AlertName;
                 await _context.SaveChangesAsync();
             }
             else
@@ -396,7 +397,8 @@ namespace CommonDatabase.Services {
                     "customformula" => "3",
                     _ => a.Type
                 },
-                a.IsPassed, a.AlertDate, a.CreateDate, a.MDate
+                a.IsPassed, a.AlertDate, a.CreateDate, a.MDate,
+                AlertName = string.IsNullOrEmpty(a.AlertName) ? a.Identifier : a.AlertName
             });
 
             return ApiResponse.Ok(responseData);

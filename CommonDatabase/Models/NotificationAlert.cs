@@ -42,6 +42,7 @@ namespace CommonDatabase.Models
         public DateTime MDate { get; set; } = DateTime.Now; // Updated on modify
         public int ClientDeviceId { get; set; }
         public int? UpdatedByClientId { get; set; }
+        public string? AlertName { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             // Allow negative values only when Type == "3"
