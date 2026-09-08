@@ -183,7 +183,7 @@ namespace ClientExcelApi.Controllers
                         input.Condition,
                         input.Flag,
                         input.Rate,
-                        contract,
+                        contract = string.IsNullOrEmpty(alert.AlertName) ? contract : alert.AlertName,
                         alert.AlertDate
                     }
                 };
