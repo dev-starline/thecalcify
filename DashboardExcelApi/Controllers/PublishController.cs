@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using StackExchange.Redis;
 using System.IO.Compression;
+using System.Text.Json.Nodes;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DashboardExcelApi.Controllers
@@ -29,6 +30,7 @@ namespace DashboardExcelApi.Controllers
         private readonly AppDbContext _context;
         private readonly HubNotifier _hubNotifier;
         private const string ClientInstrumentListKey = "ClientInstrumentList";
+        private readonly IConnectionMultiplexer _redis;
         public PublishController(IHubContext<ExcelHub> hubContext, ICommonService commonService, IConnectionMultiplexer redis, ConnectionStore connectionStore, IConfiguration configuration, AppDbContext context, HubNotifier hubNotifier)
         {
             _hubContext = hubContext;
@@ -38,6 +40,7 @@ namespace DashboardExcelApi.Controllers
             prefix = _configuration["Redis:Prefix"];
             _context = context;
             _hubNotifier = hubNotifier;
+            _redis = redis;
         }
 
         [HttpGet("PublishExcelData")]
@@ -123,8 +126,36 @@ namespace DashboardExcelApi.Controllers
         [HttpGet("publish-subscriber")]
         public async Task<IActionResult> PublishSubscriber(string symbol, string symboljson)
         {
-            await _hubNotifier.SendToGroupAsync(symbol, HubMethodName.excelRate, Compress(symboljson.ToString()));
-            await _hubNotifier.SendToGroupAsync(symbol, HubMethodName.excelBase, symboljson.ToString());
+            //await _hubNotifier.SendToGroupAsync(symbol, HubMethodName.excelRate, Compress(symboljson.ToString()));
+            //await _hubNotifier.SendToGroupAsync(symbol, HubMethodName.excelBase, symboljson.ToString());
+            var parseJson = System.Text.Json.JsonSerializer.Deserialize<JsonObject>(symboljson);
+
+            var objMessage = new
+            {
+                n = parseJson["n"].ToString(),
+                i = parseJson["i"].ToString(),
+                b = parseJson["b"].ToString(),
+                a = parseJson["a"].ToString(),
+                ltp = parseJson["ltp"].ToString(),
+                h = parseJson["h"].ToString(),
+                l = parseJson["l"].ToString(),
+                t = (long.Parse(parseJson["t"].ToString()) * 1000).ToString(),
+                o = parseJson["o"].ToString() == "--" ? "0" : parseJson["o"].ToString(),
+                c = parseJson["c"].ToString() == "--" ? "0" : parseJson["c"].ToString(),
+                d = "0",
+                v= parseJson["v"].ToString(),
+                atp = "0",
+                bq = "0",
+                tbq = "0",
+                sq = "0",
+                tsq = "0",
+                vt = "0",
+                oi = "0",
+                ltq = "0"
+
+            };
+            var sub = _redis.GetSubscriber();
+            await sub.PublishAsync("excel", System.Text.Json.JsonSerializer.Serialize(objMessage));
             return Ok();
         }
 
