@@ -150,8 +150,9 @@ namespace CommonDatabase.Services
             {
                 return new ApiResponse
                 {
-                    IsSuccess = false,
+                    IsSuccess = true,
                     Message = "Not Found",
+                    Data = new List<WatchLists>()
                 };
             }
             return new ApiResponse
