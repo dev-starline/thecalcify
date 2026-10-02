@@ -117,6 +117,7 @@ builder.Services.AddScoped<ICommonService, CommonService>();
 builder.Services.AddSingleton<ConnectionStore>();
 builder.Services.AddScoped<HubNotifier>();
 builder.Services.AddScoped<IWatchListsService, WatchlistsService>();
+builder.Services.AddScoped<ICostConfigService, CostConfigService>();
 builder.Services.AddOpenApi();
 var jwtSettings = builder.Configuration.GetSection("Jwt");
 var key = Encoding.ASCII.GetBytes(jwtSettings["Key"]);

@@ -31,6 +31,7 @@ namespace CommonDatabase
         public DbSet<ClientWiseInstrumentList> ClientWiseInstrumentList { get; set; }
         public DbSet<AlertsClient> AlertsClient { get; set; }
         public DbSet<WatchLists> WatchLists { get; set; }
+        public DbSet<CostingConfig> CostingConfig { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
